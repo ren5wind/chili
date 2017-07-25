@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_find"
+        icon="@drawable/find_selector"
+        title="发现" />
+    <tab
+        id="@+id/tab_bid"
+        icon="@drawable/bid_selector"
+        title="投标" />
+    <tab
+        id="@+id/tab_message"
+        icon="@drawable/message_selector"
+        title="消息" />
+    <tab
+        id="@+id/tab_square"
+        icon="@drawable/square_selector"
+        title="广场" />
+    <tab
+        id="@+id/tab_my"
+        icon="@drawable/my_selector"
+        title="我的" />
+</tabs>

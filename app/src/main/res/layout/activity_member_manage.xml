@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="#f2f2f2"
+    tools:context="com.topunion.chili.activity.TalkingActivity">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/normal_title_layout"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_below="@+id/title_layout"
+        android:padding="15dp"
+        android:background="@android:color/white">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/img_header"
+            android:src="@mipmap/friends"
+            android:scaleType="fitXY"
+            fresco:placeholderImageScaleType="fitXY"
+            fresco:placeholderImage="@mipmap/friends"
+            android:layout_centerHorizontal="true"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+
+        <TextView
+            android:id="@+id/txt_name"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="16sp"
+            android:layout_below="@+id/img_header"
+            android:textColor="#666666"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/img_sex"
+            android:src="@mipmap/sex_boy"
+            android:layout_alignTop="@+id/txt_name"
+            android:scaleType="center"
+            android:layout_alignBottom="@+id/txt_name"
+            android:layout_toRightOf="@+id/txt_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        
+        <LinearLayout
+            android:id="@+id/layout_des"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:layout_below="@+id/txt_name">
+
+            <TextView
+                android:id="@+id/txt_company"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#999999"/>
+
+            <View android:layout_width="1dp"
+                  android:layout_marginLeft="5dp"
+                  android:layout_marginRight="5dp"
+                  android:layout_height="20dp"
+                  android:background="#999999"/>
+
+            <TextView
+                android:id="@+id/txt_position"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#999999"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:layout_below="@+id/layout_des">
+
+            <TextView
+                android:id="@+id/txt_verify1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:background="@drawable/verify_bg"
+                android:textSize="8sp"
+                android:text="已实名认证"
+                android:textColor="@color/main"/>
+
+            <TextView
+                android:id="@+id/txt_verify2"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:background="@drawable/verify_bg"
+                android:textSize="8sp"
+                android:text="已企业认证"
+                android:textColor="@color/main"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_group"
+        android:layout_marginTop="25dp"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/layout_info"
+        android:layout_height="56dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="#666666"
+        android:background="@android:color/white">
+        <TextView
+            android:text="所在组织"
+            android:textColor="#666666"
+            android:textSize="16sp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:drawableRight="@mipmap/message_youjiao"
+            android:id="@+id/txt_department"
+            android:text="财务部门"
+            android:textColor="#999999"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            android:textSize="14sp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_position"
+        android:layout_marginTop="1dp"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/layout_group"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_height="56dp"
+        android:textColor="#666666"
+        android:background="@android:color/white">
+        <TextView
+            android:text="角色分配"
+            android:textColor="#666666"
+            android:textSize="16sp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:drawableRight="@mipmap/message_youjiao"
+            android:id="@+id/txt_position_name"
+            android:text="普通员工"
+            android:textColor="#999999"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            android:textSize="14sp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:text="删除员工"
+        android:layout_marginTop="50dp"
+        android:textColor="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/layout_position"
+        android:background="@drawable/delete_friend_bg"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

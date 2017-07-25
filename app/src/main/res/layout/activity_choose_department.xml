@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.topunion.chili.activity.ChooseDepartmentActivity">
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/normal_title_layout"/>
+
+
+    <View
+        android:layout_below="@id/title_layout"
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#999999"/>
+
+    <ListView
+        android:id="@+id/mListView"
+        android:layout_below="@id/line"
+        android:choiceMode="singleChoice"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</RelativeLayout>

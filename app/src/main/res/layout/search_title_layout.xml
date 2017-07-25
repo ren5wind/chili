@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/white"
+                android:paddingLeft="25dp"
+                android:layout_height="56dp">
+
+    <RelativeLayout
+        android:id="@+id/search_layout"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/btn_cancel"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:hint="搜索好友"
+            android:textColorHint="#999999"
+            android:textSize="12sp"
+            android:id="@+id/mSearchInput"
+            android:background="@drawable/search_input_bg"
+            android:gravity="left"
+            android:paddingLeft="30dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <ImageView
+            android:src="@mipmap/search_gray"
+            android:layout_alignLeft="@+id/mSearchInput"
+            android:layout_marginLeft="7dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+    <Button
+        android:id="@+id/btn_cancel"
+        android:text="取消"
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:background="@android:color/transparent"
+        android:paddingTop="5dp"
+        android:minHeight="0dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

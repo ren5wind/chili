@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">易投</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_talking">TalkingActivity</string>
+    <string name="title_activity_personal_center">PersonalCenterActivity</string>
+    <string name="title_activity_remark">RemarkActivity</string>
+</resources>
