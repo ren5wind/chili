@@ -52,5 +52,6 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.okhttp3:okhttp:3.1.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     testCompile 'junit:junit:4.12'
 }

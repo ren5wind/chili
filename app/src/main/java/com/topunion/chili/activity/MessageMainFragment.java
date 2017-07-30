@@ -21,6 +21,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.MyApplication;
 import com.topunion.chili.MyApplication_;
 import com.topunion.chili.R;
+import com.topunion.chili.data.UserEntry;
 import com.topunion.chili.net.HttpHelper;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpDepts;
@@ -34,10 +35,14 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.model.UserInfo;
+import cn.jpush.im.api.BasicCallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,7 +77,7 @@ public class MessageMainFragment extends Fragment {
     LinearLayout popMenu;
 
     @Click
-    void btn_add_friend(){
+    void btn_add_friend() {
         popMenu.setVisibility(View.GONE);
         //TODO
     }
@@ -84,7 +89,7 @@ public class MessageMainFragment extends Fragment {
     }
 
     @Click
-    void btn_msg () {
+    void btn_msg() {
         btn_msg.setTextColor(getResources().getColor(R.color.main));
         bottom_msg.setBackgroundColor(getResources().getColor(R.color.main));
         btn_contact.setTextColor(getResources().getColor(R.color.textGray));
@@ -131,7 +136,34 @@ public class MessageMainFragment extends Fragment {
             }
         }
         contactAdapter.setData(data);
-//        this.validList();
+        this.validList();
+    }
+
+    @Background
+    void initIm() {
+        //检测账号是否登陆
+        UserInfo myInfo = JMessageClient.getMyInfo();
+        if (myInfo == null) {//去登陆
+            JMessageClient.login(userId, password, new BasicCallback() {
+                @Override
+                public void gotResult(int responseCode, String responseMessage) {
+                    if (responseCode == 0) {
+                        //获取user
+                        UserInfo myInfo = JMessageClient.getMyInfo();
+                        File avatarFile = myInfo.getAvatarFile();
+                        String username = myInfo.getUserName();
+                        String appKey = myInfo.getAppKey();
+                        UserEntry user = UserEntry.getUser(username, appKey);
+                        if (null == user) {
+                            user = new UserEntry(username, appKey);
+                            user.save();
+                        }
+                    } else {
+
+                    }
+                }
+            });
+        }
     }
 
     @MainThread
@@ -224,7 +256,7 @@ public class MessageMainFragment extends Fragment {
                 holder.txt_time = (TextView) view.findViewById(R.id.txt_time);
 //                Uri uri = Uri.parse("https://raw.githubusercontent.com/facebook/fresco/gh-pages/static/logo.png");
 //                holder.img_header.setImageURI(uri);
-               view.setTag(holder);
+                view.setTag(holder);
             } else {
                 holder = (ViewHolder) view.getTag();
             }

@@ -15,6 +15,9 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.model.UserInfo;
+
 @EActivity(R.layout.activity_main)
 public class MainActivity extends FragmentActivity {
 
@@ -30,10 +33,10 @@ public class MainActivity extends FragmentActivity {
         List<Fragment> listFragment = new ArrayList<>();
 
         Fragment find = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/home.html");
-        Fragment bid = WebViewFragment.newInstance("http://tmit.f3322.com.topunion.chili.net:2051/chili-2.0/assets/bid-management/bid-on.html");
+        Fragment bid = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/bid-management/bid-on.html");
         Fragment message = MessageMainFragment_.builder().build();
-        Fragment square = WebViewFragment.newInstance("http://tmit.f3322.com.topunion.chili.net:2051/chili-2.0/assets/square/index.html");
-        Fragment my = WebViewFragment.newInstance("http://tmit.f3322.com.topunion.chili.net:2051/chili-2.0/assets/user/index.html");
+        Fragment square = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/square/index.html");
+        Fragment my = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/user/index.html");
 
         listFragment.add(find);
         listFragment.add(bid);
@@ -52,4 +55,5 @@ public class MainActivity extends FragmentActivity {
         alphaIndicator.setTabCurrenItem(0);
 
     }
+
 }
