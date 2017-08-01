@@ -26,6 +26,7 @@ import com.topunion.chili.net.HttpHelper;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpDepts;
 import com.topunion.chili.net.request_interface.GetCorps;
+import com.topunion.chili.util.SortConvList;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
@@ -38,9 +39,12 @@ import org.androidannotations.annotations.ViewById;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
 import retrofit2.Call;
@@ -75,6 +79,9 @@ public class MessageMainFragment extends Fragment {
 
     @ViewById
     LinearLayout popMenu;
+
+    private List<Conversation> mMsgDatas = new ArrayList<Conversation>();
+
 
     @Click
     void btn_add_friend() {
@@ -142,39 +149,48 @@ public class MessageMainFragment extends Fragment {
     @Background
     void initIm() {
         //检测账号是否登陆
-        UserInfo myInfo = JMessageClient.getMyInfo();
-        if (myInfo == null) {//去登陆
-            JMessageClient.login(userId, password, new BasicCallback() {
-                @Override
-                public void gotResult(int responseCode, String responseMessage) {
-                    if (responseCode == 0) {
-                        //获取user
-                        UserInfo myInfo = JMessageClient.getMyInfo();
-                        File avatarFile = myInfo.getAvatarFile();
-                        String username = myInfo.getUserName();
-                        String appKey = myInfo.getAppKey();
-                        UserEntry user = UserEntry.getUser(username, appKey);
-                        if (null == user) {
-                            user = new UserEntry(username, appKey);
-                            user.save();
-                        }
-                    } else {
+//        UserInfo myInfo = JMessageClient.getMyInfo();
+//        if (myInfo == null) {//去登陆
+        JMessageClient.login("17070500000003", "YiTou123", new BasicCallback() {
+            @Override
+            public void gotResult(int responseCode, String responseMessage) {
+                if (responseCode == 0) {
+//                        //获取user
+//                        UserInfo myInfo = JMessageClient.getMyInfo();
+//                        File avatarFile = myInfo.getAvatarFile();
+//                        String username = myInfo.getUserName();
+//                        String appKey = myInfo.getAppKey();
+//                        UserEntry user = UserEntry.getUser(username, appKey);
+//                        if (null == user) {
+//                            user = new UserEntry(username, appKey);
+//                            user.save();
+//                        }
+                } else {
 
-                    }
                 }
-            });
-        }
+            }
+        });
+//        }
     }
 
     @MainThread
     void validList() {
-        contactAdapter.notifyDataSetChanged();
+//        contactAdapter.notifyDataSetChanged();
     }
 
+    //得到会话列表
+    private void initConvListAdapter() {
+        mDatas = JMessageClient.getConversationList();
+        if (mDatas != null && mDatas.size() > 0) {
+            SortConvList sortConvList = new SortConvList();
+            Collections.sort(mDatas, sortConvList);
+        }
+        msgAdapter = new MsgAdapter();
+        msg_list.setAdapter(msgAdapter);
+    }
 
     @AfterViews
     protected void afterViews() {
-        msgAdapter = new MsgAdapter();
         contactAdapter = new ContactAdapter();
         contact_list.setAdapter(contactAdapter);
         msg_list.setAdapter(msgAdapter);
@@ -231,17 +247,19 @@ public class MessageMainFragment extends Fragment {
         });
 
         initCorps();
+        initIm();
     }
 
     class MsgAdapter extends BaseAdapter {
+
         @Override
         public int getCount() {
-            return 2;
+            return (mMsgDatas == null || mMsgDatas.size() == 0) ? 0 : mMsgDatas.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return null;
+            return (mMsgDatas == null || mMsgDatas.size() == 0) ? 0 : mMsgDatas.get(i);
         }
 
         @Override

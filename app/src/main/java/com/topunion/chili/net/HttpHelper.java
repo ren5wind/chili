@@ -50,7 +50,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @EBean(scope = EBean.Scope.Singleton)
 public class HttpHelper {
     public static final String DEBUG_SERVER ="http://tmit.f3322.net:2051/chili-2.0/";
-
+    public static final int PAGE_COUNT = 20;
     public Retrofit retrofit = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(HttpHelper.DEBUG_SERVER)

@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.topunion.chili.R;
+import com.topunion.chili.net.HttpHelper;
+import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.view.CharacterParser;
 import com.topunion.chili.view.PinyinComparator;
 import com.topunion.chili.view.SideBar;
@@ -37,7 +39,7 @@ public class FriendsActivity extends Activity {
 	private SortAdapter adapter; // 排序的适配器
 
 	private CharacterParser characterParser;
-	private List<SortModel> SourceDateList; // 数据
+	private List<GetFriends.GetFriendsResponse.Friend> SourceDateList; // 数据
 
 	private PinyinComparator pinyinComparator;
 	private int lastFirstVisibleItem = -1;
@@ -56,6 +58,9 @@ public class FriendsActivity extends Activity {
 	TextView txt_title;
 	@ViewById
 	ImageButton btn_operation;
+
+	private HttpHelper httpHelper;
+	private int start = 1;
 	@Click
 	void btn_operation() {
         //TODO 搜索
@@ -67,6 +72,7 @@ public class FriendsActivity extends Activity {
 
 	@AfterViews
 	void init() {
+		httpHelper = new HttpHelper();
 		search_layout.setVisibility(View.VISIBLE);
 		txt_title.setVisibility(View.GONE);
 		btn_operation.setVisibility(View.VISIBLE);
@@ -100,10 +106,10 @@ public class FriendsActivity extends Activity {
 			}
 
 		});
+		SourceDateList = httpHelper.getFriends(start,HttpHelper.PAGE_COUNT).result;
+//		SourceDateList = filledData(new String[]{"xx","bb","ll","aa","ii","zz","oo","cc","bb","ll","aa","ii","zz","bb","ll","aa","ii","zz"});
 
-		SourceDateList = filledData(new String[]{"xx","bb","ll","aa","ii","zz","oo","cc","bb","ll","aa","ii","zz","bb","ll","aa","ii","zz"});
-
-		Collections.sort(SourceDateList, pinyinComparator);
+//		Collections.sort(SourceDateList, pinyinComparator);
 		adapter = new SortAdapter(this, SourceDateList);
 		mListView.setAdapter(adapter);
 

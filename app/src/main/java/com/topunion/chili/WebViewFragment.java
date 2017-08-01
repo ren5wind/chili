@@ -19,6 +19,8 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.topunion.chili.data.JsObject;
+
 public class WebViewFragment extends Fragment {
 
     public static String ARG_URL;
@@ -67,6 +69,7 @@ public class WebViewFragment extends Fragment {
                 // 分享
                 if (url.contains("/user/api/login.do")) {
                     Toast.makeText(getActivity(), url, Toast.LENGTH_SHORT).show();
+                    System.out.println(url);
                     return;
                 }
                 super.onLoadResource(view, url);
@@ -100,6 +103,8 @@ public class WebViewFragment extends Fragment {
         // 设置超链接 （需要添加setMovementMethod方法附加响应）
 //        mSpannableString.setSpan(new URLSpan(urlStr), 0, 4,
 //                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        wv.addJavascriptInterface(new JsObject(), "hybridProtocol");
+
         wv.loadUrl(urlStr);
 //        wv.setMovementMethod(LinkMovementMethod.getInstance());
 //        wv.setText(mSpannableString);
