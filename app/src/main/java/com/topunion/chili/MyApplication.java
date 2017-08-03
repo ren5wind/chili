@@ -1,9 +1,13 @@
 package com.topunion.chili;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper;
+import com.topunion.chili.util.SPUtil;
+import com.topunion.chili.util.StringUtil;
 
 import org.androidannotations.annotations.EApplication;
 
@@ -15,6 +19,26 @@ import cn.jpush.im.android.api.JMessageClient;
 
 @EApplication
 public class MyApplication extends Application {
+    private static MyApplication baseApplication;
+
+    private String token;
+
+    private int myUserId = -1;
+
+    public synchronized static MyApplication getInstance() {
+        if (null == baseApplication) {
+            baseApplication = new MyApplication();
+        }
+        return baseApplication;
+    }
+
+    public static Context getContext() {
+        return baseApplication;
+    }
+
+    public static Context getAppContext() {
+        return baseApplication;
+    }
 
     @Override
     public void onCreate() {
@@ -24,6 +48,34 @@ public class MyApplication extends Application {
 
         JMessageClient.setDebugMode(true);
         JMessageClient.init(this);
+        baseApplication = this;
+
     }
+
+    public String getToken() {
+        if (StringUtil.isEmpt(token)) {
+            token = SPUtil.getSharedStringData(MyApplication.getAppContext(), AccountManager.KEY_SP_ACCOUNT_TOKEN);
+        }
+//        if (TextUtils.isEmpty(token)) {
+//            token = "7f3c694ccea6c31373b1391095f7762a";
+//        }
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setMyUserId(int userId) {
+        myUserId = userId;
+    }
+
+    public int getMyUserId() {
+        if (myUserId == -1) {//没有
+            myUserId = SPUtil.getSharedIntData(MyApplication.getAppContext(), AccountManager.KEY_SP_ACCOUNT_USERID, -1);
+        }
+        return myUserId;
+    }
+
 
 }

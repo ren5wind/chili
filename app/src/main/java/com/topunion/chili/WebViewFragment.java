@@ -1,22 +1,17 @@
 package com.topunion.chili;
 
-import android.graphics.MaskFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.URLSpan;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.topunion.chili.data.JsObject;
@@ -26,10 +21,12 @@ public class WebViewFragment extends Fragment {
     public static String ARG_URL;
 
     private WebView webView;
+    ProgressBar bar;
 
     private String urlStr;
 
-    public WebViewFragment() {}
+    public WebViewFragment() {
+    }
 
     public static WebViewFragment newInstance(String urlStr) {
         WebViewFragment fragment = new WebViewFragment();
@@ -50,20 +47,26 @@ public class WebViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_webview, container, false);
+
         Bundle arguments = getArguments();
         if (arguments != null) {
             urlStr = arguments.getString(ARG_URL);
         }
 
 //        TextView wv = new TextView(getActivity());
-        WebView wv = new WebView(getActivity());
-        wv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        wv.getSettings().setJavaScriptEnabled(true);
-        wv.setWebViewClient(new WebViewClient() {
-           public boolean shouldOverrideUrlLoading(WebView view, String url) {
-               view.loadUrl(url);
-               return true;
-           }
+//        WebView wv = new WebView(getActivity());
+//        wv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        webView = (WebView) rootView.findViewById(R.id.webView);
+        bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+
             @Override
             public void onLoadResource(WebView view, String url) {
                 // 分享
@@ -75,24 +78,38 @@ public class WebViewFragment extends Fragment {
                 super.onLoadResource(view, url);
             }
         });
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                if (newProgress == 100) {
+                    bar.setVisibility(View.INVISIBLE);
+                } else {
+                    if (View.INVISIBLE == bar.getVisibility()) {
+                        bar.setVisibility(View.VISIBLE);
+                    }
+                    bar.setProgress(newProgress);
+                }
+                super.onProgressChanged(view, newProgress);
+            }
 
+        });
 
         //魅族手机设置LayerType为LAYER_TYPE_NONE
         if (Build.MANUFACTURER.equals("Meizu")) {
-            wv.setLayerType(View.LAYER_TYPE_NONE, null);
+            webView.setLayerType(View.LAYER_TYPE_NONE, null);
         }
 
 
         //启用WebView localStorage
-        wv.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
         //开启 database storage API 功能
-        wv.getSettings().setDatabaseEnabled(true);
-        wv.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
-        wv.getSettings().setAllowFileAccess(true);
-        wv.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        wv.getSettings().setAppCacheEnabled(false);
+        webView.getSettings().setDatabaseEnabled(true);
+        webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView.getSettings().setAppCacheEnabled(false);
         String appCachePath = getActivity().getCacheDir().getAbsolutePath();
-        wv.getSettings().setAppCachePath(appCachePath);
+        webView.getSettings().setAppCachePath(appCachePath);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && BuildConfig.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true);
@@ -103,13 +120,13 @@ public class WebViewFragment extends Fragment {
         // 设置超链接 （需要添加setMovementMethod方法附加响应）
 //        mSpannableString.setSpan(new URLSpan(urlStr), 0, 4,
 //                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        wv.addJavascriptInterface(new JsObject(), "hybridProtocol");
+        webView.addJavascriptInterface(new JsObject(), "hybridProtocol");
 
-        wv.loadUrl(urlStr);
+        webView.loadUrl(urlStr);
 //        wv.setMovementMethod(LinkMovementMethod.getInstance());
 //        wv.setText(mSpannableString);
 
-        return wv;
+        return rootView;
     }
 
     @Override
