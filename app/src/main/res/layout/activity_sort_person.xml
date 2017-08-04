@@ -45,7 +45,7 @@
             android:textSize="30.0dip"
             android:visibility="invisible" />
 
-        <com.topunion.chili.view.SideBar
+        <com.topunion.chili.wight.SideBar
             android:id="@+id/sideBar"
             android:layout_width="25.0dip"
             android:layout_height="match_parent"

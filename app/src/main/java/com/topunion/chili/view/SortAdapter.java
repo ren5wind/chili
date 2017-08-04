@@ -10,6 +10,7 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.topunion.chili.R;
+import com.topunion.chili.data.SortModel;
 
 import java.util.List;
 
@@ -31,11 +32,11 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 	}
 
 	public int getCount() {
-		return this.list.size();
+		return (list == null)?0:list.size();
 	}
 
 	public Object getItem(int position) {
-		return list.get(position);
+		return (list == null)?null:list.get(position);
 	}
 
 	public long getItemId(int position) {
@@ -44,6 +45,9 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 
 	public View getView(final int position, View view, ViewGroup arg2) {
 		ViewHolder viewHolder = null;
+		if(list == null){
+			return null;
+		}
 		final SortModel mContent = list.get(position);
 		if (view == null) {
 			viewHolder = new ViewHolder();
@@ -83,10 +87,17 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 	 * 得到首字母的ascii值
 	 */
 	public int getSectionForPosition(int position) {
+		if(list == null){
+			return 0;
+		}
+
 		return list.get(position).getSortLetters().charAt(0);
 	}
 
 	public int getPositionForSection(int section) {
+		if(list == null){
+			return -1;
+		}
 		for (int i = 0; i < getCount(); i++) {
 			String sortStr = list.get(i).getSortLetters();
 			char firstChar = sortStr.toUpperCase().charAt(0);

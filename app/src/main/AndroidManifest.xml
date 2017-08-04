@@ -37,16 +37,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="AA_DB_NAME"
-            android:value="jchat.db" />
-        <meta-data
-            android:name="AA_MODELS"
-            android:value="com.topunion.chili.data.UserEntry, com.topunion.chili.data.FriendEntry,
-             com.topunion.chili.data.FriendRecommendEntry" />
-        <meta-data
-            android:name="AA_DB_VERSION"
-            android:value="4" />
 
         <activity
             android:name=".MainActivity_"

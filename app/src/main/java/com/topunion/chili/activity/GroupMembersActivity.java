@@ -18,9 +18,9 @@ import android.widget.Toast;
 import com.topunion.chili.R;
 import com.topunion.chili.view.CharacterParser;
 import com.topunion.chili.view.PinyinComparator;
-import com.topunion.chili.view.SideBar;
+import com.topunion.chili.wight.SideBar;
 import com.topunion.chili.view.SortAdapter;
-import com.topunion.chili.view.SortModel;
+import com.topunion.chili.data.SortModel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;

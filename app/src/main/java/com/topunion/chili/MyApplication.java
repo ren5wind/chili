@@ -2,6 +2,7 @@ package com.topunion.chili;
 
 import android.app.Application;
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.topunion.chili.business.AccountManager;
@@ -23,7 +24,7 @@ public class MyApplication extends Application {
 
     private String token;
 
-    private int myUserId = -1;
+    private String myUserId;
 
     public synchronized static MyApplication getInstance() {
         if (null == baseApplication) {
@@ -66,14 +67,15 @@ public class MyApplication extends Application {
         this.token = token;
     }
 
-    public void setMyUserId(int userId) {
+    public void setMyUserId(String userId) {
         myUserId = userId;
     }
 
-    public int getMyUserId() {
-        if (myUserId == -1) {//没有
-            myUserId = SPUtil.getSharedIntData(MyApplication.getAppContext(), AccountManager.KEY_SP_ACCOUNT_USERID, -1);
+    public String getMyUserId() {
+        if (StringUtil.isEmpt(myUserId)) {//没有
+            myUserId = SPUtil.getSharedStringData(MyApplication.getAppContext(), AccountManager.KEY_SP_ACCOUNT_USERID);
         }
+        myUserId = "17070500000003";
         return myUserId;
     }
 

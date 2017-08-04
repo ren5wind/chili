@@ -1,6 +1,7 @@
 package com.topunion.chili.net.request_interface;
 
 import com.topunion.chili.net.response_model.BaseListResponse;
+import com.topunion.chili.net.response_model.ResponseData;
 
 import java.util.List;
 
@@ -98,7 +99,7 @@ public class GetFriends {
      */
     public interface IGetFriends {
         @GET("app/contacts/friend/getFriends")
-        Call<GetFriends.GetFriendsResponse> getFriends(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize);
+        Call<ResponseData<GetFriendsResponse>> getFriends(@Query("userId") String userId, @Query("pageNo") int pageNo, @Query("pageSize") int pageSize);
     }
 
     public static class GetFriendsResponse extends BaseListResponse{

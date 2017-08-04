@@ -1,4 +1,4 @@
-package com.topunion.chili.view;
+package com.topunion.chili.data;
 
 import java.io.Serializable;
 

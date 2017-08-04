@@ -1,4 +1,4 @@
-package com.topunion.chili.view;
+package com.topunion.chili.wight;
 
 import android.content.Context;
 import android.graphics.PointF;

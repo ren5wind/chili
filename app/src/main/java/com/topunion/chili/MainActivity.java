@@ -15,9 +15,6 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jpush.im.android.api.JMessageClient;
-import cn.jpush.im.android.api.model.UserInfo;
-
 @EActivity(R.layout.activity_main)
 public class MainActivity extends FragmentActivity {
 

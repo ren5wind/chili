@@ -14,11 +14,20 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetGroupDetails;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import java.util.List;
+
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.callback.GetGroupIDListCallback;
 
 @EActivity(R.layout.activity_group_list)
 public class GroupListActivity extends AppCompatActivity {
@@ -68,6 +77,31 @@ public class GroupListActivity extends AppCompatActivity {
         });
     }
 
+    private void initGroup(){
+        JMessageClient.getGroupIDList(new GetGroupIDListCallback() {
+            @Override
+            public void gotResult(int responseCode, String responseMessage, List<Long> groupIDList) {
+                if (responseCode == 0) {
+
+                }
+            }
+        });
+    }
+    @Background
+    void dataRequest() {
+//        GetGroupDetails.getGroupDetails friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(),1, 20);
+//        if (friends.result.size() != 0) {
+//            for (int i = 0; i < friends.result.size(); i++) {
+//
+//            }
+//        }
+//        updata();
+    }
+
+    @UiThread
+    void updata(){
+//        adapter.updateListView(SourceDateList);
+    }
     class Adapter extends BaseAdapter {
         @Override
         public int getCount() {

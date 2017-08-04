@@ -32,6 +32,7 @@ import com.topunion.chili.net.request_interface.UpdateETFriendApplyAgree;
 import com.topunion.chili.net.request_interface.UpdateETFriendNickname;
 import com.topunion.chili.net.request_interface.UpdateGroupName;
 import com.topunion.chili.net.response_model.BaseStateResponse;
+import com.topunion.chili.net.response_model.ResponseData;
 
 import org.androidannotations.annotations.EBean;
 
@@ -49,7 +50,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class HttpHelper {
-    public static final String DEBUG_SERVER ="http://tmit.f3322.net:2051/chili-2.0/";
+    public static final String DEBUG_SERVER = "http://tmit.f3322.net:2051/chili-2.0/";
     public static final int PAGE_COUNT = 20;
     public Retrofit retrofit = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -248,12 +249,12 @@ public class HttpHelper {
         }
     }
 
-    public GetFriends.GetFriendsResponse getFriends(int pageNo, int pageSize) {
+    public GetFriends.GetFriendsResponse getFriends(String userId, int pageNo, int pageSize) {
         try {
             GetFriends.IGetFriends request = retrofit.create(GetFriends.IGetFriends.class);
-            Call<GetFriends.GetFriendsResponse> call = request.getFriends(pageNo, pageSize);
-            Response<GetFriends.GetFriendsResponse> result = call.execute();
-            return result.body();
+            Call<ResponseData<GetFriends.GetFriendsResponse>> call = request.getFriends(userId, pageNo, pageSize);
+            Response<ResponseData<GetFriends.GetFriendsResponse>> result = call.execute();
+            return result.body().data;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

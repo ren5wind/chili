@@ -1,5 +1,7 @@
 package com.topunion.chili.view;
 
+import com.topunion.chili.data.SortModel;
+
 import java.util.Comparator;
 
 public class PinyinComparator implements Comparator<SortModel> {

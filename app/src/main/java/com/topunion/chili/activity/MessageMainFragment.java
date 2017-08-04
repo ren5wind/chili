@@ -15,13 +15,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.MyApplication;
 import com.topunion.chili.MyApplication_;
 import com.topunion.chili.R;
-import com.topunion.chili.net.HttpHelper;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpDepts;
 import com.topunion.chili.net.request_interface.GetCorps;
@@ -75,6 +73,8 @@ public class MessageMainFragment extends Fragment {
     void btn_add_friend(){
         popMenu.setVisibility(View.GONE);
         //TODO
+
+
     }
 
     @Click
@@ -131,7 +131,7 @@ public class MessageMainFragment extends Fragment {
             }
         }
         contactAdapter.setData(data);
-//        this.validList();
+        this.validList();
     }
 
     @MainThread

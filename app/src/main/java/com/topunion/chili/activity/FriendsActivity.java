@@ -16,20 +16,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
-import com.topunion.chili.net.request_interface.GetCorpDepts;
-import com.topunion.chili.net.request_interface.GetCorps;
 import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.view.CharacterParser;
 import com.topunion.chili.view.PinyinComparator;
-import com.topunion.chili.view.SideBar;
+import com.topunion.chili.wight.SideBar;
 import com.topunion.chili.view.SortAdapter;
-import com.topunion.chili.view.SortModel;
+import com.topunion.chili.data.SortModel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -110,7 +110,6 @@ public class FriendsActivity extends Activity {
 
 //        SourceDateList = filledData(new String[]{"xx", "bb", "ll", "aa", "ii", "zz", "oo", "cc", "bb", "ll", "aa", "ii", "zz", "bb", "ll", "aa", "ii", "zz"});
         dataRequest();
-        Collections.sort(SourceDateList, pinyinComparator);
         adapter = new SortAdapter(this, SourceDateList);
         mListView.setAdapter(adapter);
 
@@ -161,23 +160,33 @@ public class FriendsActivity extends Activity {
     }
 
     @Background
-    private void dataRequest() {
-        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(1, 20);
+    void dataRequest() {
+        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(),1, 20);
 //        if (friends.result.size() != 0) {
 //            for (int i = 0; i < friends.result.size(); i++) {
 //
 //            }
 //        }
         SourceDateList = filledData(friends.result);
+        if(SourceDateList != null) {
+            Collections.sort(SourceDateList, pinyinComparator);
+        }
+        updata();
+    }
+
+    @UiThread
+    void updata(){
         adapter.updateListView(SourceDateList);
     }
 
-    private List<SortModel> filledData(List<GetFriends.GetFriendsResponse.Friend> date) {
+    private List<SortModel> filledData(List<GetFriends.GetFriendsResponse.Friend> data) {
         List<SortModel> mSortList = new ArrayList<SortModel>();
-
-        for (int i = 0; i < date.size(); i++) {
+        if(data == null){
+            return null;
+        }
+        for (int i = 0; i < data.size(); i++) {
             SortModel sortModel = new SortModel();
-            GetFriends.GetFriendsResponse.Friend friend = date.get(i);
+            GetFriends.GetFriendsResponse.Friend friend = data.get(i);
             sortModel.setName(friend.nickname);
 //			sortModel.setSex(friend.);
             String pinyin = characterParser.getSelling(friend.nickname);

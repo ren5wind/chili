@@ -5,9 +5,6 @@ package com.topunion.chili.net.response_model;
  */
 
 public class BaseListResponse {
-
-    public int state;
-
     public int pageNo;
     public int pageSize;
     public String order;
