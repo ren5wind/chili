@@ -9,16 +9,17 @@ import java.io.Serializable;
  */
 public class AccountBean implements Serializable {
 
-    private String uid;
+    private String userId;
     private String token;
     private String mobile;
+    private String username;
 
     public String getUid() {
-        return uid;
+        return userId;
     }
 
     public void setUid(String uid) {
-        this.uid = uid;
+        this.userId = uid;
     }
 
     public String getToken() {

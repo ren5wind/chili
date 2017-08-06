@@ -14,7 +14,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.topunion.chili.data.JsObject;
+import com.topunion.chili.business.JsManager;
 
 public class WebViewFragment extends Fragment {
 
@@ -64,7 +64,9 @@ public class WebViewFragment extends Fragment {
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
-                return true;
+                JsManager.getInstance().parseUrl(url);
+                return super.shouldOverrideUrlLoading(view, url);
+
             }
 
             @Override
@@ -120,8 +122,6 @@ public class WebViewFragment extends Fragment {
         // 设置超链接 （需要添加setMovementMethod方法附加响应）
 //        mSpannableString.setSpan(new URLSpan(urlStr), 0, 4,
 //                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        webView.addJavascriptInterface(new JsObject(), "hybridProtocol");
-
         webView.loadUrl(urlStr);
 //        wv.setMovementMethod(LinkMovementMethod.getInstance());
 //        wv.setText(mSpannableString);

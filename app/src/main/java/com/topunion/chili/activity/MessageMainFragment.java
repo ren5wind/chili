@@ -136,7 +136,7 @@ public class MessageMainFragment extends Fragment {
 
     @MainThread
     void validList() {
-        contactAdapter.notifyDataSetChanged();
+//        contactAdapter.notifyDataSetChanged();
     }
 
 
