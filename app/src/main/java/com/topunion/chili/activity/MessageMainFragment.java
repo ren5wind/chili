@@ -18,10 +18,14 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.MyApplication;
-import com.topunion.chili.MyApplication_;
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.data.Company;
+import com.topunion.chili.data.Department;
+import com.topunion.chili.data.Organization;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpDepts;
+import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
 import com.topunion.chili.net.request_interface.GetCorps;
 
 import org.androidannotations.annotations.AfterViews;
@@ -32,16 +36,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.HTTP;
+import java.util.List;
 
 @EFragment(R.layout.fragment_message_main)
 public class MessageMainFragment extends Fragment {
@@ -69,12 +65,13 @@ public class MessageMainFragment extends Fragment {
     @ViewById
     LinearLayout popMenu;
 
+    private Organization mOrganization;
+    private ArrayList<Object> dataList;
+
     @Click
-    void btn_add_friend(){
+    void btn_add_friend() {
         popMenu.setVisibility(View.GONE);
         //TODO
-
-
     }
 
     @Click
@@ -84,7 +81,7 @@ public class MessageMainFragment extends Fragment {
     }
 
     @Click
-    void btn_msg () {
+    void btn_msg() {
         btn_msg.setTextColor(getResources().getColor(R.color.main));
         bottom_msg.setBackgroundColor(getResources().getColor(R.color.main));
         btn_contact.setTextColor(getResources().getColor(R.color.textGray));
@@ -112,26 +109,34 @@ public class MessageMainFragment extends Fragment {
         popMenu.setVisibility(popMenu.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
-
     MsgAdapter msgAdapter;
     ContactAdapter contactAdapter;
 
     @Background
     void initCorps() {
-        ArrayList<Object> data = new ArrayList<>();
-        data.add("好友");
-        data.add("群组");
-        data.add("电话本");
-        GetCorps.GetCorpsResponse corps = HttpHelper_.getInstance_(getActivity()).getCorps("17070500000003");
-        if (corps.data.result.size() != 0) {
-            for (int i = 0; i < corps.data.result.size(); i++) {
-                data.add(corps.data.result.get(i));
-                GetCorpDepts.GetCorpDeptsResponse depts = HttpHelper_.getInstance_(getActivity()).getCorpDepts(1, 20, Integer.parseInt(corps.data.result.get(0).id));
-                data.addAll(depts.data.result);
-            }
+        //获取组织结构
+        //获取企业列表
+        GetCorps.GetCorpsResponse corps = HttpHelper_.getInstance_(getActivity()).getCorps(AccountManager.getInstance().getUserId());
+        mOrganization = new Organization();
+        List<Company> companyList = mOrganization.analysisCompany(corps);
+        List<Department> departmentList = null;
+        //获取部门列表
+
+        for (int i = 0; companyList != null && i < companyList.size(); i++) {
+            dataList.add(companyList.get(i));
+            GetCorpDepts.GetCorpDeptsResponse depts = HttpHelper_.getInstance_(getActivity()).getCorpDepts(1, 20, Integer.parseInt(companyList.get(i).getId()));
+            departmentList = companyList.get(i).analysisDepartment(depts);
+            dataList.addAll(departmentList);
         }
-        contactAdapter.setData(data);
+
+        contactAdapter.setData(dataList);
         this.validList();
+        //获取人员列表
+        for (int j = 0; departmentList != null && j < departmentList.size(); j++) {
+            GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse deptNumbs = HttpHelper_.getInstance_(getActivity()).
+                    getDeptUsers(1, 20, Integer.parseInt(departmentList.get(j).getId()), departmentList.get(j).getName());
+            departmentList.get(j).analysisEmployee(deptNumbs);
+        }
     }
 
     @MainThread
@@ -195,8 +200,19 @@ public class MessageMainFragment extends Fragment {
                         InviteContactActivity_.intent(getActivity()).start();
                         break;
                 }
+
+                if (contactAdapter.getItem(i) instanceof Department) {//部门
+                    Department dept = (Department) contactAdapter.getItem(i);
+                    FriendsActivity_.intent(getActivity()).deptId(Integer.parseInt(dept.getId()))
+                            .deptName(dept.getName()).showType(FriendsActivity_.TYPE_SHOW_DEPT_NUMBERS).start();
+                }
             }
         });
+        dataList = new ArrayList<>();
+        dataList.add("好友");
+        dataList.add("群组");
+        dataList.add("电话本");
+        contactAdapter.setData(dataList);
 
         initCorps();
     }
@@ -306,23 +322,23 @@ public class MessageMainFragment extends Fragment {
                     break;
 
                 default:
-                    if (getItem(i) instanceof GetCorps.GetCorpsResponse.Data.Corp) { //公司
-                        final GetCorps.GetCorpsResponse.Data.Corp corp = (GetCorps.GetCorpsResponse.Data.Corp) getItem(i);
+                    if (getItem(i) instanceof Company) { //公司
+                        final Company company = (Company) getItem(i);
                         view = LayoutInflater.from(getActivity()).inflate(R.layout.company_list_item, null);
                         txt_name = (TextView) view.findViewById(R.id.txt_name);
-                        txt_name.setText(corp.name);
+                        txt_name.setText(company.getName());
                         Button btn_manage = (Button) view.findViewById(R.id.btn_manage);
                         btn_manage.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                CompanyManageActivity_.intent(getActivity()).companyId(corp.id).start();
+                                CompanyManageActivity_.intent(getActivity()).organization(mOrganization).start();
                             }
                         });
-                    } else if (getItem(i) instanceof GetCorpDepts.GetCorpDeptsResponse.Data.Dept) { //部门
-                        final GetCorpDepts.GetCorpDeptsResponse.Data.Dept dept = (GetCorpDepts.GetCorpDeptsResponse.Data.Dept) getItem(i);
+                    } else if (getItem(i) instanceof Department) { //部门
+                        final Department dept = (Department) getItem(i);
                         view = LayoutInflater.from(getActivity()).inflate(R.layout.department_list_item, null);
                         txt_name = (TextView) view.findViewById(R.id.txt_name);
-                        txt_name.setText(dept.name);
+                        txt_name.setText(dept.getName());
                     }
                     break;
             }

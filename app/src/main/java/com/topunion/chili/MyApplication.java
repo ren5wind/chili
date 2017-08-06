@@ -75,7 +75,6 @@ public class MyApplication extends Application {
         if (StringUtil.isEmpt(myUserId)) {//没有
             myUserId = SPUtil.getSharedStringData(MyApplication.getAppContext(), AccountManager.KEY_SP_ACCOUNT_USERID);
         }
-        myUserId = "17070500000003";
         return myUserId;
     }
 

@@ -10,6 +10,10 @@ public class SortModel implements Serializable {
 
 	private String name;
 	private String sortLetters;
+	private boolean isChecked;
+	private String iconUrl;
+	private int sex; // 0 男 1 女
+	private String id;
 
 	public SortModel(String name, String sortLetters, boolean isChecked,
 					 String iconUrl, int sex) {
@@ -49,10 +53,6 @@ public class SortModel implements Serializable {
 		this.sex = sex;
 	}
 
-	private boolean isChecked;
-	private String iconUrl;
-	private int sex; // 0 男 1 女
-
 	public String getName() {
 		return name;
 	}
@@ -67,5 +67,13 @@ public class SortModel implements Serializable {
 
 	public void setSortLetters(String sortLetters) {
 		this.sortLetters = sortLetters;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

@@ -180,9 +180,9 @@ public class HttpHelper {
     public GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse getDeptUsers(int pageNo, int pageSize, int deptId, String corpName) {
         try {
             GetCorpOrDeptUsers.IGetCorpOrDeptUsers request = retrofit.create(GetCorpOrDeptUsers.IGetCorpOrDeptUsers.class);
-            Call<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse> call = request.getDeptUsers(pageNo, pageSize, deptId, corpName);
-            Response<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse> result = call.execute();
-            return result.body();
+            Call<ResponseData<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse>> call = request.getDeptUsers(pageNo, pageSize, deptId, corpName);
+            Response<ResponseData<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse>> result = call.execute();
+            return result.body().data;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

@@ -1,6 +1,7 @@
 package com.topunion.chili.net.request_interface;
 
 import com.topunion.chili.net.response_model.BaseListResponse;
+import com.topunion.chili.net.response_model.ResponseData;
 
 import java.util.List;
 
@@ -104,8 +105,8 @@ public class GetCorpOrDeptUsers {
         Call<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse> getCorpUsers(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize ,
                                                                              @Query("corpId") int corpId, @Query("corpName") String corpName);
         @GET("app/corp/corpUser/getCorpUsers")
-        Call<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse> getDeptUsers(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize ,
-                                                                             @Query("corpDeptId") int corpDeptId, @Query("corpDeptName") String corpDeptName);
+        Call<ResponseData<GetCorpOrDeptUsersResponse>> getDeptUsers(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize ,
+                                                                    @Query("corpDeptId") int corpDeptId, @Query("corpDeptName") String corpDeptName);
     }
 
     public static class GetCorpOrDeptUsersResponse extends BaseListResponse {

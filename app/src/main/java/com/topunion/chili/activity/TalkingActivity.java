@@ -43,6 +43,12 @@ public class TalkingActivity extends AppCompatActivity {
     @ViewById
     EditText mEditText;
 
+    public static final String INTENT_KEY_USER_ID = "intent_key_user_id";
+    public static final String INTENT_KEY_USER_NICKNAME = "intent_key_user_nickName";
+
+    private String mUserId;
+    private String mUserNickName;
+
     @Click
     void btn_back() {
         this.finish();
@@ -65,7 +71,12 @@ public class TalkingActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
-        txt_title.setText("鸣人");
+        Intent intent = getIntent();
+        if(intent != null){//获取userid和usrnickname
+            mUserId = intent.getStringExtra(INTENT_KEY_USER_ID);
+            mUserNickName = intent.getStringExtra(INTENT_KEY_USER_NICKNAME);
+        }
+        txt_title.setText(mUserNickName);
         MsgInfo msg1 = new MsgInfo("Asdfasdf", null);
         MsgInfo msg2 = new MsgInfo(null, "Asdfasdf");
         adapter = new ListViewAdapter(this);

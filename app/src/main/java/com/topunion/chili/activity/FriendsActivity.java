@@ -1,7 +1,7 @@
 package com.topunion.chili.activity;
 
 import android.app.Activity;
-import android.text.TextUtils;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.AbsListView;
@@ -13,11 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.topunion.chili.R;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
 import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.view.CharacterParser;
 import com.topunion.chili.view.PinyinComparator;
@@ -29,6 +29,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -47,6 +48,9 @@ public class FriendsActivity extends Activity {
     private PinyinComparator pinyinComparator;
     private int lastFirstVisibleItem = -1;
 
+    public final static int TYPE_SHOW_FRIENDS = 0;
+    public final static int TYPE_SHOW_DEPT_NUMBERS = 1;
+
     @ViewById
     LinearLayout top_layout;
     @ViewById
@@ -62,6 +66,12 @@ public class FriendsActivity extends Activity {
     @ViewById
     ImageButton btn_operation;
 
+    @Extra
+    int showType;
+    @Extra
+    int deptId;
+    @Extra
+    String deptName;
     @Click
     void btn_operation() {
         //TODO 搜索
@@ -99,16 +109,16 @@ public class FriendsActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
-                Toast.makeText(getApplication(),
-                        ((SortModel) adapter.getItem(position)).getName(),
-                        Toast.LENGTH_SHORT).show();
-
+                SortModel shortModel = SourceDateList.get(position);
+                Intent intent = new Intent();
+                intent.putExtra(TalkingActivity_.INTENT_KEY_USER_ID,shortModel.getId());
+                intent.putExtra(TalkingActivity_.INTENT_KEY_USER_NICKNAME,shortModel.getName());
+                intent.setClass(FriendsActivity.this, TalkingActivity_.class);
+                startActivity(intent);
             }
 
         });
 
-//        SourceDateList = filledData(new String[]{"xx", "bb", "ll", "aa", "ii", "zz", "oo", "cc", "bb", "ll", "aa", "ii", "zz", "bb", "ll", "aa", "ii", "zz"});
         dataRequest();
         adapter = new SortAdapter(this, SourceDateList);
         mListView.setAdapter(adapter);
@@ -156,18 +166,21 @@ public class FriendsActivity extends Activity {
                 lastFirstVisibleItem = firstVisibleItem;
             }
         });
-
     }
 
     @Background
     void dataRequest() {
-        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(),1, 20);
-//        if (friends.result.size() != 0) {
-//            for (int i = 0; i < friends.result.size(); i++) {
-//
-//            }
-//        }
-        SourceDateList = filledData(friends.result);
+        switch (showType){
+            case TYPE_SHOW_FRIENDS:
+                GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(),1, 20);
+                SourceDateList = friendsTofilledData(friends.result);
+                break;
+            case TYPE_SHOW_DEPT_NUMBERS:
+                GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse deptNumbs = HttpHelper_.getInstance_(this).getDeptUsers(1, 20, deptId, deptName);
+                SourceDateList = deptTofilledData(deptNumbs.result);
+                break;
+        }
+
         if(SourceDateList != null) {
             Collections.sort(SourceDateList, pinyinComparator);
         }
@@ -178,18 +191,40 @@ public class FriendsActivity extends Activity {
     void updata(){
         adapter.updateListView(SourceDateList);
     }
-
-    private List<SortModel> filledData(List<GetFriends.GetFriendsResponse.Friend> data) {
+    private List<SortModel> friendsTofilledData(List<GetFriends.GetFriendsResponse.Friend> data) {
         List<SortModel> mSortList = new ArrayList<SortModel>();
         if(data == null){
             return null;
         }
         for (int i = 0; i < data.size(); i++) {
             SortModel sortModel = new SortModel();
-            GetFriends.GetFriendsResponse.Friend friend = data.get(i);
-            sortModel.setName(friend.nickname);
-//			sortModel.setSex(friend.);
-            String pinyin = characterParser.getSelling(friend.nickname);
+            sortModel.setName(data.get(i).nickname);
+            sortModel.setId(data.get(i).userId);
+            sortModel.setIconUrl(data.get(i).headImg);
+            String pinyin = characterParser.getSelling(data.get(i).nickname);
+            String sortString = pinyin.substring(0, 1).toUpperCase();
+
+            if (sortString.matches("[A-Z]")) {
+                sortModel.setSortLetters(sortString.toUpperCase());
+            } else {
+                sortModel.setSortLetters("#");
+            }
+            mSortList.add(sortModel);
+        }
+        return mSortList;
+    }
+
+    private List<SortModel> deptTofilledData(List<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse.User> data) {
+        List<SortModel> mSortList = new ArrayList<SortModel>();
+        if(data == null){
+            return null;
+        }
+        for (int i = 0; i < data.size(); i++) {
+            SortModel sortModel = new SortModel();
+            sortModel.setName(data.get(i).nickname);
+            sortModel.setId(data.get(i).userId);
+            sortModel.setIconUrl(data.get(i).headImg);
+            String pinyin = characterParser.getSelling(data.get(i).nickname);
             String sortString = pinyin.substring(0, 1).toUpperCase();
 
             if (sortString.matches("[A-Z]")) {
@@ -201,28 +236,5 @@ public class FriendsActivity extends Activity {
             mSortList.add(sortModel);
         }
         return mSortList;
-
     }
-
-    private void filterData(String filterStr) {
-        List<SortModel> filterDateList = new ArrayList<SortModel>();
-
-        if (TextUtils.isEmpty(filterStr)) {
-            filterDateList = SourceDateList;
-        } else {
-            filterDateList.clear();
-            for (SortModel sortModel : SourceDateList) {
-                String name = sortModel.getName();
-                if (name.indexOf(filterStr.toString()) != -1
-                        || characterParser.getSelling(name).startsWith(
-                        filterStr.toString())) {
-                    filterDateList.add(sortModel);
-                }
-            }
-        }
-
-        Collections.sort(filterDateList, pinyinComparator);
-        adapter.updateListView(filterDateList);
-    }
-
 }

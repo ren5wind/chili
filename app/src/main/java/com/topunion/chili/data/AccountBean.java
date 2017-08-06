@@ -1,13 +1,11 @@
 package com.topunion.chili.data;
 
-import java.io.Serializable;
-
 /**
  * Author      : renxiaoming
  * Date        : 2017/7/15
  * Description :
  */
-public class AccountBean implements Serializable {
+public class AccountBean extends BaseData {
 
     private String userId;
     private String token;
