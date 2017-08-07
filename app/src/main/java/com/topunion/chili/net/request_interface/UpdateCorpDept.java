@@ -46,5 +46,7 @@ public class UpdateCorpDept {
         @POST("app/corp/corpDept/updateCorpDept")
         Call<BaseStateResponse> updateCorpDept(@Field("id") int id, @Field("name") String name, @Field("description") String description);
     }
-
+    public static class UpdateCorpDeptResponse {
+        public int state;
+    }
 }

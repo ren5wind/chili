@@ -1,6 +1,7 @@
 package com.topunion.chili.activity;
 
 import android.content.Intent;
+import android.support.annotation.IntDef;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.CompanyManager;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
 import com.topunion.chili.data.Employee;
@@ -32,6 +35,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +59,8 @@ public class CompanyManageActivity extends AppCompatActivity {
     Organization organization;
     private List<ItemData> itemDataList;
 
+    private CompanyManager mCompanyManager;
+
     @Click
     void btn_back() {
         this.finish();
@@ -73,6 +80,7 @@ public class CompanyManageActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
+        mCompanyManager = new CompanyManager(this);
         //数据转换
         itemDataList = analysisOrganization(organization);
 
@@ -135,7 +143,7 @@ public class CompanyManageActivity extends AppCompatActivity {
             ItemData itemDataCompany = new ItemData();
             itemDataCompany.type = ItemData.TYPE_COMPANY;
             itemDataCompany.name = company.getName();
-            itemDataCompany.id = company.getId();
+            itemDataCompany.companyId = company.getId();
             itemDatas.add(itemDataCompany);
             //添加部门
             List<Department> departments = company.getDepartmentList();
@@ -144,26 +152,26 @@ public class CompanyManageActivity extends AppCompatActivity {
                 ItemData itemDataDepartment = new ItemData();
                 itemDataDepartment.type = ItemData.TYPE_DEPARTMENT;
                 itemDataDepartment.name = department.getName();
-                itemDataDepartment.id = department.getId();
+                itemDataDepartment.departmentId = department.getId();
                 itemDataDepartment.companyId = department.getCompanyId();
                 itemDatas.add(itemDataDepartment);
                 //读取员工
                 if (department.getEmployeeList() != null) {
                     employees.addAll(department.getEmployeeList());
                 }
-
             }
             //添加员工管理
             ItemData itemEmployeeManagement = new ItemData();
             itemEmployeeManagement.type = ItemData.TYPE_EMPLOYEE_MANAGEMENT;
             itemEmployeeManagement.name = "员工管理";
+            itemDatas.add(itemEmployeeManagement);
             //添加员工
             for (int k = 0; employees != null && k < employees.size(); k++) {
                 Employee employee = employees.get(k);
                 ItemData itemDataEmployee = new ItemData();
                 itemDataEmployee.type = ItemData.TYPE_EMPLOYEE;
                 itemDataEmployee.name = employee.getName();
-                itemDataEmployee.id = employee.getId();
+                itemDataEmployee.employeeid = employee.getId();
                 itemDataEmployee.parentName = employee.getDeptName();
                 itemDataEmployee.iconUrl = employee.getHeadUrl();
                 itemDataEmployee.companyId = employee.getCompanyId();
@@ -174,12 +182,12 @@ public class CompanyManageActivity extends AppCompatActivity {
         return itemDatas;
     }
 
-
-    private void showGroupAddAlert(String title) {
+    private void showGroupAddAlert(@TYPE final int type, String title, final String companyId, String name) {
         final AlertDialog alertDialog = new AlertDialog.Builder(CompanyManageActivity.this).create();
         alertDialog.setCancelable(false);
         alertDialog.show();
         Window window = alertDialog.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         window.setBackgroundDrawableResource(R.drawable.dialog_bg);
         window.setGravity(Gravity.CENTER);
         window.setContentView(R.layout.dialog_group_add);
@@ -200,9 +208,15 @@ public class CompanyManageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String name = edit_alert.getText().toString();
-
                 if (name != null && name.length() > 0) {
-                    //TODO
+                    switch (type){
+                        case TYPE_ADD_DEPARMENT:
+                            mCompanyManager.addDepartMent(Integer.parseInt(companyId), name);
+                            break;
+                        case TYPE_UPDATE_DEPARMENT:
+                            mCompanyManager.updateDepartMent(Integer.parseInt(companyId), name);
+                            break;
+                    }
                     alertDialog.dismiss();
                 } else {
                     Toast.makeText(CompanyManageActivity.this, "组织名称不能为空", Toast.LENGTH_SHORT).show();
@@ -230,7 +244,7 @@ public class CompanyManageActivity extends AppCompatActivity {
             LinearLayout layout_add, layout_manage;
             Button btn_add;
             ImageButton btn_dustbin, btn_edit;
-            ItemData data = dataList.get(i);
+            final ItemData data = dataList.get(i);
             switch (data.type) {
                 case ItemData.TYPE_COMPANY: //公司管理
                     view = LayoutInflater.from(CompanyManageActivity.this).inflate(R.layout.company_list_item, null);
@@ -246,7 +260,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_add.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            showGroupAddAlert(null);
+                            showGroupAddAlert(TYPE_ADD_DEPARMENT,"添加部门", data.companyId, data.name);
                         }
                     });
                     break;
@@ -259,7 +273,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_edit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            showGroupAddAlert("修改部门名称");
+                            showGroupAddAlert(TYPE_UPDATE_DEPARMENT,"修改部门名称", data.companyId, data.name);
                         }
                     });
                     btn_dustbin = (ImageButton) view.findViewById(R.id.btn_dustbin);
@@ -293,8 +307,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_dustbin.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //TODO
-                            Toast.makeText(CompanyManageActivity.this, "删除", Toast.LENGTH_SHORT).show();
+                            mCompanyManager.deleteEmployee(Integer.parseInt(data.employeeid));
                         }
                     });
                     break;
@@ -320,13 +333,21 @@ public class CompanyManageActivity extends AppCompatActivity {
         static final int TYPE_EMPLOYEE_MANAGEMENT = 2;
         static final int TYPE_EMPLOYEE = 3;
         int type;
-        String id;
+        String employeeid;
         String name;
         String iconUrl;
         String parentName;
         String companyId;
         String departmentId;
-
     }
 
+    private static final int TYPE_ADD_DEPARMENT = 0;
+    private static final int TYPE_UPDATE_DEPARMENT = 1;
+    private static final int TYPE_ADD_EMPLOYEE = 2;
+    private static final int TYPE_UPDATE_EMPLOYEE = 3;
+
+    @IntDef({TYPE_ADD_DEPARMENT, TYPE_UPDATE_DEPARMENT, TYPE_ADD_EMPLOYEE, TYPE_UPDATE_EMPLOYEE})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface TYPE {
+    }
 }

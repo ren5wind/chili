@@ -51,8 +51,6 @@ public class AddCorpDept {
     public String name;
     public String description;
 
-    public AddCorpDept() {}
-
     public AddCorpDept(int corpId, String name, String description) {
         this.corpId = corpId;
         this.name = name;
@@ -61,8 +59,5 @@ public class AddCorpDept {
 
     public static class AddCorpDeptResponse {
         public int state;
-        public static class Data {
-            public int id;
-        }
     }
 }
