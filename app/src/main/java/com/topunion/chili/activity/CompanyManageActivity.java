@@ -56,7 +56,7 @@ public class CompanyManageActivity extends AppCompatActivity {
     ListView mListView;
 
     @Extra
-    Organization organization;
+    Company company;
     private List<ItemData> itemDataList;
 
     private CompanyManager mCompanyManager;
@@ -82,7 +82,7 @@ public class CompanyManageActivity extends AppCompatActivity {
     void init() {
         mCompanyManager = new CompanyManager(this);
         //数据转换
-        itemDataList = analysisOrganization(organization);
+        itemDataList = analysisOrganization(company);
 
         txt_title.setVisibility(View.GONE);
         search_layout.setVisibility(View.VISIBLE);
@@ -129,17 +129,17 @@ public class CompanyManageActivity extends AppCompatActivity {
         window.findViewById(R.id.btn_cancel).setOnClickListener(listener);
     }
 
-    private List<ItemData> analysisOrganization(Organization organization) {
+    private List<ItemData> analysisOrganization(Company company) {
         List<ItemData> itemDatas = new ArrayList<>();
-        List<Company> companies = organization.getCompanyList();
+//        List<Company> companies = organization.getCompanyList();
 
-        if (companies == null || companies.size() == 0) {
+        if (company == null) {
             return null;
         }
-        for (int i = 0; i < companies.size(); i++) {
+//        for (int i = 0; i < companies.size(); i++) {
             List<Employee> employees = new ArrayList<>();
             //添加企业
-            Company company = companies.get(i);
+//            Company company = companies.get(i);
             ItemData itemDataCompany = new ItemData();
             itemDataCompany.type = ItemData.TYPE_COMPANY;
             itemDataCompany.name = company.getName();
@@ -178,7 +178,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                 itemDataEmployee.departmentId = employee.getDeptId();
                 itemDatas.add(itemDataEmployee);
             }
-        }
+//        }
         return itemDatas;
     }
 
