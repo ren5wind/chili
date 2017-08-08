@@ -19,20 +19,22 @@ public class CompanyManager {
         mContext = context;
     }
 
-    public boolean addDepartMent(int companyId, String name) {
+
+    public int addDepartMent(int companyId, String name) {
         AddCorpDept addCorpDept = new AddCorpDept(companyId, name, "");
         AddCorpDept.AddCorpDeptResponse response = HttpHelper_.getInstance_(mContext).addCorpDept(addCorpDept);
         if (response.state == 200) {
-            return true;
+            return response.data.id;
+        } else {
+            return -1;
         }
-        return false;
     }
 
-    public boolean updateDepartMent(int id, String name) {
+    public boolean updateDepartment(int id, String name) {
         return HttpHelper_.getInstance_(mContext).updateCorpDept(id, name, "");
     }
 
-    public boolean deleteDepartMent(int id) {
+    public boolean deleteDepartment(int id) {
         return HttpHelper_.getInstance_(mContext).removeCorpDept(id);
     }
 

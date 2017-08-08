@@ -331,7 +331,7 @@ public class MessageMainFragment extends Fragment {
                         btn_manage.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                CompanyManageActivity_.intent(getActivity()).organization(mOrganization).start();
+                                CompanyManageActivity_.intent(getActivity()).company(company).start();
                             }
                         });
                     } else if (getItem(i) instanceof Department) { //部门

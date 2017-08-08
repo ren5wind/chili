@@ -47,8 +47,8 @@ public class MyApplication extends Application {
         //请求图片的库，配合 com.facebook.drawee.view.SimpleDraweeView 使用
         Fresco.initialize(this);
 
-        JMessageClient.setDebugMode(true);
-        JMessageClient.init(this);
+//        JMessageClient.setDebugMode(true);
+//        JMessageClient.init(this);
         baseApplication = this;
 
     }

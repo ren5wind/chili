@@ -27,9 +27,9 @@ import com.topunion.chili.business.CompanyManager;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
 import com.topunion.chili.data.Employee;
-import com.topunion.chili.data.Organization;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -61,6 +61,8 @@ public class CompanyManageActivity extends AppCompatActivity {
 
     private CompanyManager mCompanyManager;
 
+    private MyAdapter myAdapter;
+
     @Click
     void btn_back() {
         this.finish();
@@ -86,7 +88,8 @@ public class CompanyManageActivity extends AppCompatActivity {
 
         txt_title.setVisibility(View.GONE);
         search_layout.setVisibility(View.VISIBLE);
-        mListView.setAdapter(new MyAdapter(itemDataList));
+        myAdapter = new MyAdapter(itemDataList);
+        mListView.setAdapter(myAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -96,6 +99,54 @@ public class CompanyManageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private List<ItemData> analysisOrganization(Company company) {
+        List<ItemData> itemDatas = new ArrayList<>();
+        if (company == null) {
+            return null;
+        }
+        List<Employee> employees = new ArrayList<>();
+        //添加企业
+        ItemData itemDataCompany = new ItemData();
+        itemDataCompany.type = ItemData.TYPE_COMPANY;
+        itemDataCompany.name = company.getName();
+        itemDataCompany.companyId = company.getId();
+        itemDatas.add(itemDataCompany);
+        //添加部门
+        List<Department> departments = company.getDepartmentList();
+        for (int j = 0; departments != null && j < departments.size(); j++) {
+            Department department = departments.get(j);
+            ItemData itemDataDepartment = new ItemData();
+            itemDataDepartment.type = ItemData.TYPE_DEPARTMENT;
+            itemDataDepartment.name = department.getName();
+            itemDataDepartment.departmentId = department.getId();
+            itemDataDepartment.companyId = department.getCompanyId();
+            itemDatas.add(itemDataDepartment);
+            //读取员工
+            if (department.getEmployeeList() != null) {
+                employees.addAll(department.getEmployeeList());
+            }
+        }
+        //添加员工管理
+        ItemData itemEmployeeManagement = new ItemData();
+        itemEmployeeManagement.type = ItemData.TYPE_EMPLOYEE_MANAGEMENT;
+        itemEmployeeManagement.name = "员工管理";
+        itemDatas.add(itemEmployeeManagement);
+        //添加员工
+        for (int k = 0; employees != null && k < employees.size(); k++) {
+            Employee employee = employees.get(k);
+            ItemData itemDataEmployee = new ItemData();
+            itemDataEmployee.type = ItemData.TYPE_EMPLOYEE;
+            itemDataEmployee.name = employee.getName();
+            itemDataEmployee.employeeid = employee.getId();
+            itemDataEmployee.parentName = employee.getDeptName();
+            itemDataEmployee.iconUrl = employee.getHeadUrl();
+            itemDataEmployee.companyId = employee.getCompanyId();
+            itemDataEmployee.departmentId = employee.getDeptId();
+            itemDatas.add(itemDataEmployee);
+        }
+        return itemDatas;
     }
 
     private void showMemberAddAlert() {
@@ -129,60 +180,7 @@ public class CompanyManageActivity extends AppCompatActivity {
         window.findViewById(R.id.btn_cancel).setOnClickListener(listener);
     }
 
-    private List<ItemData> analysisOrganization(Company company) {
-        List<ItemData> itemDatas = new ArrayList<>();
-//        List<Company> companies = organization.getCompanyList();
-
-        if (company == null) {
-            return null;
-        }
-//        for (int i = 0; i < companies.size(); i++) {
-            List<Employee> employees = new ArrayList<>();
-            //添加企业
-//            Company company = companies.get(i);
-            ItemData itemDataCompany = new ItemData();
-            itemDataCompany.type = ItemData.TYPE_COMPANY;
-            itemDataCompany.name = company.getName();
-            itemDataCompany.companyId = company.getId();
-            itemDatas.add(itemDataCompany);
-            //添加部门
-            List<Department> departments = company.getDepartmentList();
-            for (int j = 0; departments != null && j < departments.size(); j++) {
-                Department department = departments.get(j);
-                ItemData itemDataDepartment = new ItemData();
-                itemDataDepartment.type = ItemData.TYPE_DEPARTMENT;
-                itemDataDepartment.name = department.getName();
-                itemDataDepartment.departmentId = department.getId();
-                itemDataDepartment.companyId = department.getCompanyId();
-                itemDatas.add(itemDataDepartment);
-                //读取员工
-                if (department.getEmployeeList() != null) {
-                    employees.addAll(department.getEmployeeList());
-                }
-            }
-            //添加员工管理
-            ItemData itemEmployeeManagement = new ItemData();
-            itemEmployeeManagement.type = ItemData.TYPE_EMPLOYEE_MANAGEMENT;
-            itemEmployeeManagement.name = "员工管理";
-            itemDatas.add(itemEmployeeManagement);
-            //添加员工
-            for (int k = 0; employees != null && k < employees.size(); k++) {
-                Employee employee = employees.get(k);
-                ItemData itemDataEmployee = new ItemData();
-                itemDataEmployee.type = ItemData.TYPE_EMPLOYEE;
-                itemDataEmployee.name = employee.getName();
-                itemDataEmployee.employeeid = employee.getId();
-                itemDataEmployee.parentName = employee.getDeptName();
-                itemDataEmployee.iconUrl = employee.getHeadUrl();
-                itemDataEmployee.companyId = employee.getCompanyId();
-                itemDataEmployee.departmentId = employee.getDeptId();
-                itemDatas.add(itemDataEmployee);
-            }
-//        }
-        return itemDatas;
-    }
-
-    private void showGroupAddAlert(@TYPE final int type, String title, final String companyId, String name) {
+    private void showGroupAddAlert(@TYPE final int type, String title, final String companyId, final String deparmentId) {
         final AlertDialog alertDialog = new AlertDialog.Builder(CompanyManageActivity.this).create();
         alertDialog.setCancelable(false);
         alertDialog.show();
@@ -209,12 +207,12 @@ public class CompanyManageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String name = edit_alert.getText().toString();
                 if (name != null && name.length() > 0) {
-                    switch (type){
+                    switch (type) {
                         case TYPE_ADD_DEPARMENT:
-                            mCompanyManager.addDepartMent(Integer.parseInt(companyId), name);
+                            addDeparmentRequest(Integer.parseInt(companyId), name);
                             break;
                         case TYPE_UPDATE_DEPARMENT:
-                            mCompanyManager.updateDepartMent(Integer.parseInt(companyId), name);
+                            updateDeparmentRequest(Integer.parseInt(deparmentId), name);
                             break;
                     }
                     alertDialog.dismiss();
@@ -223,6 +221,113 @@ public class CompanyManageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Background
+    void addEmployeeRequest(int groupId, ArrayList<String> EmployeeIdList) {
+
+    }
+
+    @Background
+    void deleteEmployeeRequest(int id) {
+
+    }
+
+    @Background
+    void addDeparmentRequest(int companyId, String name) {
+        int id = mCompanyManager.addDepartMent(companyId, name);
+        addDeparment(name, id);
+    }
+
+    @Background
+    void updateDeparmentRequest(int id, String name) {
+        mCompanyManager.updateDepartment(id, name);
+        updateDeparment(name, String.valueOf(id));
+    }
+
+    @Background
+    void deleteDepartmentRequest(int id) {
+        mCompanyManager.deleteEmployee(id);
+        deleteDepartment(String.valueOf(id));
+    }
+
+
+    private void addEmployee(List<String> nameList, String departmentId) {
+        List<Department> departmentList = company.getDepartmentList();
+        int size = departmentList.size();
+        for (int i = 0; i < size; i++) {
+            Department department = departmentList.get(i);
+            if (departmentId.equals(department.getId())) {
+                List<Employee> employeeList = department.getEmployeeList();
+                for (int j = 0; j < nameList.size(); j++) {
+                    Employee employee = new Employee();
+                    employee.setName(nameList.get(i));
+                    employee.setDeptId(departmentId);
+                    employeeList.add(employee);
+                }
+            }
+        }
+        itemDataList = analysisOrganization(company);
+        myAdapter.notifyDataSetChanged();
+    }
+
+    private void deleteEmployee(String departmentId, String employeeId) {
+        List<Department> departmentList = company.getDepartmentList();
+        int size = departmentList.size();
+        DEPARTMENT:
+        for (int i = 0; i < size; i++) {
+            Department department = departmentList.get(i);
+            if (departmentId.equals(department.getId())) {
+                List<Employee> employeeList = department.getEmployeeList();
+                for (int j = 0; j < employeeList.size(); j++) {
+                    Employee employee = employeeList.get(j);
+                    if (employeeId.equals(employee.getId())) {
+                        employeeList.remove(employee);
+                        break DEPARTMENT;
+                    }
+                }
+            }
+        }
+        itemDataList = analysisOrganization(company);
+        myAdapter.notifyDataSetChanged();
+    }
+
+    private void addDeparment(String name, int id) {
+        Department department = new Department();
+        department.setName(name);
+        department.setId(String.valueOf(id));
+        company.getDepartmentList().add(department);
+        itemDataList = analysisOrganization(company);
+        myAdapter.notifyDataSetChanged();
+    }
+
+    private void updateDeparment(String name, String id) {
+        List<Department> departmentList = company.getDepartmentList();
+        int size = departmentList.size();
+        for (int i = 0; i < size; i++) {
+            Department department = departmentList.get(i);
+            if (id.equals(department.getId())) {
+                department.setId(id);
+                department.setName(name);
+                break;
+            }
+        }
+        itemDataList = analysisOrganization(company);
+        myAdapter.notifyDataSetChanged();
+    }
+
+    private void deleteDepartment(String id) {
+        List<Department> departmentList = company.getDepartmentList();
+        int size = departmentList.size();
+        for (int i = 0; i < size; i++) {
+            Department department = departmentList.get(i);
+            if (id.equals(department.getId())) {
+                departmentList.remove(department);
+                break;
+            }
+        }
+        itemDataList = analysisOrganization(company);
+        myAdapter.notifyDataSetChanged();
     }
 
     class MyAdapter extends BaseAdapter {
@@ -260,7 +365,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_add.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            showGroupAddAlert(TYPE_ADD_DEPARMENT,"添加部门", data.companyId, data.name);
+                            showGroupAddAlert(TYPE_ADD_DEPARMENT, "添加部门", data.companyId, data.departmentId);
                         }
                     });
                     break;
@@ -273,7 +378,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_edit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            showGroupAddAlert(TYPE_UPDATE_DEPARMENT,"修改部门名称", data.companyId, data.name);
+                            showGroupAddAlert(TYPE_UPDATE_DEPARMENT, "修改部门名称", data.companyId, data.departmentId);
                         }
                     });
                     btn_dustbin = (ImageButton) view.findViewById(R.id.btn_dustbin);
@@ -307,7 +412,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_dustbin.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mCompanyManager.deleteEmployee(Integer.parseInt(data.employeeid));
+                            deleteDepartmentRequest(Integer.parseInt(data.employeeid));
                         }
                     });
                     break;

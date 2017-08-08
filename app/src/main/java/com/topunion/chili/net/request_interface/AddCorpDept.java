@@ -59,5 +59,9 @@ public class AddCorpDept {
 
     public static class AddCorpDeptResponse {
         public int state;
+        public Data data;
+        public static class Data {
+            public int id;
+        }
     }
 }
