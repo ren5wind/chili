@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.AddCorpDept;
-import com.topunion.chili.net.request_interface.AddGroupMember;
 
 import java.util.ArrayList;
 
@@ -21,8 +20,7 @@ public class CompanyManager {
 
 
     public int addDepartMent(int companyId, String name) {
-        AddCorpDept addCorpDept = new AddCorpDept(companyId, name, "");
-        AddCorpDept.AddCorpDeptResponse response = HttpHelper_.getInstance_(mContext).addCorpDept(addCorpDept);
+        AddCorpDept.AddCorpDeptResponse response = HttpHelper_.getInstance_(mContext).addCorpDept(companyId, name, "");
         if (response.state == 200) {
             return response.data.id;
         } else {
@@ -39,8 +37,7 @@ public class CompanyManager {
     }
 
     public boolean addEmployee(int groupId, ArrayList<String> EmployeeIdList) {
-        AddGroupMember addGroupMember = new AddGroupMember(groupId, EmployeeIdList);
-        return HttpHelper_.getInstance_(mContext).addGroupMember(addGroupMember);
+        return HttpHelper_.getInstance_(mContext).addGroupMember(groupId, EmployeeIdList);
     }
 
     public boolean deleteEmployee(int id) {

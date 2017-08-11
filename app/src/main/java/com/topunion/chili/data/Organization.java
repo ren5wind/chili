@@ -9,14 +9,17 @@ import java.util.List;
  * Created by Administrator on 2017/8/6.
  */
 
-public class Organization extends BaseData{
+public class Organization extends BaseData {
     private List<Company> companyList;
 
-    public List<Company> analysisCompany(GetCorps.GetCorpsResponse corps ){
+    public List<Company> analysisCompany(GetCorps.GetCorpsResponse corps) {
+        if (corps == null) {
+            return null;
+        }
         companyList = new ArrayList<>();
         List<GetCorps.GetCorpsResponse.Data.Corp> corpList = corps.data.result;
         int size = corpList.size();
-        for(int i =0;i< size;i++){
+        for (int i = 0; i < size; i++) {
             GetCorps.GetCorpsResponse.Data.Corp corp = corpList.get(i);
             Company company = new Company();
             company.setId(corp.id);

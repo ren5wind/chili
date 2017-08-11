@@ -2,6 +2,8 @@ package com.topunion.chili.activity;
 
 import android.content.Intent;
 import android.support.annotation.IntDef;
+import android.support.annotation.MainThread;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -229,28 +231,41 @@ public class CompanyManageActivity extends AppCompatActivity {
     }
 
     @Background
-    void deleteEmployeeRequest(int id) {
-
+    void deleteEmployeeRequest(int employeeId, int departmentId) {
+        mCompanyManager.deleteEmployee(employeeId);
+        deleteEmployee(String.valueOf(departmentId), String.valueOf(employeeId));
+        updateAdapter();
     }
 
     @Background
     void addDeparmentRequest(int companyId, String name) {
         int id = mCompanyManager.addDepartMent(companyId, name);
         addDeparment(name, id);
+        updateAdapter();
     }
 
     @Background
     void updateDeparmentRequest(int id, String name) {
         mCompanyManager.updateDepartment(id, name);
         updateDeparment(name, String.valueOf(id));
+        updateAdapter();
     }
 
     @Background
     void deleteDepartmentRequest(int id) {
-        mCompanyManager.deleteEmployee(id);
+        mCompanyManager.deleteDepartment(id);
         deleteDepartment(String.valueOf(id));
+        updateAdapter();
     }
 
+    void updateAdapter() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                myAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     private void addEmployee(List<String> nameList, String departmentId) {
         List<Department> departmentList = company.getDepartmentList();
@@ -268,7 +283,6 @@ public class CompanyManageActivity extends AppCompatActivity {
             }
         }
         itemDataList = analysisOrganization(company);
-        myAdapter.notifyDataSetChanged();
     }
 
     private void deleteEmployee(String departmentId, String employeeId) {
@@ -289,7 +303,6 @@ public class CompanyManageActivity extends AppCompatActivity {
             }
         }
         itemDataList = analysisOrganization(company);
-        myAdapter.notifyDataSetChanged();
     }
 
     private void addDeparment(String name, int id) {
@@ -298,7 +311,6 @@ public class CompanyManageActivity extends AppCompatActivity {
         department.setId(String.valueOf(id));
         company.getDepartmentList().add(department);
         itemDataList = analysisOrganization(company);
-        myAdapter.notifyDataSetChanged();
     }
 
     private void updateDeparment(String name, String id) {
@@ -313,7 +325,6 @@ public class CompanyManageActivity extends AppCompatActivity {
             }
         }
         itemDataList = analysisOrganization(company);
-        myAdapter.notifyDataSetChanged();
     }
 
     private void deleteDepartment(String id) {
@@ -327,7 +338,6 @@ public class CompanyManageActivity extends AppCompatActivity {
             }
         }
         itemDataList = analysisOrganization(company);
-        myAdapter.notifyDataSetChanged();
     }
 
     class MyAdapter extends BaseAdapter {

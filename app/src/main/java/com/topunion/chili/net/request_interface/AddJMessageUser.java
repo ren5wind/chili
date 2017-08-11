@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Shawn on 7/19/17.
@@ -41,13 +42,7 @@ public class AddJMessageUser {
     public interface IAddJMessageUser {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/push/jMessage/registerUser")
-        Call<AddJMessageUser.AddJMessageUserResponse> addJMessageUser(@Body AddJMessageUser user);
-    }
-
-    private String userId;
-
-    public AddJMessageUser(String userId) {
-        this.userId = userId;
+        Call<AddJMessageUser.AddJMessageUserResponse> addJMessageUser(@Query("userId") String userId);
     }
 
     public static class AddJMessageUserResponse {

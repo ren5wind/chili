@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Shawn on 7/18/17.
@@ -42,8 +43,8 @@ public class UpdateDeptMember {
     public interface IUpdateDeptMember {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/corp/corpUser/updateCorpUser")
-        Call<BaseStateResponse> updateDeptMember(@Field("id") int id, @Field("corpDeptId") String corpDeptId,
-                                                 @Field("role") String role);
+        Call<BaseStateResponse> updateDeptMember(@Query("id") int id, @Query("corpDeptId") String corpDeptId,
+                                                 @Query("role") String role);
     }
 
 }

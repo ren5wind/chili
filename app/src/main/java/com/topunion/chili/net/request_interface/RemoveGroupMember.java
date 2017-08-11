@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Shawn on 7/18/17.
@@ -43,7 +44,7 @@ public class RemoveGroupMember {
     public interface IRemoveGroupMember {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/contacts/groupFriends/deleteGroupFriends")
-        Call<BaseStateResponse> removeGroupMember(@Field("groupId") int groupId, @Field("acceptorIds") List<String> acceptorIds);
+        Call<BaseStateResponse> removeGroupMember(@Query("groupId") int groupId, @Query("acceptorIds") List<String> acceptorIds);
     }
 
 }

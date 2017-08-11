@@ -57,10 +57,10 @@ public class HttpHelper {
             .baseUrl(HttpHelper.DEBUG_SERVER)
             .build();
 
-    public AddCorpDept.AddCorpDeptResponse addCorpDept(AddCorpDept data) {
+    public AddCorpDept.AddCorpDeptResponse addCorpDept(int corpId, String name, String description) {
         try {
             AddCorpDept.IAddCorpDept request = retrofit.create(AddCorpDept.IAddCorpDept.class);
-            Call<AddCorpDept.AddCorpDeptResponse> call = request.addCorpDept(data);
+            Call<AddCorpDept.AddCorpDeptResponse> call = request.addCorpDept(corpId, name, description);
             Response<AddCorpDept.AddCorpDeptResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
@@ -69,10 +69,11 @@ public class HttpHelper {
         }
     }
 
-    public boolean addDeptMember(AddDeptMember data) {
+    public boolean addDeptMember(int corpId, List<String> userIds,
+                                 int corpDeptId, String role) {
         try {
             AddDeptMember.IAddDeptMember request = retrofit.create(AddDeptMember.IAddDeptMember.class);
-            Call<BaseStateResponse> call = request.addDeptMember(data);
+            Call<BaseStateResponse> call = request.addDeptMember(corpId, userIds, corpDeptId, role);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {
@@ -81,10 +82,10 @@ public class HttpHelper {
         }
     }
 
-    public boolean addETFriend(AddETFriend data) {
+    public boolean addETFriend(String sender, String acceptor, String acceptorNickname) {
         try {
             AddETFriend.IAddETFriend request = retrofit.create(AddETFriend.IAddETFriend.class);
-            Call<BaseStateResponse> call = request.addETFriend(data);
+            Call<BaseStateResponse> call = request.addETFriend(sender, acceptor, acceptorNickname);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {
@@ -93,10 +94,10 @@ public class HttpHelper {
         }
     }
 
-    public AddGroup.AddGroupResponse addGroup(AddGroup data) {
+    public AddGroup.AddGroupResponse addGroup(String sender, String name, List<String> acceptorIds) {
         try {
             AddGroup.IAddGroup request = retrofit.create(AddGroup.IAddGroup.class);
-            Call<AddGroup.AddGroupResponse> call = request.addGroup(data);
+            Call<AddGroup.AddGroupResponse> call = request.addGroup(sender, name, acceptorIds);
             Response<AddGroup.AddGroupResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
@@ -105,10 +106,10 @@ public class HttpHelper {
         }
     }
 
-    public boolean addGroupMember(AddGroupMember data) {
+    public boolean addGroupMember(int groupId, List<String> acceptorIds) {
         try {
             AddGroupMember.IAddGroupMember request = retrofit.create(AddGroupMember.IAddGroupMember.class);
-            Call<BaseStateResponse> call = request.addGroupMember(data);
+            Call<BaseStateResponse> call = request.addGroupMember(groupId, acceptorIds);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {
@@ -117,10 +118,10 @@ public class HttpHelper {
         }
     }
 
-    public AddJMessageUser.AddJMessageUserResponse addGroupMember(AddJMessageUser data) {
+    public AddJMessageUser.AddJMessageUserResponse addGroupMember(String userId) {
         try {
             AddJMessageUser.IAddJMessageUser request = retrofit.create(AddJMessageUser.IAddJMessageUser.class);
-            Call<AddJMessageUser.AddJMessageUserResponse> call = request.addJMessageUser(data);
+            Call<AddJMessageUser.AddJMessageUserResponse> call = request.addJMessageUser(userId);
             Response<AddJMessageUser.AddJMessageUserResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
@@ -129,10 +130,10 @@ public class HttpHelper {
         }
     }
 
-    public boolean exitGroup(ExitGroup data) {
+    public boolean exitGroup(int groupId, String acceptorId) {
         try {
             ExitGroup.IExitGroup request = retrofit.create(ExitGroup.IExitGroup.class);
-            Call<BaseStateResponse> call = request.exitGroup(data);
+            Call<BaseStateResponse> call = request.exitGroup(groupId, acceptorId);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {

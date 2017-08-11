@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Shawn on 7/18/17.
@@ -42,7 +43,7 @@ public class UpdateGroupName {
     public interface IUpdateGroupName {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/contacts/group/updateGroupName")
-        Call<BaseStateResponse> updateGroupName(@Field("id") int id, @Field("name") String name);
+        Call<BaseStateResponse> updateGroupName(@Query("id") int id, @Query("name") String name);
     }
 
 }

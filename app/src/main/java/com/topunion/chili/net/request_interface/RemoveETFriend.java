@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Shawn on 7/18/17.
@@ -40,6 +41,6 @@ public class RemoveETFriend {
     public interface IRemoveETFriend {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/contacts/friend/deleteFriend")
-        Call<BaseStateResponse> removeETFriend(@Field("userId") String userId, @Field("friendId") String friendId);
+        Call<BaseStateResponse> removeETFriend(@Query("userId") String userId, @Query("friendId") String friendId);
     }
 }

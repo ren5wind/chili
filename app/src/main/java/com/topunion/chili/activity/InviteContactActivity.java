@@ -4,6 +4,7 @@ package com.topunion.chili.activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,11 +42,7 @@ public class InviteContactActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
-        try {
-            getContact();
-        } catch (Exception e) {
-
-        }
+        getContact();
         txt_title.setText("电话本");
 
         final Adapter mAdapter = new Adapter();
@@ -60,37 +57,37 @@ public class InviteContactActivity extends AppCompatActivity {
         String phone;
     }
 
-    public void getContact() throws Exception {
-        Uri uri = Uri.parse("content://com.android.contacts/contacts");
-        ContentResolver resolver = this.getContentResolver();
-        Cursor cursor = resolver.query(uri, new String[]{"_id"}, null, null, null);
-        while (cursor.moveToNext()) {
-            int contractID = cursor.getInt(0);
+    private String getSortkey(String sortKeyString) {
+        String key = sortKeyString.substring(0, 1).toUpperCase();
+        if (key.matches("[A-Z]")) {
+            return key;
+        } else
+            return "#";   //获取sort key的首个字符，如果是英文字母就直接返回，否则返回#。
+    }
 
-            StringBuilder sb = new StringBuilder("contractID=");
-
-            sb.append(contractID);
-            uri = Uri.parse("content://com.android.contacts/contacts/" + contractID + "/data");
-            Cursor cursor1 = resolver.query(uri, new String[]{"mimetype", "data1", "data2"}, null, null, null);
-            while (cursor1.moveToNext()) {
+    public void getContact() {
+        try {
+            Uri contactUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            Cursor cursor = getContentResolver().query(contactUri,
+                    new String[]{"display_name", "sort_key", "contact_id", "data1"},
+                    null, null, "sort_key");
+            String contactSortKey;
+            int contactId;
+            while (cursor.moveToNext()) {
                 Contact contact = new Contact();
-                String data1 = cursor1.getString(cursor1.getColumnIndex("data1"));
-                String mimeType = cursor1.getString(cursor1.getColumnIndex("mimetype"));
-                if ("vnd.android.cursor.item/name".equals(mimeType)) { //是姓名
-                    sb.append(",name=" + data1);
-                    contact.name = data1;
-                } else if ("vnd.android.cursor.item/email_v2".equals(mimeType)) { //邮箱
-                    sb.append(",email=" + data1);
-                } else if ("vnd.android.cursor.item/phone_v2".equals(mimeType)) { //手机
-                    sb.append(",phone=" + data1);
-                    contact.phone = data1;
-                }
-                contacts.add(contact);
+                contact.name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                contact.phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                contactId = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
+                contactSortKey = getSortkey(cursor.getString(1));
+                if (contact.name != null)
+                    contacts.add(contact);
             }
-            cursor1.close();
-            Log.i("Shawn", sb.toString());
+            cursor.close();//使用完后一定要将cursor关闭，不然会造成内存泄露等问题
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
         }
-        cursor.close();
     }
 
     class Adapter extends BaseAdapter {
@@ -107,7 +104,7 @@ public class InviteContactActivity extends AppCompatActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             ViewHolder viewHolder;
-            if (view == null ){
+            if (view == null) {
                 view = LayoutInflater.from(InviteContactActivity.this).inflate(R.layout.person_detail_list_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.txt_name = (TextView) view.findViewById(R.id.txt_name);

@@ -8,6 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Shawn on 7/18/17.
@@ -40,6 +41,6 @@ public class RemoveCorpDept {
     public interface IRemoveCorpDept {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/corp/corpDept/deleteCorpDept")
-        Call<BaseStateResponse> removeCorpDept(@Field("id") int id);
+        Call<BaseStateResponse> removeCorpDept(@Query("id") int id);
     }
 }
