@@ -232,37 +232,44 @@ public class CompanyManageActivity extends AppCompatActivity {
 
     @Background
     void deleteEmployeeRequest(int employeeId, int departmentId) {
-        mCompanyManager.deleteEmployee(employeeId);
+        boolean isSuccess = mCompanyManager.deleteEmployee(employeeId);
         deleteEmployee(String.valueOf(departmentId), String.valueOf(employeeId));
-        updateAdapter();
+        updateAdapter(isSuccess, "当前网络不佳，删除员工失败");
     }
 
     @Background
     void addDeparmentRequest(int companyId, String name) {
         int id = mCompanyManager.addDepartMent(companyId, name);
         addDeparment(name, id);
-        updateAdapter();
+        updateAdapter(id != -1, "当前网络不佳，添加部门失败");
     }
 
     @Background
     void updateDeparmentRequest(int id, String name) {
-        mCompanyManager.updateDepartment(id, name);
+        boolean isSuccess = mCompanyManager.updateDepartment(id, name);
         updateDeparment(name, String.valueOf(id));
-        updateAdapter();
+        updateAdapter(isSuccess, "当前网络不佳，修改部门失败");
+
     }
 
     @Background
     void deleteDepartmentRequest(int id) {
-        mCompanyManager.deleteDepartment(id);
+        boolean isSuccess = mCompanyManager.deleteDepartment(id);
         deleteDepartment(String.valueOf(id));
-        updateAdapter();
+        updateAdapter(isSuccess, "当前网络不佳，删除部门失败");
+
     }
 
-    void updateAdapter() {
+    void updateAdapter(final boolean isUpdate, final String toast) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                myAdapter.notifyDataSetChanged();
+                if (isUpdate) {
+                    myAdapter.setData(itemDataList);
+                    myAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(CompanyManageActivity.this, toast, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -347,6 +354,10 @@ public class CompanyManageActivity extends AppCompatActivity {
             this.dataList = dataList;
         }
 
+        public void setData(List<ItemData> dataList) {
+            this.dataList = dataList;
+        }
+
         @Override
         public long getItemId(int i) {
             return i;
@@ -392,6 +403,12 @@ public class CompanyManageActivity extends AppCompatActivity {
                         }
                     });
                     btn_dustbin = (ImageButton) view.findViewById(R.id.btn_dustbin);
+                    btn_dustbin.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteDepartmentRequest(Integer.parseInt(data.departmentId));
+                        }
+                    });
                     txt_name.setText(data.name);
                     break;
                 case ItemData.TYPE_EMPLOYEE_MANAGEMENT: //员工管理
@@ -422,7 +439,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_dustbin.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            deleteDepartmentRequest(Integer.parseInt(data.employeeid));
+                            deleteEmployeeRequest(Integer.parseInt(data.employeeid), Integer.parseInt(data.departmentId));
                         }
                     });
                     break;

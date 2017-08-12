@@ -5,7 +5,6 @@
 
     <ImageView
         android:id="@+id/img_header"
-        android:src="@mipmap/message_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

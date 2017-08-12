@@ -2,9 +2,14 @@ package com.topunion.chili.activity;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.MainThread;
 import android.support.v4.app.Fragment;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +20,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.MyApplication;
@@ -27,6 +33,11 @@ import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpDepts;
 import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
 import com.topunion.chili.net.request_interface.GetCorps;
+import com.topunion.chili.net.request_interface.GetETMemberDetails;
+import com.topunion.chili.net.request_interface.GetGroupDetails;
+import com.topunion.chili.net.request_interface.GetUsers;
+import com.topunion.chili.util.SortConvList;
+import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
@@ -36,8 +47,22 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback;
+import cn.jpush.im.android.api.content.CustomContent;
+import cn.jpush.im.android.api.content.MessageContent;
+import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.enums.ConversationType;
+import cn.jpush.im.android.api.model.Conversation;
+import cn.jpush.im.android.api.model.GroupInfo;
+import cn.jpush.im.android.api.model.Message;
+import cn.jpush.im.android.api.model.UserInfo;
+import cn.jpush.im.api.BasicCallback;
 
 @EFragment(R.layout.fragment_message_main)
 public class MessageMainFragment extends Fragment {
@@ -66,7 +91,8 @@ public class MessageMainFragment extends Fragment {
     LinearLayout popMenu;
 
     private Organization mOrganization;
-    private ArrayList<Object> dataList;
+    private List<Object> dataList;
+    private List<Conversation> msgList;
 
     @Click
     void btn_add_friend() {
@@ -137,17 +163,70 @@ public class MessageMainFragment extends Fragment {
                     getDeptUsers(1, 20, Integer.parseInt(departmentList.get(j).getId()), departmentList.get(j).getName());
             departmentList.get(j).analysisEmployee(deptNumbs);
         }
+
+        JMessageClient.login(AccountManager.getInstance().getUserId(), "YiTou123", new BasicCallback() {
+            @Override
+            public void gotResult(int responseCode, String responseMessage) {
+                if (responseCode == 0) {
+                    UserInfo myInfo = JMessageClient.getMyInfo();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "登陆成功", Toast.LENGTH_SHORT).show();
+                            initConvListAdapter();
+                        }
+                    });
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "登陆失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
-    @MainThread
     void validList() {
 //        contactAdapter.notifyDataSetChanged();
     }
 
+    //得到会话列表
+    private void initConvListAdapter() {
+        msgList = JMessageClient.getConversationList();
+        if (msgList != null && msgList.size() > 0) {
+//            mConvListView.setNullConversation(true);
+            SortConvList sortConvList = new SortConvList();
+            Collections.sort(msgList, sortConvList);
+        } else {
+//            mConvListView.setNullConversation(false);
+        }
+        msgAdapter = new MsgAdapter(msgList);
+        msg_list.setAdapter(msgAdapter);
+    }
+
+    /**
+     * 收到消息后将会话置顶
+     *
+     * @param conv 要置顶的会话
+     */
+    public void setToTop(Conversation conv) {
+        for (Conversation conversation : msgList) {
+            if (conv.getId().equals(conversation.getId())) {
+                msgList.remove(conversation);
+                msgList.add(0, conv);
+                return;
+            }
+        }
+        //如果是新的会话
+        msgList.add(0, conv);
+    }
 
     @AfterViews
     protected void afterViews() {
-        msgAdapter = new MsgAdapter();
+        msgList = new ArrayList<>();
+        msgAdapter = new MsgAdapter(msgList);
         contactAdapter = new ContactAdapter();
         contact_list.setAdapter(contactAdapter);
         msg_list.setAdapter(msgAdapter);
@@ -218,18 +297,34 @@ public class MessageMainFragment extends Fragment {
     }
 
     class MsgAdapter extends BaseAdapter {
+        private List<Conversation> mDataList;
+
+        MsgAdapter(List<Conversation> dataList) {
+            mDataList = dataList;
+        }
+
         @Override
         public int getCount() {
-            return 2;
+            return (mDataList == null) ? 0 : mDataList.size();
         }
 
         @Override
-        public Object getItem(int i) {
-            return null;
+        public Conversation getItem(int i) {
+            return (mDataList == null || mDataList.size() <= i) ? null : mDataList.get(i);
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
+        public View getView(int position, View view, ViewGroup viewGroup) {
+            Conversation data = mDataList.get(position);
+            if (data.getType().equals(ConversationType.single)) {
+                UserInfo feedBack = (UserInfo) data.getTargetInfo();
+                if (feedBack.getUserName().equals("feedback_Android")) {
+                    JMessageClient.deleteSingleConversation("feedback_Android", feedBack.getAppKey());
+                    mDataList.remove(position);
+                    notifyDataSetChanged();
+                }
+            }
+
             ViewHolder holder;
             if (view == null) {
                 view = LayoutInflater.from(getActivity()).inflate(R.layout.message_list_item, null);
@@ -245,19 +340,109 @@ public class MessageMainFragment extends Fragment {
                 holder = (ViewHolder) view.getTag();
             }
 
-            switch (i) {
-                case 0:
-                    holder.txt_name.setText("易投通知");
-                    holder.txt_msg.setText("有人回答了你的问题");
-                    holder.txt_time.setText("08:45");
-                    break;
-                case 1:
-                    holder.txt_name.setText("张三");
-                    holder.txt_msg.setText("吃饭了吗？");
-                    holder.txt_time.setText("18:11");
-                    break;
+            //聊天内容
 
+            Message lastMsg = data.getLatestMessage();
+            if (lastMsg != null) {
+                TimeFormat timeFormat = new TimeFormat(getContext(), lastMsg.getCreateTime());
+                //会话界面时间
+                holder.txt_time.setText(timeFormat.getTime());
+                String contentStr;
+                switch (lastMsg.getContentType()) {
+                    case image:
+                        contentStr = getContext().getString(R.string.type_picture);
+                        break;
+                    case voice:
+                        contentStr = getContext().getString(R.string.type_voice);
+                        break;
+                    case location:
+                        contentStr = getContext().getString(R.string.type_location);
+                        break;
+                    case file:
+                        String extra = lastMsg.getContent().getStringExtra("video");
+                        if (extra != null && extra.equals("mp4")) {
+                            contentStr = getContext().getString(R.string.type_smallvideo);
+                        } else {
+                            contentStr = getContext().getString(R.string.type_file);
+                        }
+                        break;
+                    case video:
+                        contentStr = getContext().getString(R.string.type_video);
+                        break;
+                    case eventNotification:
+                        contentStr = getContext().getString(R.string.group_notification);
+                        break;
+                    case custom:
+                        CustomContent customContent = (CustomContent) lastMsg.getContent();
+                        Boolean isBlackListHint = customContent.getBooleanValue("blackList");
+                        if (isBlackListHint != null && isBlackListHint) {
+                            contentStr = getContext().getString(R.string.jmui_server_803008);
+                        } else {
+                            contentStr = getContext().getString(R.string.type_custom);
+                        }
+                        break;
+                    default:
+                        contentStr = ((TextContent) lastMsg.getContent()).getText();
+                }
+
+                MessageContent msgContent = lastMsg.getContent();
+
+                if (lastMsg.getTargetType() == ConversationType.group && !contentStr.equals("[群成员变动]")) {
+                    UserInfo info = lastMsg.getFromUser();
+                    String fromName = info.getNotename();
+                    if (TextUtils.isEmpty(fromName)) {
+                        fromName = info.getNickname();
+                        if (TextUtils.isEmpty(fromName)) {
+                            fromName = info.getUserName();
+                        }
+                    }
+                    holder.txt_msg.setText(fromName + ": " + contentStr);
+                } else {
+                    holder.txt_msg.setText(contentStr);
+                }
+            } else {
+                TimeFormat timeFormat = new TimeFormat(getContext(), data.getLastMsgDate());
+                holder.txt_time.setText(timeFormat.getTime());
+                holder.txt_msg.setText("");
             }
+
+
+            if (data.getType().equals(ConversationType.single)) {//单聊头像
+                holder.txt_name.setText(data.getTitle());
+                UserInfo userInfo = (UserInfo) data.getTargetInfo();
+                GetETMemberDetails.GetETMemberDetailsResponse response =
+                        HttpHelper_.getInstance_(getActivity()).getETMemberDetails((int) userInfo.getUserID());
+                if (response != null && response.data != null) {
+                    holder.img_header.setImageURI(response.data.headImg);
+                }
+            } else {//群聊头像
+                GroupInfo groupInfo = (GroupInfo) data.getTargetInfo();
+                GetGroupDetails.GetGroupDetailsResponse response =
+                        HttpHelper_.getInstance_(getActivity()).getGroupDetails((int) groupInfo.getGroupID());
+//                if (response != null && response.data != null) {
+//                    holder.img_header.setImageURI(response.data.);
+//                }
+                holder.txt_name.setText(data.getTitle());
+            }
+
+//            holder.txt_name.setText(data.);
+//            holder.txt_msg.setText("吃饭了吗？");
+//            holder.txt_time.setText("18:11");
+
+
+//            switch (i) {
+//                case 0:
+//                    holder.txt_name.setText("易投通知");
+//                    holder.txt_msg.setText("有人回答了你的问题");
+//                    holder.txt_time.setText("08:45");
+//                    break;
+//                case 1:
+//                    holder.txt_name.setText("张三");
+//                    holder.txt_msg.setText("吃饭了吗？");
+//                    holder.txt_time.setText("18:11");
+//                    break;
+//
+//            }
 
             return view;
         }
@@ -278,9 +463,9 @@ public class MessageMainFragment extends Fragment {
 
     class ContactAdapter extends BaseAdapter {
 
-        private ArrayList<Object> data = new ArrayList<>();
+        private List<Object> data = new ArrayList<>();
 
-        public void setData(ArrayList<Object> data) {
+        public void setData(List<Object> data) {
             this.data = data;
         }
 
