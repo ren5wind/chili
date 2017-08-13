@@ -87,7 +87,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 	 * 得到首字母的ascii值
 	 */
 	public int getSectionForPosition(int position) {
-		if(list == null){
+		if(list == null || list.size() == 0){
 			return 0;
 		}
 

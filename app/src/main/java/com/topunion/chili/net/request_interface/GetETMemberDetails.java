@@ -70,7 +70,7 @@ import retrofit2.http.Query;
 public class GetETMemberDetails {
 
     public interface IGetETMemberDetails {
-        @GET("app/corp/corpUser/getUserInfo.do")
+        @GET("user/api/getUserInfo.do")
         Call<GetETMemberDetails.GetETMemberDetailsResponse> getETMemberDetails(@Query("userId") int userId);
     }
 

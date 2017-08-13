@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_marginRight="15dp"
-                android:layout_height="280dp">
+                android:layout_height="230dp">
 
     <LinearLayout
         android:layout_above="@+id/btn_cancel"
@@ -39,6 +39,7 @@
             android:background="#999999"/>
 
         <Button
+            android:visibility="gone"
             android:id="@+id/btn_from_contact"
             android:text="通过电话本添加"
             android:background="@android:color/transparent"
@@ -46,6 +47,7 @@
             android:layout_height="50dp"/>
 
         <View
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="#999999"/>

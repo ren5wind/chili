@@ -6,6 +6,7 @@ import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.AddCorpDept;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/8/7.
@@ -36,8 +37,9 @@ public class CompanyManager {
         return HttpHelper_.getInstance_(mContext).removeCorpDept(id);
     }
 
-    public boolean addEmployee(int groupId, ArrayList<String> EmployeeIdList) {
-        return HttpHelper_.getInstance_(mContext).addGroupMember(groupId, EmployeeIdList);
+    public boolean addEmployee(int corpId, List<String> userIds,
+                               int corpDeptId, String role) {
+        return HttpHelper_.getInstance_(mContext).addDeptMember(corpId, userIds, corpDeptId, role);
     }
 
     public boolean deleteEmployee(int id) {

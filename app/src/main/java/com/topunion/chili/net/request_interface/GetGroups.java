@@ -85,7 +85,7 @@ public class GetGroups {
             public String senderId;
             public String name;
             public String count;
-            public List<String> haedImgs;
+            public String imgUrls;
             public String id;
             public String pushGroupId;
         }

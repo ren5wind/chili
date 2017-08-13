@@ -1,6 +1,7 @@
 package com.topunion.chili.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.MainThread;
 import android.support.annotation.UiThread;
@@ -35,6 +36,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 import java.lang.annotation.Retention;
@@ -65,6 +67,8 @@ public class CompanyManageActivity extends AppCompatActivity {
 
     private MyAdapter myAdapter;
 
+    public static final int REQUEST_CODE_GET_EMPLOYEE = 1;
+
     @Click
     void btn_back() {
         this.finish();
@@ -78,8 +82,12 @@ public class CompanyManageActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        int index = resultCode;
-        //TODO
+
+        String companyId = data.getStringExtra("companyId");
+        String deparmentId = data.getStringExtra("deparmentId");
+        String role = data.getStringExtra("role");
+        List<Employee> employees = (List<Employee>) data.getSerializableExtra("employees");
+        addEmployeeRequest(Integer.valueOf(companyId), employees, Integer.valueOf(deparmentId), role);
     }
 
     @AfterViews
@@ -151,7 +159,7 @@ public class CompanyManageActivity extends AppCompatActivity {
         return itemDatas;
     }
 
-    private void showMemberAddAlert() {
+    private void showMemberAddAlert(final String companyId, final String deparmentId) {
         final AlertDialog alertDialog = new AlertDialog.Builder(CompanyManageActivity.this).create();
         alertDialog.setCancelable(false);
         alertDialog.show();
@@ -170,7 +178,12 @@ public class CompanyManageActivity extends AppCompatActivity {
                         startActivity(new Intent(CompanyManageActivity.this, SearchFromContactActivity_.class));
                         break;
                     case R.id.btn_from_friedns:
-                        startActivity(new Intent(CompanyManageActivity.this, SearchFromFriendsActivity_.class));
+//                        startActivity(new Intent(CompanyManageActivity.this, SearchFromFriendsActivity_.class));
+
+                        Intent intent = new Intent(CompanyManageActivity.this, SearchFromFriendsActivity_.class);
+                        intent.putExtra("companyId", companyId);
+                        intent.putExtra("deparmentId", deparmentId);
+                        startActivityForResult(intent, REQUEST_CODE_GET_EMPLOYEE);
                         break;
                 }
                 alertDialog.dismiss();
@@ -226,8 +239,17 @@ public class CompanyManageActivity extends AppCompatActivity {
     }
 
     @Background
-    void addEmployeeRequest(int groupId, ArrayList<String> EmployeeIdList) {
+    void addEmployeeRequest(int corpId, List<Employee> employees,
+                            int corpDeptId, String role) {
+        int size = employees.size();
+        List<String> userIds = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            userIds.add(employees.get(i).getId());
+        }
 
+        boolean isSuccess = mCompanyManager.addEmployee(corpId, userIds, corpDeptId, role);
+        addEmployee(employees, String.valueOf(corpDeptId));
+        updateAdapter(isSuccess, "当前网络不佳，删除员工失败");
     }
 
     @Background
@@ -274,19 +296,14 @@ public class CompanyManageActivity extends AppCompatActivity {
         });
     }
 
-    private void addEmployee(List<String> nameList, String departmentId) {
+    private void addEmployee(List<Employee> addEmployeeList, String departmentId) {
         List<Department> departmentList = company.getDepartmentList();
         int size = departmentList.size();
         for (int i = 0; i < size; i++) {
             Department department = departmentList.get(i);
             if (departmentId.equals(department.getId())) {
-                List<Employee> employeeList = department.getEmployeeList();
-                for (int j = 0; j < nameList.size(); j++) {
-                    Employee employee = new Employee();
-                    employee.setName(nameList.get(i));
-                    employee.setDeptId(departmentId);
-                    employeeList.add(employee);
-                }
+                department.getEmployeeList().addAll(addEmployeeList);
+                break;
             }
         }
         itemDataList = analysisOrganization(company);
@@ -425,7 +442,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_add.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            showMemberAddAlert();
+                            showMemberAddAlert(data.companyId, data.departmentId);
                         }
                     });
                     break;

@@ -6,9 +6,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 import com.topunion.chili.activity.MessageMainFragment_;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetGroups;
 import com.yinglan.alphatabs.AlphaTabsIndicator;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 

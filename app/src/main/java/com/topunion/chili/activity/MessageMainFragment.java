@@ -26,6 +26,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.MyApplication;
 import com.topunion.chili.R;
 import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.business.ImInfoManager;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
 import com.topunion.chili.data.Organization;
@@ -34,9 +35,12 @@ import com.topunion.chili.net.request_interface.GetCorpDepts;
 import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
 import com.topunion.chili.net.request_interface.GetCorps;
 import com.topunion.chili.net.request_interface.GetETMemberDetails;
+import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
+import com.topunion.chili.net.request_interface.GetGroups;
 import com.topunion.chili.net.request_interface.GetUsers;
 import com.topunion.chili.util.SortConvList;
+import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
@@ -192,6 +196,26 @@ public class MessageMainFragment extends Fragment {
 //        contactAdapter.notifyDataSetChanged();
     }
 
+
+    @Background
+    void getGroup() {
+        String uid = AccountManager.getInstance().getUserId();
+        if (!StringUtil.isEmpt(uid)) {
+            GetGroups.GetGroupsResponse response = HttpHelper_.getInstance_(getActivity()).getGroups(1, 1000, uid);
+            ImInfoManager.getInstance().addGroupList(response.result);
+        }
+    }
+
+    @Background
+    void getFriend() {
+        String uid = AccountManager.getInstance().getUserId();
+        if (!StringUtil.isEmpt(uid)) {
+            GetFriends.GetFriendsResponse response = HttpHelper_.getInstance_(getActivity()).getFriends(uid, 1, 1000);
+            ImInfoManager.getInstance().addFriendList(response.result);
+        }
+    }
+
+
     //得到会话列表
     private void initConvListAdapter() {
         msgList = JMessageClient.getConversationList();
@@ -294,6 +318,8 @@ public class MessageMainFragment extends Fragment {
         contactAdapter.setData(dataList);
 
         initCorps();
+        getGroup();
+        getFriend();
     }
 
     class MsgAdapter extends BaseAdapter {

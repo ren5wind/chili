@@ -10,14 +10,21 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetETMemberDetails;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_personal_center)
 public class PersonalCenterActivity extends AppCompatActivity {
+    @Extra
+    int uid;
 
     @ViewById
     TextView txt_title, txt_name, txt_verify1, txt_verify2, txt_company, txt_position;
@@ -34,6 +41,8 @@ public class PersonalCenterActivity extends AppCompatActivity {
     @ViewById
     SimpleDraweeView img_header;
 
+    private GetETMemberDetails.GetETMemberDetailsResponse.Member mData;
+
     @Click
     void btn_back() {
         this.finish();
@@ -47,11 +56,45 @@ public class PersonalCenterActivity extends AppCompatActivity {
     @AfterViews
     void init() {
         txt_title.setText("个人主页");
-        txt_name.setText("鸣人");
-        btn_operation.setImageResource(R.mipmap.more);
-        btn_operation.setVisibility(View.VISIBLE);
-        txt_company.setText("易投科技有限公司");
-        txt_position.setText("普通职员");
+        getUserDeetailRequest();
+    }
+
+    @Background
+    void getUserDeetailRequest() {
+        GetETMemberDetails.GetETMemberDetailsResponse response = HttpHelper_.getInstance_(this).getETMemberDetails(uid);
+        mData = response.data;
+        updateUi();
+    }
+
+    private void updateUi() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txt_name.setText(mData.nickname);
+                img_header.setImageURI(mData.headImg);
+                btn_operation.setImageResource(R.mipmap.more);
+                btn_operation.setVisibility(View.VISIBLE);
+                txt_company.setText(mData.corpName);
+                txt_position.setText(mData.corpTitleName);
+                if ("male".equals(mData.gender)) {
+                    img_sex.setImageResource(R.mipmap.sex_boy);
+                } else if ("female".equals(mData.gender)) {
+                    img_sex.setImageResource(R.mipmap.sex_girl);
+                } else {
+                    img_sex.setVisibility(View.GONE);
+                }
+                if (mData.hasIdentify) {
+                    txt_verify1.setText("已实名认证");
+                } else {
+                    txt_verify1.setVisibility(View.GONE);
+                }
+                if (mData.hasCorp) {
+                    txt_verify2.setText("已企业认证");
+                } else {
+                    txt_verify2.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     @Override

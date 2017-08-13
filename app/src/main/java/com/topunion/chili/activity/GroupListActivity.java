@@ -14,8 +14,10 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
+import com.topunion.chili.net.request_interface.GetGroups;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -24,6 +26,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.jpush.im.android.api.JMessageClient;
@@ -41,11 +44,14 @@ public class GroupListActivity extends AppCompatActivity {
     @ViewById
     ListView mListView;
 
+    private Adapter mAdapter;
+    private List<GetGroups.GetGroupsResponse.Group> mDataList;
+
     @Click
     void btn_operation() {
         ChoosePersonActivity_.intent(this)
-                .choose(new int[]{0,0,0,0,0,0,0})
-                .data(new String[]{"张三","李四","王五","赵六","田七","猴八","牛二"})
+                .choose(new int[]{0, 0, 0, 0, 0, 0, 0})
+                .data(new String[]{"张三", "李四", "王五", "赵六", "田七", "猴八", "牛二"})
                 .title("选择联系人").startForResult(0);
     }
 
@@ -53,7 +59,7 @@ public class GroupListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 && resultCode == 200) {
-            Toast.makeText(this, "result: " + data.getIntArrayExtra("result").toString() , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "result: " + data.getIntArrayExtra("result").toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -68,49 +74,71 @@ public class GroupListActivity extends AppCompatActivity {
         btn_operation.setVisibility(View.VISIBLE);
         btn_operation.setImageResource(R.mipmap.add_friends);
 
-        mListView.setAdapter(new Adapter());
+
+        mDataList = new ArrayList<>();
+        mAdapter = new Adapter(mDataList);
+        mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                GroupTalkingActivity_.intent(GroupListActivity.this).title("张三，李四，王五...").start();
+                GroupTalkingActivity_.intent(GroupListActivity.this).title(mAdapter.getItem(i).name).start();
             }
         });
+        initGroup();
     }
 
-    private void initGroup(){
-        JMessageClient.getGroupIDList(new GetGroupIDListCallback() {
-            @Override
-            public void gotResult(int responseCode, String responseMessage, List<Long> groupIDList) {
-                if (responseCode == 0) {
-
-                }
-            }
-        });
-    }
+    //获取群组列表
     @Background
-    void dataRequest() {
-//        GetGroupDetails.getGroupDetails friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(),1, 20);
-//        if (friends.result.size() != 0) {
-//            for (int i = 0; i < friends.result.size(); i++) {
-//
-//            }
-//        }
-//        updata();
+    void initGroup() {
+        GetGroups.GetGroupsResponse groups = HttpHelper_.getInstance_(this).getGroups(1, 100, AccountManager.getInstance().getUserId());
+        if (groups == null) {
+            return;
+        }
+        //test data
+        GetGroups.GetGroupsResponse.Group group = new GetGroups.GetGroupsResponse.Group();
+        group.count = "20";
+        group.name = "测试";
+        groups.result = new ArrayList<>();
+        groups.result.add(group);
+        mDataList = groups.result;
+        updateAdapter();
     }
 
-    @UiThread
-    void updata(){
-//        adapter.updateListView(SourceDateList);
+    private void updateAdapter() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.setData(mDataList);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
+
     class Adapter extends BaseAdapter {
+
+        private List<GetGroups.GetGroupsResponse.Group> groupList;
+
+        public Adapter(List<GetGroups.GetGroupsResponse.Group> groupList) {
+            this.groupList = groupList;
+        }
+
         @Override
         public int getCount() {
-            return 1;
+            return (groupList == null) ? 0 : groupList.size();
+        }
+
+        @Override
+        public GetGroups.GetGroupsResponse.Group getItem(int i) {
+            return (groupList == null) ? null : groupList.get(i);
         }
 
         @Override
         public long getItemId(int i) {
             return i;
+        }
+
+        public void setData(List<GetGroups.GetGroupsResponse.Group> groupList) {
+            this.groupList = groupList;
         }
 
         @Override
@@ -127,14 +155,11 @@ public class GroupListActivity extends AppCompatActivity {
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-            viewHolder.txt_name.setText("易投科技有限公司群");
-            viewHolder.txt_count.setText("22人");
-            return view;
-        }
+            GetGroups.GetGroupsResponse.Group data = groupList.get(i);
 
-        @Override
-        public Object getItem(int i) {
-            return i;
+            viewHolder.txt_name.setText(data.name);
+            viewHolder.txt_count.setText(data.count + "人");
+            return view;
         }
 
         class ViewHolder {
