@@ -370,9 +370,8 @@ public class MessageMainFragment extends Fragment {
 
             Message lastMsg = data.getLatestMessage();
             if (lastMsg != null) {
-                TimeFormat timeFormat = new TimeFormat(getContext(), lastMsg.getCreateTime());
                 //会话界面时间
-                holder.txt_time.setText(timeFormat.getTime());
+                holder.txt_time.setText(TimeFormat.getTime(getContext(), lastMsg.getCreateTime()));
                 String contentStr;
                 switch (lastMsg.getContentType()) {
                     case image:
@@ -427,8 +426,7 @@ public class MessageMainFragment extends Fragment {
                     holder.txt_msg.setText(contentStr);
                 }
             } else {
-                TimeFormat timeFormat = new TimeFormat(getContext(), data.getLastMsgDate());
-                holder.txt_time.setText(timeFormat.getTime());
+                holder.txt_time.setText(TimeFormat.getTime(getContext(), data.getLastMsgDate()));
                 holder.txt_msg.setText("");
             }
 
@@ -445,31 +443,8 @@ public class MessageMainFragment extends Fragment {
                 GroupInfo groupInfo = (GroupInfo) data.getTargetInfo();
                 GetGroupDetails.GetGroupDetailsResponse response =
                         HttpHelper_.getInstance_(getActivity()).getGroupDetails((int) groupInfo.getGroupID());
-//                if (response != null && response.data != null) {
-//                    holder.img_header.setImageURI(response.data.);
-//                }
                 holder.txt_name.setText(data.getTitle());
             }
-
-//            holder.txt_name.setText(data.);
-//            holder.txt_msg.setText("吃饭了吗？");
-//            holder.txt_time.setText("18:11");
-
-
-//            switch (i) {
-//                case 0:
-//                    holder.txt_name.setText("易投通知");
-//                    holder.txt_msg.setText("有人回答了你的问题");
-//                    holder.txt_time.setText("08:45");
-//                    break;
-//                case 1:
-//                    holder.txt_name.setText("张三");
-//                    holder.txt_msg.setText("吃饭了吗？");
-//                    holder.txt_time.setText("18:11");
-//                    break;
-//
-//            }
-
             return view;
         }
 

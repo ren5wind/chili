@@ -11,14 +11,6 @@ import cn.jiguang.api.JCoreInterface;
 
 public class TimeFormat {
 
-    private long mTimeStamp;
-    private Context mContext;
-
-    public TimeFormat(Context context, long timeStamp) {
-        this.mContext = context;
-        this.mTimeStamp = timeStamp;//最后一条消息创建的时间
-    }
-
     /**
      * 会话列表时间显示：以会话的最后一条消息时间为准
      *
@@ -29,7 +21,7 @@ public class TimeFormat {
      * 今年之前的时间显示 年-月-日，举例：2015-4-22
      */
     //用于显示会话时间
-    public String getTime() {
+    public static String getTime(Context mContext,long mTimeStamp) {
         //最后一条消息的 年 月 日 时 分
         //yyyy-MM-dd HH:mm:ss
         Date date = new Date(mTimeStamp);
@@ -142,7 +134,7 @@ public class TimeFormat {
      */
 
     //用于显示消息具体时间
-    public String getDetailTime() {
+    public static String getDetailTime(Context mContext,long mTimeStamp) {
         //最后一条消息的 年 月 日 时 分
         //yyyy-MM-dd HH:mm:ss
         Date date = new Date(mTimeStamp);

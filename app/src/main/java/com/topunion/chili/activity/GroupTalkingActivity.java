@@ -19,7 +19,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.ImInfoManager;
+import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -42,20 +45,17 @@ import cn.jpush.im.android.api.model.UserInfo;
 
 @EActivity(R.layout.activity_talking)
 public class GroupTalkingActivity extends AppCompatActivity {
-    @Extra
-    String title;
 
     @ViewById
     ListView mListView;
-
     @ViewById
     TextView txt_title;
-
     @ViewById
     ImageButton btn_operation;
-
     @ViewById
     EditText mEditText;
+    @Extra
+    String title;
     @Extra
     String targetId;
     @Extra
@@ -63,6 +63,10 @@ public class GroupTalkingActivity extends AppCompatActivity {
     //文本
     private final int TYPE_SEND_TXT = 0;
     private final int TYPE_RECEIVE_TXT = 1;
+
+    private boolean mIsSingle = true;
+    private Conversation mConv;
+    int mOffset = 1000;
 
     @Click
     void btn_back() {
@@ -85,17 +89,6 @@ public class GroupTalkingActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         mListView.setSelection(mListView.getBottom());
         JMessageClient.sendMessage(msg);
-
-
-//        final String text = mEditText.getText().toString();
-//        if (text != null && text.length() > 0) {
-//            adapter.addDataToAdapter(new MsgInfo(null, text));
-//            adapter.notifyDataSetChanged();
-//            mListView.setSelection(mListView.getBottom());
-//        } else {
-//            Toast.makeText(GroupTalkingActivity.this, "不能发送空消息", Toast.LENGTH_SHORT).show();
-//        }
-//        mEditText.setText("");
     }
 
     private ListViewAdapter adapter;
@@ -122,7 +115,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 GroupInfo groupInfo = (GroupInfo) mConv.getTargetInfo();
 //                UserInfo userInfo = groupInfo.getGroupMemberInfo(mMyInfo.getUserName());
             } else {
-                mConv = Conversation.createGroupConversation(mGroupId);
+                mConv = Conversation.createGroupConversation(groupId);
             }
         }
 
@@ -131,29 +124,21 @@ public class GroupTalkingActivity extends AppCompatActivity {
         int size = messageList.size();
         for (int i = 0; i < size; i++) {
             Message message = messageList.get(i);
-            long time = message.getCreateTime();
             if (message.getContentType() == ContentType.text) {
                 int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
                         : TYPE_RECEIVE_TXT;
-                if(direct == TYPE_SEND_TXT){//发送方
-
-                }else if(direct == TYPE_RECEIVE_TXT){//接收方
-
+                if (direct == TYPE_SEND_TXT) {//发送方
+                    adapter.addDataToAdapter(new MsgInfo(message, null));
+                } else if (direct == TYPE_RECEIVE_TXT) {//接收方
+                    adapter.addDataToAdapter(new MsgInfo(null, message));
                 }
-
             }
         }
 
         txt_title.setText(title);
         btn_operation.setVisibility(View.VISIBLE);
         btn_operation.setImageResource(R.mipmap.more);
-//        MsgInfo msg1 = new MsgInfo("Asdfasdf", null);
-//        MsgInfo msg2 = new MsgInfo(null, "Asdfasdf");
         adapter = new ListViewAdapter(this);
-//        adapter.addDataToAdapter(new MsgInfo(null, null));
-//        adapter.addDataToAdapter(msg1);
-//        adapter.addDataToAdapter(msg2);
-//        adapter.addDataToAdapter(new MsgInfo(null, null));
         mListView.setAdapter(adapter);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -176,42 +161,10 @@ public class GroupTalkingActivity extends AppCompatActivity {
         });
     }
 
-    private boolean mIsSingle = true;
-    private Conversation mConv;
-    long mGroupId;
-    int mOffset = 1000;
-
-    private void initMsg() {
-        if (!TextUtils.isEmpty(targetId)) {
-            //单聊
-            mIsSingle = true;
-            mConv = JMessageClient.getSingleConversation(targetId);
-            if (mConv == null) {
-                mConv = Conversation.createSingleConversation(targetId);
-            }
-        } else {
-            //群聊
-            mIsSingle = false;
-            mConv = JMessageClient.getGroupConversation(groupId);
-            if (mConv != null) {
-                GroupInfo groupInfo = (GroupInfo) mConv.getTargetInfo();
-//                UserInfo userInfo = groupInfo.getGroupMemberInfo(mMyInfo.getUserName());
-            } else {
-                mConv = Conversation.createGroupConversation(mGroupId);
-            }
-        }
-    }
-
     class MsgInfo {
-        //        public String left_text;
-//        public String right_text;
         public Message left_msg;
         public Message right_msg;
 
-        //        public MsgInfo(String left_text, String right_text) {
-//            this.left_text = left_text;
-//            this.right_text = right_text;
-//        }
         public MsgInfo(Message left_msg, Message right_msg) {
             this.left_msg = left_msg;
             this.right_msg = right_msg;
@@ -271,28 +224,40 @@ public class GroupTalkingActivity extends AppCompatActivity {
             }
 
             //获取adapter中的数据
-            String left = ((TextContent) datas.get(position).left_msg.getContent()).getText();
-            String right = ((TextContent) datas.get(position).right_msg.getContent()).getText();
+            Message left = datas.get(position).left_msg;
+            Message right = datas.get(position).right_msg;
+
+
+//            String left = ((TextContent) datas.get(position).left_msg.getContent()).getText();
+//            String right = ((TextContent) datas.get(position).right_msg.getContent()).getText();
 
             //如果数据为空，则将数据设置给右边，同时显示右边，隐藏左边
             if (right != null) {
-                viewHolder.text_right.setText(right);
+                viewHolder.text_right.setText(((TextContent) right.getContent()).getText());
                 viewHolder.right.setVisibility(View.VISIBLE);
                 viewHolder.left.setVisibility(View.GONE);
                 viewHolder.middle.setVisibility(View.GONE);
+                viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, left.getCreateTime()));
+                viewHolder.img_header_other.setImageURI(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).headImg);
+                viewHolder.tv_name_other.setText(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).nickname);
+
             } else if (left != null) {
-                viewHolder.text_left.setText(left);
+                viewHolder.text_left.setText(((TextContent) left.getContent()).getText());
                 viewHolder.left.setVisibility(View.VISIBLE);
                 viewHolder.right.setVisibility(View.GONE);
                 viewHolder.middle.setVisibility(View.GONE);
-            } else {
-                viewHolder.left.setVisibility(View.GONE);
-                viewHolder.right.setVisibility(View.GONE);
-                viewHolder.middle.setVisibility(View.VISIBLE);
-                if (position == 0) {
-                    viewHolder.text_info.setVisibility(View.GONE);
-                }
+                viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, right.getCreateTime()));
+                viewHolder.img_header.setImageURI(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).headImg);
+                viewHolder.tv_name.setText(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).nickname);
             }
+//            else {
+//                viewHolder.left.setVisibility(View.GONE);
+//                viewHolder.right.setVisibility(View.GONE);
+//                viewHolder.middle.setVisibility(View.VISIBLE);
+//                if (position == 0) {
+//                    viewHolder.text_info.setVisibility(View.GONE);
+//                }
+//            }
 
             return convertView;
 
@@ -307,6 +272,10 @@ public class GroupTalkingActivity extends AppCompatActivity {
             public LinearLayout middle;
             public TextView text_time;
             public TextView text_info;
+            public SimpleDraweeView img_header_other;
+            public TextView tv_name_other;
+            public SimpleDraweeView img_header;
+            public TextView tv_name;
 
             public ViewHolder(View rootView) {
                 this.rootView = rootView;
