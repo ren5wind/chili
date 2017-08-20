@@ -12,6 +12,7 @@ public class SortModel implements Serializable {
 	private String sortLetters;
 	private boolean isChecked;
 	private String iconUrl;
+	private String imName;
 	private int sex; // 0 男 1 女
 	private String id;
 
@@ -75,5 +76,13 @@ public class SortModel implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getImName() {
+		return imName;
+	}
+
+	public void setImName(String imName) {
+		this.imName = imName;
 	}
 }

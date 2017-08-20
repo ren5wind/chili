@@ -7,9 +7,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetETMemberDetails;
 
@@ -24,7 +26,7 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_personal_center)
 public class PersonalCenterActivity extends AppCompatActivity {
     @Extra
-    int uid;
+    String uid;
 
     @ViewById
     TextView txt_title, txt_name, txt_verify1, txt_verify2, txt_company, txt_position;
@@ -49,6 +51,15 @@ public class PersonalCenterActivity extends AppCompatActivity {
     }
 
     @Click
+    void btn_send() {
+        if ("0".equals(mData.isFriend)) {//不是好友
+            addETFriend();
+        } else {
+
+        }
+    }
+
+    @Click
     void btn_operation() {
         startActivityForResult(new Intent(this, RemarkActivity_.class), 0);
     }
@@ -57,6 +68,19 @@ public class PersonalCenterActivity extends AppCompatActivity {
     void init() {
         txt_title.setText("个人主页");
         getUserDeetailRequest();
+    }
+
+    @Background
+    void addETFriend() {
+        boolean b = HttpHelper_.getInstance_(this).addETFriend(AccountManager.getInstance().getUserId(), uid, AccountManager.getInstance().getNickName());
+        if (b) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(PersonalCenterActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Background
@@ -93,6 +117,12 @@ public class PersonalCenterActivity extends AppCompatActivity {
                 } else {
                     txt_verify2.setVisibility(View.GONE);
                 }
+                if ("0".equals(mData.isFriend)) {//不是好友
+                    btn_send.setText("添加好友");
+                } else {
+                    btn_send.setText("发消息");
+                }
+
             }
         });
     }

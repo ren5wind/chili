@@ -24,9 +24,9 @@ public class CloneUtil {
             ObjectInputStream in = new ObjectInputStream(byteIn);
             dest = (List<T>) in.readObject();
         } catch (IOException e) {
-
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
-
+            e.printStackTrace();
         }
         return dest;
     }

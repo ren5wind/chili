@@ -3,6 +3,7 @@ package com.topunion.chili.net.request_interface;
 import com.topunion.chili.net.response_model.BaseListResponse;
 import com.topunion.chili.net.response_model.ResponseData;
 
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
@@ -104,7 +105,7 @@ public class GetFriends {
 
     public static class GetFriendsResponse extends BaseListResponse{
         public List<Friend> result;
-        public static class Friend {
+        public static class Friend implements Serializable {
             public String friendId;
             public String headImg;
             public String inCorp;

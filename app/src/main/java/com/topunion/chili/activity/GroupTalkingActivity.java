@@ -22,9 +22,13 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
 import com.topunion.chili.business.ImInfoManager;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetETMemberDetails;
+import com.topunion.chili.net.request_interface.GetGroupDetails;
 import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -42,6 +46,7 @@ import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
+import cn.jpush.im.android.api.options.MessageSendingOptions;
 
 @EActivity(R.layout.activity_talking)
 public class GroupTalkingActivity extends AppCompatActivity {
@@ -67,7 +72,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
     private boolean mIsSingle = true;
     private Conversation mConv;
     int mOffset = 1000;
-
+    MessageSendingOptions options;
     @Click
     void btn_back() {
         this.finish();
@@ -88,7 +93,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
         adapter.addDataToAdapter(new MsgInfo(null, msg));
         adapter.notifyDataSetChanged();
         mListView.setSelection(mListView.getBottom());
-        JMessageClient.sendMessage(msg);
+        JMessageClient.sendMessage(msg, options);
     }
 
     private ListViewAdapter adapter;
@@ -100,6 +105,9 @@ public class GroupTalkingActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
+        options = new MessageSendingOptions();
+        options.setRetainOffline(true);//是否当对方用户不在线时让后台服务区保存这条消息的离线消息
+        options.setShowNotification(true);//是否让对方展示sdk默认的通知栏通知
         if (!TextUtils.isEmpty(targetId)) {
             //单聊
             mIsSingle = true;
@@ -118,9 +126,9 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 mConv = Conversation.createGroupConversation(groupId);
             }
         }
-
+        adapter = new ListViewAdapter(this);
         //获取消息列表
-        List<Message> messageList = mConv.getMessagesFromNewest(0, mOffset);
+        List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
         int size = messageList.size();
         for (int i = 0; i < size; i++) {
             Message message = messageList.get(i);
@@ -128,9 +136,9 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
                         : TYPE_RECEIVE_TXT;
                 if (direct == TYPE_SEND_TXT) {//发送方
-                    adapter.addDataToAdapter(new MsgInfo(message, null));
-                } else if (direct == TYPE_RECEIVE_TXT) {//接收方
                     adapter.addDataToAdapter(new MsgInfo(null, message));
+                } else if (direct == TYPE_RECEIVE_TXT) {//接收方
+                    adapter.addDataToAdapter(new MsgInfo(message, null));
                 }
             }
         }
@@ -138,7 +146,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
         txt_title.setText(title);
         btn_operation.setVisibility(View.VISIBLE);
         btn_operation.setImageResource(R.mipmap.more);
-        adapter = new ListViewAdapter(this);
+
         mListView.setAdapter(adapter);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -170,7 +178,35 @@ public class GroupTalkingActivity extends AppCompatActivity {
             this.right_msg = right_msg;
         }
     }
+    @Background
+    void getGroup(GroupInfo groupInfo, final TextView txt_name) {
+        final GetGroupDetails.GetGroupDetailsResponse response =
+                HttpHelper_.getInstance_(this).getGroupDetails((int) groupInfo.getGroupID());
+        if (response.data == null) {
+            return;
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txt_name.setText(response.data.name);
+            }
+        });
+    }
 
+    @Background
+    void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
+        final GetETMemberDetails.GetETMemberDetailsResponse response =
+                HttpHelper_.getInstance_(this).getETMemberDetails(userInfo.getUserName());
+        if (response != null && response.data != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    img_header.setImageURI(response.data.headImg);
+                    txt_name.setText(response.data.corpName);
+                }
+            });
+        }
+    }
     public class ListViewAdapter extends BaseAdapter {
 
         private Context context;
@@ -237,18 +273,20 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 viewHolder.right.setVisibility(View.VISIBLE);
                 viewHolder.left.setVisibility(View.GONE);
                 viewHolder.middle.setVisibility(View.GONE);
-                viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, left.getCreateTime()));
-                viewHolder.img_header_other.setImageURI(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).headImg);
-                viewHolder.tv_name_other.setText(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).nickname);
-
+                viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, right.getCreateTime()));
+//                viewHolder.img_header_other.setImageURI(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).headImg);
+//                viewHolder.tv_name_other.setText(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).nickname);
+                getETMember(right.getFromUser(), viewHolder.img_header, viewHolder.tv_name);
             } else if (left != null) {
                 viewHolder.text_left.setText(((TextContent) left.getContent()).getText());
                 viewHolder.left.setVisibility(View.VISIBLE);
                 viewHolder.right.setVisibility(View.GONE);
                 viewHolder.middle.setVisibility(View.GONE);
-                viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, right.getCreateTime()));
-                viewHolder.img_header.setImageURI(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).headImg);
-                viewHolder.tv_name.setText(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).nickname);
+                viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, left.getCreateTime()));
+//                viewHolder.img_header.setImageURI(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).headImg);
+//                viewHolder.tv_name.setText(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).nickname);
+                getETMember(left.getFromUser(), viewHolder.img_header_other, viewHolder.tv_name_other);
+
             }
 //            else {
 //                viewHolder.left.setVisibility(View.GONE);
@@ -286,6 +324,10 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 this.middle = (LinearLayout) rootView.findViewById(R.id.layout_info);
                 this.text_time = (TextView) rootView.findViewById(R.id.txt_time);
                 this.text_info = (TextView) rootView.findViewById(R.id.txt_info);
+                this.img_header_other = (SimpleDraweeView) rootView.findViewById(R.id.img_header_other);
+                this.img_header = (SimpleDraweeView) rootView.findViewById(R.id.img_header);
+                this.tv_name_other = (TextView) rootView.findViewById(R.id.tv_name_other);
+                this.tv_name = (TextView) rootView.findViewById(R.id.tv_name);
             }
 
         }

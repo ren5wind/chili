@@ -71,7 +71,7 @@ public class GetETMemberDetails {
 
     public interface IGetETMemberDetails {
         @GET("user/api/getUserInfo.do")
-        Call<GetETMemberDetails.GetETMemberDetailsResponse> getETMemberDetails(@Query("userId") int userId);
+        Call<GetETMemberDetails.GetETMemberDetailsResponse> getETMemberDetails(@Query("userId") String userId);
     }
 
     public static class GetETMemberDetailsResponse {

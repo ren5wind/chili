@@ -10,7 +10,7 @@ public class AccountBean extends BaseData {
     private String userId;
     private String token;
     private String mobile;
-    private String username;
+    private String nickName;
 
     public String getUid() {
         return userId;
@@ -34,6 +34,14 @@ public class AccountBean extends BaseData {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     @Override

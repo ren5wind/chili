@@ -39,7 +39,7 @@
     </RelativeLayout>
     <Button
         android:id="@+id/btn_cancel"
-        android:text="取消"
+        android:text="搜索"
         android:textSize="12sp"
         android:textColor="#666666"
         android:background="@android:color/transparent"

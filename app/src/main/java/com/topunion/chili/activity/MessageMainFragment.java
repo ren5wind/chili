@@ -2,14 +2,9 @@ package com.topunion.chili.activity;
 
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.annotation.MainThread;
 import android.support.v4.app.Fragment;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,14 +45,11 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import cn.jpush.im.android.api.JMessageClient;
-import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback;
 import cn.jpush.im.android.api.content.CustomContent;
 import cn.jpush.im.android.api.content.MessageContent;
 import cn.jpush.im.android.api.content.TextContent;
@@ -102,6 +94,8 @@ public class MessageMainFragment extends Fragment {
     void btn_add_friend() {
         popMenu.setVisibility(View.GONE);
         //TODO
+        startActivity(new Intent(getActivity(), SearchFromManualActivity_.class));
+        SearchFromManualActivity_.intent(getActivity()).viewType(SearchFromManualActivity_.TYPE_SEARCH).start();
     }
 
     @Click
@@ -279,14 +273,20 @@ public class MessageMainFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                switch (i) {
-                    case 0:
-                        startActivity(new Intent(getActivity(), NotificationActivity_.class));
-                        break;
-                    default:
-                        startActivity(new Intent(getContext(), TalkingActivity_.class));
-                        break;
+//                switch (i) {
+//                    case 0:
+//                        startActivity(new Intent(getActivity(), NotificationActivity_.class));
+//                        break;
+//                    default:
+//                startActivity(new Intent(getContext(), GroupTalkingActivity_.class));
+
+                String tagerId = "";
+                if (msgAdapter.getItem(i).getTargetInfo() instanceof UserInfo) {
+                    tagerId = ((UserInfo) msgAdapter.getItem(i).getTargetInfo()).getUserName();
+                    GroupTalkingActivity_.intent(getActivity()).targetId(tagerId).start();
                 }
+//                        break;
+//                }
             }
         });
         contact_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -320,6 +320,36 @@ public class MessageMainFragment extends Fragment {
         initCorps();
         getGroup();
         getFriend();
+    }
+
+    @Background
+    void getGroup(GroupInfo groupInfo, final TextView txt_name) {
+        final GetGroupDetails.GetGroupDetailsResponse response =
+                HttpHelper_.getInstance_(getActivity()).getGroupDetails((int) groupInfo.getGroupID());
+        if (response.data == null) {
+            return;
+        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txt_name.setText(response.data.name);
+            }
+        });
+    }
+
+    @Background
+    void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
+        final GetETMemberDetails.GetETMemberDetailsResponse response =
+                HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userInfo.getUserName());
+        if (response != null && response.data != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    img_header.setImageURI(response.data.headImg);
+                    txt_name.setText(response.data.corpName);
+                }
+            });
+        }
     }
 
     class MsgAdapter extends BaseAdapter {
@@ -430,23 +460,16 @@ public class MessageMainFragment extends Fragment {
                 holder.txt_msg.setText("");
             }
 
-
             if (data.getType().equals(ConversationType.single)) {//单聊头像
-                holder.txt_name.setText(data.getTitle());
                 UserInfo userInfo = (UserInfo) data.getTargetInfo();
-                GetETMemberDetails.GetETMemberDetailsResponse response =
-                        HttpHelper_.getInstance_(getActivity()).getETMemberDetails((int) userInfo.getUserID());
-                if (response != null && response.data != null) {
-                    holder.img_header.setImageURI(response.data.headImg);
-                }
+                getETMember(userInfo, holder.img_header, holder.txt_name);
             } else {//群聊头像
                 GroupInfo groupInfo = (GroupInfo) data.getTargetInfo();
-                GetGroupDetails.GetGroupDetailsResponse response =
-                        HttpHelper_.getInstance_(getActivity()).getGroupDetails((int) groupInfo.getGroupID());
-                holder.txt_name.setText(data.getTitle());
+                getGroup(groupInfo, holder.txt_name);
             }
             return view;
         }
+
 
         @Override
         public long getItemId(int i) {

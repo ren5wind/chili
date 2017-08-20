@@ -26,6 +26,8 @@ public class MyApplication extends Application {
 
     private String myUserId;
 
+    private String nickName;
+
     public synchronized static MyApplication getInstance() {
         if (null == baseApplication) {
             baseApplication = new MyApplication();
@@ -57,10 +59,16 @@ public class MyApplication extends Application {
         if (StringUtil.isEmpt(token)) {
             token = SPUtil.getSharedStringData(MyApplication.getAppContext(), AccountManager.KEY_SP_ACCOUNT_TOKEN);
         }
-//        if (TextUtils.isEmpty(token)) {
-//            token = "7f3c694ccea6c31373b1391095f7762a";
-//        }
         return token;
+    }
+
+    public String getNickName() {
+        nickName = SPUtil.getSharedStringData(MyApplication.getAppContext(), AccountManager.KEY_SP_ACCOUNT_NICKNAME);
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public void setToken(String token) {

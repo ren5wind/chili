@@ -13,6 +13,7 @@ import com.topunion.chili.util.SPUtil;
 public class AccountManager {
     public static final String KEY_SP_ACCOUNT_TOKEN = "key_sp_account_token";
     public static final String KEY_SP_ACCOUNT_USERID = "key_sp_account_userId";
+    public static final String KEY_SP_ACCOUNT_NICKNAME = "key_sp_account_nickname";
     private static AccountManager instance;
     private final static Object syncLock = new Object();
 
@@ -26,25 +27,33 @@ public class AccountManager {
         }
         return instance;
     }
+
     public void saveAccount(AccountBean accountBean) {
         if (accountBean == null) {
             return;
         }
         SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_TOKEN, accountBean.getToken());
         SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_USERID, accountBean.getUid());
+        SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_NICKNAME, accountBean.getUid());
         MyApplication_.getInstance().setToken(accountBean.getToken());
         MyApplication_.getInstance().setMyUserId(accountBean.getUid());
+        MyApplication_.getInstance().setNickName(accountBean.getNickName());
     }
 
     public AccountBean getAccount() {
         AccountBean accountBean = new AccountBean();
         accountBean.setUid(MyApplication_.getInstance().getMyUserId());
         accountBean.setToken(MyApplication_.getInstance().getToken());
+        accountBean.setToken(MyApplication_.getInstance().getNickName());
         return accountBean;
     }
 
     public String getToken() {
         return MyApplication_.getInstance().getToken();
+    }
+
+    public String getNickName() {
+        return MyApplication_.getInstance().getNickName();
     }
 
     public String getUserId() {

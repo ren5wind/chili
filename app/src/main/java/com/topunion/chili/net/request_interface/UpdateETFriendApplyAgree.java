@@ -42,7 +42,7 @@ public class UpdateETFriendApplyAgree {
     public interface IUpdateETFriendApplyAgree {
         @Headers({"Content-Type: application/json", "Accept:  application/json"})
         @POST("app/contacts/friendApply/updateFriendApplyAgree")
-        Call<BaseStateResponse> updateETFriendApplyAgree(@Query("id") int id);
+        Call<BaseStateResponse> updateETFriendApplyAgree(@Query("id") String id);
     }
 
 }

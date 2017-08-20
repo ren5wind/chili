@@ -38,6 +38,9 @@ public class ImInfoManager {
     }
 
     public void addFriendList(final List<GetFriends.GetFriendsResponse.Friend> list) {
+        if(list == null){
+            return;
+        }
         List<GetFriends.GetFriendsResponse.Friend> newList = CloneUtil.deepCopyList(list);
         for (int i = 0; i < newList.size(); i++) {
             GetFriends.GetFriendsResponse.Friend friend = newList.get(i);
@@ -63,6 +66,9 @@ public class ImInfoManager {
     }
 
     public void addGroupList(final List<GetGroups.GetGroupsResponse.Group> list) {
+        if(list == null){
+            return;
+        }
         List<GetGroups.GetGroupsResponse.Group> newList = CloneUtil.deepCopyList(list);
         for (int i = 0; i < newList.size(); i++) {
             GetGroups.GetGroupsResponse.Group group = newList.get(i);

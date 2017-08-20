@@ -226,7 +226,7 @@ public class HttpHelper {
         }
     }
 
-    public GetETMemberDetails.GetETMemberDetailsResponse getETMemberDetails(int userId) {
+    public GetETMemberDetails.GetETMemberDetailsResponse getETMemberDetails(String userId) {
         try {
             GetETMemberDetails.IGetETMemberDetails request = retrofit.create(GetETMemberDetails.IGetETMemberDetails.class);
             Call<GetETMemberDetails.GetETMemberDetailsResponse> call = request.getETMemberDetails(userId);
@@ -406,7 +406,7 @@ public class HttpHelper {
         }
     }
 
-    public boolean updateETFriendApplyAgree(int id) {
+    public boolean updateETFriendApplyAgree(String id) {
         try {
             UpdateETFriendApplyAgree.IUpdateETFriendApplyAgree request = retrofit.create(
                     UpdateETFriendApplyAgree.IUpdateETFriendApplyAgree.class);

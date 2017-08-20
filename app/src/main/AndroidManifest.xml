@@ -134,6 +134,11 @@
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".activity.NewFriendsActivity_"
+            android:label="@string/title_activity_remark"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
 
     </application>
