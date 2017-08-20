@@ -190,9 +190,9 @@ public class FriendsActivity extends Activity {
         for (int i = 0; i < data.size(); i++) {
             SortModel sortModel = new SortModel();
             sortModel.setName(data.get(i).nickname);
-            sortModel.setId(data.get(i).userId);
+            sortModel.setId(data.get(i).friendId);
             sortModel.setIconUrl(data.get(i).headImg);
-            sortModel.setImName(data.get(i).userId);
+            sortModel.setImName(data.get(i).friendId);
             String pinyin = characterParser.getSelling(data.get(i).nickname);
             String sortString = pinyin.substring(0, 1).toUpperCase();
 

@@ -102,12 +102,12 @@ public class SearchFromFriendsActivity extends AppCompatActivity {
                 if (viewHolder.img_choose.getVisibility() == View.GONE) {
                     viewHolder.img_choose.setVisibility(View.VISIBLE);
                     Employee employee = new Employee();
-                    employee.setId(myAdapter.getItem(i).userId);
+                    employee.setId(myAdapter.getItem(i).friendId);
                     employee.setName(myAdapter.getItem(i).nickname);
                     chooseEmployee.add(employee);
                 } else if (viewHolder.img_choose.getVisibility() == View.VISIBLE) {
                     viewHolder.img_choose.setVisibility(View.GONE);
-                    chooseEmployee.remove(myAdapter.getItem(i).userId);
+                    chooseEmployee.remove(myAdapter.getItem(i).friendId);
                 }
             }
         });

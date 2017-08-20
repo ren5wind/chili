@@ -1,7 +1,6 @@
 package com.topunion.chili.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
-import com.topunion.chili.business.ImInfoManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetETMemberDetails;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
@@ -73,6 +71,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
     private Conversation mConv;
     int mOffset = 1000;
     MessageSendingOptions options;
+
     @Click
     void btn_back() {
         this.finish();
@@ -178,6 +177,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
             this.right_msg = right_msg;
         }
     }
+
     @Background
     void getGroup(GroupInfo groupInfo, final TextView txt_name) {
         final GetGroupDetails.GetGroupDetailsResponse response =
@@ -202,11 +202,12 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     img_header.setImageURI(response.data.headImg);
-                    txt_name.setText(response.data.corpName);
+                    txt_name.setText(response.data.logicNickname);
                 }
             });
         }
     }
+
     public class ListViewAdapter extends BaseAdapter {
 
         private Context context;
@@ -229,7 +230,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int position) {
+        public MsgInfo getItem(int position) {
             return datas.get(position);
         }
 
@@ -239,19 +240,12 @@ public class GroupTalkingActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             if (convertView == null) {
 
                 LayoutInflater inflater = LayoutInflater.from(context);
                 convertView = inflater.inflate(R.layout.message_item, null);
-                convertView.findViewById(R.id.img_header_other).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startActivity(new Intent(GroupTalkingActivity.this, PersonalCenterActivity_.class));
-//                        PersonalCenterActivity_.intent(GroupTalkingActivity.this).uid().start();
-                    }
-                });
                 viewHolder = new ViewHolder(convertView);
                 convertView.setTag(viewHolder);
 
@@ -277,6 +271,16 @@ public class GroupTalkingActivity extends AppCompatActivity {
 //                viewHolder.img_header_other.setImageURI(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).headImg);
 //                viewHolder.tv_name_other.setText(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).nickname);
                 getETMember(right.getFromUser(), viewHolder.img_header, viewHolder.tv_name);
+                viewHolder.img_header.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UserInfo userInfo = null;
+                        Message message = null;
+                        message = getItem(position).right_msg;
+                        userInfo = message.getFromUser();
+                        PersonalCenterActivity_.intent(GroupTalkingActivity.this).uid(userInfo.getUserName()).start();
+                    }
+                });
             } else if (left != null) {
                 viewHolder.text_left.setText(((TextContent) left.getContent()).getText());
                 viewHolder.left.setVisibility(View.VISIBLE);
@@ -286,7 +290,16 @@ public class GroupTalkingActivity extends AppCompatActivity {
 //                viewHolder.img_header.setImageURI(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).headImg);
 //                viewHolder.tv_name.setText(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).nickname);
                 getETMember(left.getFromUser(), viewHolder.img_header_other, viewHolder.tv_name_other);
-
+                viewHolder.img_header_other.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UserInfo userInfo = null;
+                        Message message = null;
+                        message = getItem(position).left_msg;
+                        userInfo = message.getFromUser();
+                        PersonalCenterActivity_.intent(GroupTalkingActivity.this).uid(userInfo.getUserName()).start();
+                    }
+                });
             }
 //            else {
 //                viewHolder.left.setVisibility(View.GONE);
