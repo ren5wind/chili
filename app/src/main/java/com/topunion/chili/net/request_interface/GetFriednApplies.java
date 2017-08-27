@@ -105,12 +105,13 @@ public class GetFriednApplies {
 
     public interface IGetFriednApplies {
         @GET("app/contacts/friendApply/getFriendApplies")
-        Call<GetFriednApplies.GetFriednAppliesResponse> getFriednApplies(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize);
+        Call<GetFriednApplies.GetFriednAppliesResponse> getFriednApplies(@Query("acceptor") String acceptor, @Query("pageNo") int pageNo, @Query("pageSize") int pageSize);
     }
 
     public static class GetFriednAppliesResponse extends BaseListResponse {
         public Data data;
         public int state;
+
         public static class Data extends BaseListResponse {
             public List<Apply> result;
 

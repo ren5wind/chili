@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
-import com.topunion.chili.business.ImInfoManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetETMemberDetails;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
@@ -71,8 +70,11 @@ public class GroupTalkingActivity extends AppCompatActivity {
 
     private boolean mIsSingle = true;
     private Conversation mConv;
+    private Conversation mSendConv;
+
     int mOffset = 1000;
     MessageSendingOptions options;
+
     @Click
     void btn_back() {
         this.finish();
@@ -119,10 +121,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
             //群聊
             mIsSingle = false;
             mConv = JMessageClient.getGroupConversation(groupId);
-            if (mConv != null) {
-                GroupInfo groupInfo = (GroupInfo) mConv.getTargetInfo();
-//                UserInfo userInfo = groupInfo.getGroupMemberInfo(mMyInfo.getUserName());
-            } else {
+            if (mConv == null) {
                 mConv = Conversation.createGroupConversation(groupId);
             }
         }
@@ -144,8 +143,11 @@ public class GroupTalkingActivity extends AppCompatActivity {
         }
 
         txt_title.setText(title);
-        btn_operation.setVisibility(View.VISIBLE);
-        btn_operation.setImageResource(R.mipmap.more);
+        if (!mIsSingle) {
+            btn_operation.setVisibility(View.VISIBLE);
+            btn_operation.setImageResource(R.mipmap.more);
+        }
+
 
         mListView.setAdapter(adapter);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -167,6 +169,8 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
     }
 
     class MsgInfo {
@@ -178,6 +182,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
             this.right_msg = right_msg;
         }
     }
+
     @Background
     void getGroup(GroupInfo groupInfo, final TextView txt_name) {
         final GetGroupDetails.GetGroupDetailsResponse response =
@@ -202,11 +207,12 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     img_header.setImageURI(response.data.headImg);
-                    txt_name.setText(response.data.corpName);
+                    txt_name.setText(response.data.logicNickname);
                 }
             });
         }
     }
+
     public class ListViewAdapter extends BaseAdapter {
 
         private Context context;

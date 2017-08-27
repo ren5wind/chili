@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/normal_title_layout" />
+
+    <RelativeLayout
+        android:id="@+id/layout_group"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_below="@+id/layout_info"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/white"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="#666666">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="所在组织"
+            android:textColor="#666666"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txt_department"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:drawableRight="@mipmap/message_youjiao"
+            android:textColor="#999999"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_position"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_below="@+id/layout_group"
+        android:layout_marginTop="1dp"
+        android:background="@android:color/white"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="#666666">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="角色分配"
+            android:textColor="#666666"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txt_position_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:drawableRight="@mipmap/message_youjiao"
+            android:textColor="#999999"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/white" />
+</LinearLayout>

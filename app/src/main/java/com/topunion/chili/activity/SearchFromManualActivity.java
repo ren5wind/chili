@@ -1,5 +1,6 @@
 package com.topunion.chili.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.data.Company;
+import com.topunion.chili.data.Employee;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetUsers;
 
@@ -22,6 +25,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_search_from_manual)
@@ -38,9 +43,12 @@ public class SearchFromManualActivity extends AppCompatActivity {
     EditText mSearchInput;
 
     private MyAdapter mAdapter;
-
+    @Extra
+    Company company;
+    @Extra
+    String deparmentId;
     private List<GetUsers.GetUsersResponse.Data.User> mDataList;
-
+    private List<Employee> chooseEmployee;
     @Click
     void btn_cancel() {
         search();
@@ -48,13 +56,22 @@ public class SearchFromManualActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
+        chooseEmployee = new ArrayList<>();
         mAdapter = new MyAdapter();
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (viewType == TYPE_NORMAL) {
-                    setResult(i);
+                    Intent intent = new Intent(SearchFromManualActivity.this, CompanyManageAddEmployessActivity_.class);
+                    Employee employee = new Employee();
+                    employee.setId(mAdapter.getItem(i).cId);
+                    employee.setName(mAdapter.getItem(i).logicNickname);
+                    chooseEmployee.add(employee);
+                    intent.putExtra("employees", (Serializable) chooseEmployee);
+                    intent.putExtra("company", company);
+                    intent.putExtra("deparmentId", deparmentId);
+                    startActivity(intent);
                     finish();
                 } else if (viewType == TYPE_SEARCH) {
                     PersonalCenterActivity_.intent(SearchFromManualActivity.this).

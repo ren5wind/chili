@@ -72,7 +72,7 @@ public class PersonalCenterActivity extends AppCompatActivity {
 
     @Background
     void addETFriend() {
-        boolean b = HttpHelper_.getInstance_(this).addETFriend(AccountManager.getInstance().getUserId(), uid, AccountManager.getInstance().getNickName());
+        boolean b = HttpHelper_.getInstance_(this).addETFriend(AccountManager.getInstance().getUserId(), uid, mData.logicNickname);
         if (b) {
             runOnUiThread(new Runnable() {
                 @Override

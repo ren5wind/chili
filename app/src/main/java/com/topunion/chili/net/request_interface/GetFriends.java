@@ -110,9 +110,9 @@ public class GetFriends {
             public String headImg;
             public String inCorp;
             public String nickname;
-            public String id;
+//            public String id;
             public String inGroup;
-            public String userId;
+//            public String userId;
         }
     }
 

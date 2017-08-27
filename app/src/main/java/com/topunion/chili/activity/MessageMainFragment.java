@@ -45,6 +45,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -94,14 +95,16 @@ public class MessageMainFragment extends Fragment {
     void btn_add_friend() {
         popMenu.setVisibility(View.GONE);
         //TODO
-        startActivity(new Intent(getActivity(), SearchFromManualActivity_.class));
         SearchFromManualActivity_.intent(getActivity()).viewType(SearchFromManualActivity_.TYPE_SEARCH).start();
     }
 
     @Click
     void btn_create_group() {
         popMenu.setVisibility(View.GONE);
-        //TODO
+        ChoosePersonActivity_.intent(this)
+                .choose(new int[]{0, 0, 0, 0, 0, 0, 0})
+                .data(new String[]{"张三", "李四", "王五", "赵六", "田七", "猴八", "牛二"})
+                .title("选择联系人").startForResult(0);
     }
 
     @Click
@@ -272,21 +275,13 @@ public class MessageMainFragment extends Fragment {
         msg_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-//                switch (i) {
-//                    case 0:
-//                        startActivity(new Intent(getActivity(), NotificationActivity_.class));
-//                        break;
-//                    default:
-//                startActivity(new Intent(getContext(), GroupTalkingActivity_.class));
-
-                String tagerId = "";
                 if (msgAdapter.getItem(i).getTargetInfo() instanceof UserInfo) {
-                    tagerId = ((UserInfo) msgAdapter.getItem(i).getTargetInfo()).getUserName();
+                    String tagerId = ((UserInfo) msgAdapter.getItem(i).getTargetInfo()).getUserName();
                     GroupTalkingActivity_.intent(getActivity()).targetId(tagerId).start();
+                } else {
+                    long groupId = ((GroupInfo) msgAdapter.getItem(i).getTargetInfo()).getGroupID();
+                    GroupTalkingActivity_.intent(getActivity()).groupId(groupId).start();
                 }
-//                        break;
-//                }
             }
         });
         contact_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -318,8 +313,8 @@ public class MessageMainFragment extends Fragment {
         contactAdapter.setData(dataList);
 
         initCorps();
-        getGroup();
-        getFriend();
+//        getGroup();
+//        getFriend();
     }
 
     @Background

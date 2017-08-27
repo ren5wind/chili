@@ -35,10 +35,12 @@ import com.topunion.chili.net.response_model.BaseStateResponse;
 import com.topunion.chili.net.response_model.ResponseData;
 
 import org.androidannotations.annotations.EBean;
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -52,9 +54,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HttpHelper {
     public static final String DEBUG_SERVER = "http://tmit.f3322.net:2051/chili-2.0/";
     public static final int PAGE_COUNT = 20;
+
+    public OkHttpClient.Builder builder = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor());
+
     public Retrofit retrofit = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(HttpHelper.DEBUG_SERVER)
+            .client(builder.build())
             .build();
 
     public AddCorpDept.AddCorpDeptResponse addCorpDept(int corpId, String name, String description) {
@@ -73,7 +79,14 @@ public class HttpHelper {
                                  int corpDeptId, String role) {
         try {
             AddDeptMember.IAddDeptMember request = retrofit.create(AddDeptMember.IAddDeptMember.class);
-            Call<BaseStateResponse> call = request.addDeptMember(corpId, userIds, corpDeptId, role);
+
+            String[] userArr = new String[userIds.size()];
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 0; i < userIds.size(); i++) {
+                jsonArray.put(userIds.get(i));
+            }
+
+            Call<BaseStateResponse> call = request.addDeptMember(corpId, jsonArray, corpDeptId, role);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {
@@ -238,10 +251,10 @@ public class HttpHelper {
         }
     }
 
-    public GetFriednApplies.GetFriednAppliesResponse getFriednApplies(int pageNo, int pageSize) {
+    public GetFriednApplies.GetFriednAppliesResponse getFriednApplies(String acceptor, int pageNo, int pageSize) {
         try {
             GetFriednApplies.IGetFriednApplies request = retrofit.create(GetFriednApplies.IGetFriednApplies.class);
-            Call<GetFriednApplies.GetFriednAppliesResponse> call = request.getFriednApplies(pageNo, pageSize);
+            Call<GetFriednApplies.GetFriednAppliesResponse> call = request.getFriednApplies(acceptor, pageNo, pageSize);
             Response<GetFriednApplies.GetFriednAppliesResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
@@ -301,9 +314,9 @@ public class HttpHelper {
     public GetGroups.GetGroupsResponse getGroups(int pageNo, int pageSize, String acceptorId) {
         try {
             GetGroups.IGetGroups request = retrofit.create(GetGroups.IGetGroups.class);
-            Call<GetGroups.GetGroupsResponse> call = request.getGroups(pageNo, pageSize, acceptorId);
-            Response<GetGroups.GetGroupsResponse> result = call.execute();
-            return result.body();
+            Call<ResponseData<GetGroups.GetGroupsResponse>> call = request.getGroups(pageNo, pageSize, acceptorId);
+            Response<ResponseData<GetGroups.GetGroupsResponse>> result = call.execute();
+            return result.body().data;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

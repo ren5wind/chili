@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetFriednApplies;
 
@@ -68,7 +69,7 @@ public class NewFriendsActivity extends Activity {
 
     @Background
     void dataRequest() {
-        GetFriednApplies.GetFriednAppliesResponse friends = HttpHelper_.getInstance_(this).getFriednApplies(1, 100);
+        GetFriednApplies.GetFriednAppliesResponse friends = HttpHelper_.getInstance_(this).getFriednApplies(AccountManager.getInstance().getUserId(), 1, 100);
         mDataList = friends.data.result;
         updateAdapter();
     }

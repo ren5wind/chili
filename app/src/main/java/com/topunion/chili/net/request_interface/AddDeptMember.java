@@ -2,11 +2,10 @@ package com.topunion.chili.net.request_interface;
 
 import com.topunion.chili.net.response_model.BaseStateResponse;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import org.json.JSONArray;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -25,7 +24,7 @@ import retrofit2.http.Query;
  * 参数说明
  * 参数名	必选	类型及范围	说明
  * corpId	true	Integer	企业Id
- * userIds	true	List	用户Id列表
+ * userIds	true	jsonArr	用户Id列表
  * corpDeptId	true	Integer	部门Id
  * role	true	String	角色
  * <p>
@@ -44,7 +43,7 @@ public class AddDeptMember {
     public interface IAddDeptMember {
         @Headers({"Content-Type: application/json", "Accept:  application/json"})
         @POST("app/corp/corpUser/insertCorpUser")
-        Call<BaseStateResponse> addDeptMember(@Query("corpId") int corpId, @Query("userIds") List<String> userIds,
+        Call<BaseStateResponse> addDeptMember(@Query("corpId") int corpId, @Query("userIds") JSONArray userIds,
                                               @Query("corpDeptId") int corpDeptId, @Query("role") String role);
 
 

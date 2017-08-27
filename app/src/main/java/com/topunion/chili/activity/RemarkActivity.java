@@ -29,9 +29,6 @@ public class RemarkActivity extends AppCompatActivity {
     String uid;
 
     @ViewById
-    Button btn_confirm;
-
-    @ViewById
     TextView txt_title;
 
     @ViewById
@@ -88,8 +85,6 @@ public class RemarkActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
-        btn_confirm.setVisibility(View.VISIBLE);
-
         txt_title.setText("资料设置");
         mEditText.setText(logicNickname);
     }

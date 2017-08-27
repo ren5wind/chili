@@ -44,7 +44,7 @@ public class ImInfoManager {
         List<GetFriends.GetFriendsResponse.Friend> newList = CloneUtil.deepCopyList(list);
         for (int i = 0; i < newList.size(); i++) {
             GetFriends.GetFriendsResponse.Friend friend = newList.get(i);
-            int id = Integer.valueOf(friend.id);
+            int id = Integer.valueOf(friend.friendId);
             synchronized (syncLock) {
                 friendList.put(id, friend);
             }

@@ -1,6 +1,7 @@
 package com.topunion.chili.net.request_interface;
 
 import com.topunion.chili.net.response_model.BaseListResponse;
+import com.topunion.chili.net.response_model.ResponseData;
 
 import java.io.Serializable;
 import java.util.List;
@@ -74,8 +75,8 @@ public class GetGroups {
 
     public interface IGetGroups {
         @GET("app/contacts/groupFriends/getGroupsByAcceptor")
-        Call<GetGroups.GetGroupsResponse> getGroups(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize,
-                                                    @Query("acceptor") String acceptor);
+        Call<ResponseData<GetGroupsResponse>> getGroups(@Query("pageNo") int pageNo, @Query("pageSize") int pageSize,
+                                                        @Query("acceptor") String acceptor);
     }
 
     public static class GetGroupsResponse extends BaseListResponse {

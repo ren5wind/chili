@@ -94,12 +94,12 @@ public class GroupListActivity extends AppCompatActivity {
         if (groups == null) {
             return;
         }
-        //test data
-        GetGroups.GetGroupsResponse.Group group = new GetGroups.GetGroupsResponse.Group();
-        group.count = "20";
-        group.name = "测试";
-        groups.result = new ArrayList<>();
-        groups.result.add(group);
+//        //test data
+//        GetGroups.GetGroupsResponse.Group group = new GetGroups.GetGroupsResponse.Group();
+//        group.count = "20";
+//        group.name = "测试";
+//        groups.result = new ArrayList<>();
+//        groups.result.add(group);
         mDataList = groups.result;
         updateAdapter();
     }

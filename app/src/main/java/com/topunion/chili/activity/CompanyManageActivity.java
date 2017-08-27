@@ -1,10 +1,7 @@
 package com.topunion.chili.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.IntDef;
-import android.support.annotation.MainThread;
-import android.support.annotation.UiThread;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -26,7 +23,9 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.base.RxBus;
 import com.topunion.chili.business.CompanyManager;
+import com.topunion.chili.data.AddEmployess;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
 import com.topunion.chili.data.Employee;
@@ -36,13 +35,17 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 @EActivity(R.layout.activity_manage_company)
 public class CompanyManageActivity extends AppCompatActivity {
@@ -79,16 +82,16 @@ public class CompanyManageActivity extends AppCompatActivity {
         SearchFromManualActivity_.intent(this).startForResult(0);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        String companyId = data.getStringExtra("companyId");
-        String deparmentId = data.getStringExtra("deparmentId");
-        String role = data.getStringExtra("role");
-        List<Employee> employees = (List<Employee>) data.getSerializableExtra("employees");
-        addEmployeeRequest(Integer.valueOf(companyId), employees, Integer.valueOf(deparmentId), role);
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (data == null)
+//            return;
+//        String companyId = data.getStringExtra("companyId");
+//        String deparmentId = data.getStringExtra("deparmentId");
+//        String role = data.getStringExtra("role");
+//        List<Employee> employees = (List<Employee>) data.getSerializableExtra("employees");
+//        addEmployeeRequest(Integer.valueOf(companyId), employees, Integer.valueOf(deparmentId), role);
+//    }
 
     @AfterViews
     void init() {
@@ -159,7 +162,7 @@ public class CompanyManageActivity extends AppCompatActivity {
         return itemDatas;
     }
 
-    private void showMemberAddAlert(final String companyId, final String deparmentId) {
+    private void showMemberAddAlert(final String companyId) {
         final AlertDialog alertDialog = new AlertDialog.Builder(CompanyManageActivity.this).create();
         alertDialog.setCancelable(false);
         alertDialog.show();
@@ -172,17 +175,23 @@ public class CompanyManageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.btn_from_manual:
-                        startActivity(new Intent(CompanyManageActivity.this, SearchFromManualActivity_.class));
+                        addEmployeeListener();
+                        Intent intent1 = new Intent(CompanyManageActivity.this, SearchFromManualActivity_.class);
+                        intent1.putExtra("companyId", companyId);
+                        intent1.putExtra("company", company);
+                        intent1.putExtra("viewType", SearchFromManualActivity_.TYPE_NORMAL);
+                        startActivity(intent1);
                         break;
-                    case R.id.btn_from_contact:
-                        startActivity(new Intent(CompanyManageActivity.this, SearchFromContactActivity_.class));
-                        break;
+//                    case R.id.btn_from_contact:
+//                        startActivity(new Intent(CompanyManageActivity.this, SearchFromContactActivity_.class));
+//                        break;
                     case R.id.btn_from_friedns:
 //                        startActivity(new Intent(CompanyManageActivity.this, SearchFromFriendsActivity_.class));
-
+                        addEmployeeListener();
                         Intent intent = new Intent(CompanyManageActivity.this, SearchFromFriendsActivity_.class);
                         intent.putExtra("companyId", companyId);
-                        intent.putExtra("deparmentId", deparmentId);
+                        intent.putExtra("company", company);
+
                         startActivityForResult(intent, REQUEST_CODE_GET_EMPLOYEE);
                         break;
                 }
@@ -193,6 +202,29 @@ public class CompanyManageActivity extends AppCompatActivity {
         window.findViewById(R.id.btn_from_contact).setOnClickListener(listener);
         window.findViewById(R.id.btn_from_friedns).setOnClickListener(listener);
         window.findViewById(R.id.btn_cancel).setOnClickListener(listener);
+    }
+
+    private void addEmployeeListener() {
+        //监听添加员工
+        Observable<AddEmployess> addEmployessCallBackobservable = RxBus.getInstance().register(CompanyManageAddEmployessActivity.RXBUS_ADD_EMPLOYESS);
+        addEmployessCallBackobservable.observeOn(Schedulers.io())
+                .subscribe(new Subscriber<AddEmployess>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(AddEmployess data) {
+                        RxBus.getInstance().unregister(CompanyManageAddEmployessActivity.RXBUS_ADD_EMPLOYESS);
+                        addEmployeeRequest(Integer.valueOf(data.companyId), data.employees, Integer.valueOf(data.deparmentId), data.roleId);
+                    }
+                });
     }
 
     private void showGroupAddAlert(@TYPE final int type, String title, final String companyId, final String deparmentId) {
@@ -238,18 +270,17 @@ public class CompanyManageActivity extends AppCompatActivity {
         });
     }
 
-    @Background
     void addEmployeeRequest(int corpId, List<Employee> employees,
-                            int corpDeptId, String role) {
+                            int corpDeptId, String roleId) {
         int size = employees.size();
         List<String> userIds = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             userIds.add(employees.get(i).getId());
         }
 
-        boolean isSuccess = mCompanyManager.addEmployee(corpId, userIds, corpDeptId, role);
+        boolean isSuccess = mCompanyManager.addEmployee(corpId, userIds, corpDeptId, roleId);
         addEmployee(employees, String.valueOf(corpDeptId));
-        updateAdapter(isSuccess, "当前网络不佳，删除员工失败");
+        updateAdapter(isSuccess, "当前网络不佳，添加员工失败");
     }
 
     @Background
@@ -302,6 +333,10 @@ public class CompanyManageActivity extends AppCompatActivity {
         for (int i = 0; i < size; i++) {
             Department department = departmentList.get(i);
             if (departmentId.equals(department.getId())) {
+                for (int j = 0; j < addEmployeeList.size(); j++) {
+                    addEmployeeList.get(i).setDeptId(departmentId);
+                    addEmployeeList.get(i).setDeptName(department.getName());
+                }
                 department.getEmployeeList().addAll(addEmployeeList);
                 break;
             }
@@ -442,7 +477,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     btn_add.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            showMemberAddAlert(data.companyId, data.departmentId);
+                            showMemberAddAlert(data.companyId);
                         }
                     });
                     break;

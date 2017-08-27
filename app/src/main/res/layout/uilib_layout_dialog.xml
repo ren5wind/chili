@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/uilib_bg_dialog"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="13dp"
+        android:paddingRight="13dp">
+
+        <include layout="@layout/uilib_layout_dialog_title" />
+
+        <TextView
+            android:id="@+id/uilib_dialog_tv_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/uilib_bg_dialog_tips"
+            android:visibility="gone"
+            android:textSize="15sp" />
+
+        <CheckBox
+            android:id="@+id/uilib_dialog_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="18dp"
+            android:button="@null"
+            android:drawableLeft="@drawable/uilib_checkbox"
+            android:drawablePadding="6dp"
+            android:text="checkbox"
+            android:textColor="@color/text_hit"
+            android:textSize="12sp" />
+
+        <RelativeLayout
+            android:id="@+id/uilib_dialog_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:visibility="gone"
+            android:background="@drawable/uilib_bg_dialog_edittext">
+
+            <ImageView
+                android:id="@+id/uilib_dialog_btn_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="right"
+                android:paddingBottom="7dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="7dp"
+                android:src="@drawable/uilib_btn_delete" />
+
+            <EditText
+                android:id="@+id/uilib_dialog_et_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/uilib_dialog_btn_clear"
+                android:background="@null"
+                android:gravity="center_vertical|left"
+                android:hint="标签名称"
+                android:paddingLeft="15dp"
+                android:textColor="#333333"
+                android:textColorHint="@color/text_hit"
+                android:textSize="14dp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dip"
+        android:layout_marginTop="15dp"
+        android:background="@color/divider_line" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/uilib_dialog_btn_left"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="left"
+            android:textColor="@color/uilib_btn_text_color_gray"
+            android:textSize="15sp" />
+
+        <View
+            android:id="@+id/uilib_dialog_view_1"
+            android:layout_width="0.5dp"
+            android:layout_height="48dp"
+            android:background="@color/divider_line" />
+
+        <TextView
+            android:id="@+id/uilib_dialog_btn_mid"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="mid"
+            android:textColor="@color/uilib_btn_text_color_gray"
+            android:textSize="15sp" />
+
+        <View
+            android:id="@+id/uilib_dialog_view_2"
+            android:layout_width="0.5dp"
+            android:layout_height="48dp"
+            android:background="@color/divider_line" />
+
+        <TextView
+            android:id="@+id/uilib_dialog_btn_right"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="right"
+            android:textColor="@color/uilib_btn_text_color_gray"
+            android:textSize="15sp" />
+    </LinearLayout>
+</LinearLayout>

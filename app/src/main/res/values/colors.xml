@@ -5,4 +5,16 @@
     <color name="colorAccent">#FF4081</color>
     <color name="textGray">#c6c6c6</color>
     <color name="main">#fa8d2d</color>
+    <color name="uilib_titlebar_title_textColor">#333333</color>
+    <color name="uilib_titlebar_background_normal">#ffffff</color>
+    <color name="uilib_titlebar_bottom_background">#bbbbbb</color>
+
+    <color name="uilib_bg_dialog_list_item_pressed">#fff3f3f3</color>
+    <color name="uilib_bg_dialog_tips">#e15151</color>
+    <color name="uilib_bg_dialog_list_item_normal">#ffffff</color>
+
+    <color name="divider_line">#e6e8ea</color>
+    <color name="uilib_transparent">#00000000</color>
+    <color name="text_hit">#ff999999</color>
+
 </resources>

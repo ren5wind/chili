@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
 import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Employee;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetFriends;
@@ -49,11 +50,11 @@ public class SearchFromFriendsActivity extends AppCompatActivity {
 
     private List<Employee> chooseEmployee;
 
-    private String role;
     @Extra
     String companyId;
     @Extra
-    String deparmentId;
+    Company company;
+
 
     private List<GetFriends.GetFriendsResponse.Friend> mDataList;
     private MyAdapter myAdapter;
@@ -61,14 +62,19 @@ public class SearchFromFriendsActivity extends AppCompatActivity {
     @Click
     void btn_confirm() {
         this.finish();
-        Intent intent = new Intent(this, CompanyManageActivity_.class);
+//        Intent intent = new Intent(this, CompanyManageActivity.class);
+//        intent.putExtra("employees", (Serializable) chooseEmployee);
+//        intent.putExtra("role", role);
+//        intent.putExtra("company", company);
+//        setResult(RESULT_OK, intent);
+
+        Intent intent = new Intent(this, CompanyManageAddEmployessActivity_.class);
         intent.putExtra("employees", (Serializable) chooseEmployee);
-        intent.putExtra("role", role);
-        intent.putExtra("companyId", companyId);
-        intent.putExtra("deparmentId", deparmentId);
-        setResult(RESULT_OK, intent);
+        intent.putExtra("company", company);
+        startActivity(intent);
     }
-//    {
+
+    //    {
 //        this.finish();
 //        Intent intent = new Intent(this, CompanyManageActivity_.class);
 //        List<String> chooseEmployeeStr = new ArrayList<>();
@@ -102,12 +108,12 @@ public class SearchFromFriendsActivity extends AppCompatActivity {
                 if (viewHolder.img_choose.getVisibility() == View.GONE) {
                     viewHolder.img_choose.setVisibility(View.VISIBLE);
                     Employee employee = new Employee();
-                    employee.setId(myAdapter.getItem(i).userId);
+                    employee.setId(myAdapter.getItem(i).friendId);
                     employee.setName(myAdapter.getItem(i).nickname);
                     chooseEmployee.add(employee);
                 } else if (viewHolder.img_choose.getVisibility() == View.VISIBLE) {
                     viewHolder.img_choose.setVisibility(View.GONE);
-                    chooseEmployee.remove(myAdapter.getItem(i).userId);
+                    chooseEmployee.remove(myAdapter.getItem(i).friendId);
                 }
             }
         });
@@ -117,7 +123,7 @@ public class SearchFromFriendsActivity extends AppCompatActivity {
 
     @Background
     void GetFriends() {
-        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), 1, 20);
+        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), 1, 100);
         if (friends == null) {
             return;
         }
