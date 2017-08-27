@@ -1,7 +1,6 @@
 package com.topunion.chili.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -37,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jpush.im.android.api.JMessageClient;
-import cn.jpush.im.android.api.callback.GetGroupInfoCallback;
 import cn.jpush.im.android.api.content.TextContent;
 import cn.jpush.im.android.api.enums.ContentType;
 import cn.jpush.im.android.api.enums.MessageDirect;
@@ -235,7 +233,7 @@ public class GroupTalkingActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int position) {
+        public MsgInfo getItem(int position) {
             return datas.get(position);
         }
 
@@ -245,19 +243,12 @@ public class GroupTalkingActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             if (convertView == null) {
 
                 LayoutInflater inflater = LayoutInflater.from(context);
                 convertView = inflater.inflate(R.layout.message_item, null);
-                convertView.findViewById(R.id.img_header_other).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startActivity(new Intent(GroupTalkingActivity.this, PersonalCenterActivity_.class));
-//                        PersonalCenterActivity_.intent(GroupTalkingActivity.this).uid().start();
-                    }
-                });
                 viewHolder = new ViewHolder(convertView);
                 convertView.setTag(viewHolder);
 
@@ -269,30 +260,41 @@ public class GroupTalkingActivity extends AppCompatActivity {
             Message left = datas.get(position).left_msg;
             Message right = datas.get(position).right_msg;
 
-
-//            String left = ((TextContent) datas.get(position).left_msg.getContent()).getText();
-//            String right = ((TextContent) datas.get(position).right_msg.getContent()).getText();
-
             //如果数据为空，则将数据设置给右边，同时显示右边，隐藏左边
             if (right != null) {
                 viewHolder.text_right.setText(((TextContent) right.getContent()).getText());
                 viewHolder.right.setVisibility(View.VISIBLE);
                 viewHolder.left.setVisibility(View.GONE);
-                viewHolder.middle.setVisibility(View.GONE);
                 viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, right.getCreateTime()));
-//                viewHolder.img_header_other.setImageURI(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).headImg);
-//                viewHolder.tv_name_other.setText(ImInfoManager.getInstance().getFriendById((int) right.getFromUser().getUserID()).nickname);
                 getETMember(right.getFromUser(), viewHolder.img_header, viewHolder.tv_name);
+                viewHolder.img_header.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UserInfo userInfo = null;
+                        Message message = null;
+                        message = getItem(position).right_msg;
+                        userInfo = message.getFromUser();
+                        PersonalCenterActivity_.intent(GroupTalkingActivity.this).uid(userInfo.getUserName()).start();
+                    }
+                });
             } else if (left != null) {
                 viewHolder.text_left.setText(((TextContent) left.getContent()).getText());
                 viewHolder.left.setVisibility(View.VISIBLE);
                 viewHolder.right.setVisibility(View.GONE);
-                viewHolder.middle.setVisibility(View.GONE);
                 viewHolder.text_time.setText(TimeFormat.getDetailTime(GroupTalkingActivity.this, left.getCreateTime()));
 //                viewHolder.img_header.setImageURI(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).headImg);
 //                viewHolder.tv_name.setText(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).nickname);
                 getETMember(left.getFromUser(), viewHolder.img_header_other, viewHolder.tv_name_other);
-
+                viewHolder.img_header_other.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UserInfo userInfo = null;
+                        Message message = null;
+                        message = getItem(position).left_msg;
+                        userInfo = message.getFromUser();
+                        PersonalCenterActivity_.intent(GroupTalkingActivity.this).uid(userInfo.getUserName()).start();
+                    }
+                });
             }
 //            else {
 //                viewHolder.left.setVisibility(View.GONE);
@@ -328,8 +330,8 @@ public class GroupTalkingActivity extends AppCompatActivity {
                 this.text_right = (TextView) rootView.findViewById(R.id.text_right);
                 this.right = (LinearLayout) rootView.findViewById(R.id.right);
                 this.middle = (LinearLayout) rootView.findViewById(R.id.layout_info);
-                this.text_time = (TextView) rootView.findViewById(R.id.txt_time);
-                this.text_info = (TextView) rootView.findViewById(R.id.txt_info);
+                this.text_time = (TextView) rootView.findViewById(R.id.text_time);
+                this.text_info = (TextView) rootView.findViewById(R.id.text_info);
                 this.img_header_other = (SimpleDraweeView) rootView.findViewById(R.id.img_header_other);
                 this.img_header = (SimpleDraweeView) rootView.findViewById(R.id.img_header);
                 this.tv_name_other = (TextView) rootView.findViewById(R.id.tv_name_other);

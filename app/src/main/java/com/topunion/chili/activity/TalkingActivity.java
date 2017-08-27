@@ -213,7 +213,7 @@ public class TalkingActivity extends AppCompatActivity {
                 this.right = (LinearLayout) rootView.findViewById(R.id.right);
                 this.middle = (LinearLayout) rootView.findViewById(R.id.layout_info);
                 this.text_time = (TextView) rootView.findViewById(R.id.txt_time);
-                this.text_info = (TextView) rootView.findViewById(R.id.txt_info);
+                this.text_info = (TextView) rootView.findViewById(R.id.text_info);
             }
 
         }

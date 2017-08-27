@@ -341,7 +341,7 @@ public class MessageMainFragment extends Fragment {
                 @Override
                 public void run() {
                     img_header.setImageURI(response.data.headImg);
-                    txt_name.setText(response.data.corpName);
+                    txt_name.setText(response.data.logicNickname);
                 }
             });
         }
