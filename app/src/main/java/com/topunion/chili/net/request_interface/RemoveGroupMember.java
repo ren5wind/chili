@@ -3,6 +3,8 @@ package com.topunion.chili.net.request_interface;
 
 import com.topunion.chili.net.response_model.BaseStateResponse;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class RemoveGroupMember {
     public interface IRemoveGroupMember {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/contacts/groupFriends/deleteGroupFriends")
-        Call<BaseStateResponse> removeGroupMember(@Query("groupId") int groupId, @Query("acceptorIds") List<String> acceptorIds);
+        Call<BaseStateResponse> removeGroupMember(@Query("groupId") String groupId, @Query("acceptorIds") JSONArray acceptorIds);
     }
 
 }

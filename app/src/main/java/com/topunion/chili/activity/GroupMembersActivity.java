@@ -83,7 +83,6 @@ public class GroupMembersActivity extends Activity {
 				if (position != -1) {
 					mListView.setSelection(position);
 				}
-
 			}
 		});
 
@@ -92,13 +91,10 @@ public class GroupMembersActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 									int position, long id) {
-
 				Toast.makeText(getApplication(),
 						((SortModel) adapter.getItem(position)).getName(),
 						Toast.LENGTH_SHORT).show();
-
 			}
-
 		});
 
 		SourceDateList = filledData(new String[]{"xx群成员","bb群成员","ll群成员","aa群成员","ii群成员","zz群成员","oo群成员","cc群成员",

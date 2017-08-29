@@ -1,181 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="#f2f2f2"
+    android:fitsSystemWindows="true"
     tools:context="com.topunion.chili.activity.TalkingActivity">
 
     <include
         android:id="@+id/title_layout"
-        layout="@layout/normal_title_layout"/>
+        layout="@layout/normal_title_layout" />
 
     <RelativeLayout
         android:id="@+id/layout_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
         android:layout_below="@+id/title_layout"
-        android:padding="15dp"
-        android:background="@android:color/white">
+        android:layout_marginTop="1dp"
+        android:background="@android:color/white"
+        android:padding="15dp">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/img_header"
-            android:src="@mipmap/friends"
-            android:scaleType="fitXY"
-            fresco:placeholderImageScaleType="fitXY"
-            fresco:placeholderImage="@mipmap/friends"
-            fresco:roundAsCircle="true"
-            android:layout_centerHorizontal="true"
             android:layout_width="80dp"
-            android:layout_height="80dp"/>
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitXY"
+            android:src="@mipmap/friends"
+            fresco:placeholderImage="@mipmap/friends"
+            fresco:placeholderImageScaleType="fitXY"
+            fresco:roundAsCircle="true" />
 
         <TextView
             android:id="@+id/txt_name"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="10dp"
-            android:textSize="16sp"
-            android:layout_below="@+id/img_header"
-            android:textColor="#666666"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="15dp"
+            android:textColor="#666666"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/img_edit"
-            android:src="@mipmap/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/txt_name"
-            android:scaleType="center"
             android:layout_alignTop="@+id/txt_name"
-            android:layout_toRightOf="@+id/txt_name"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_toRightOf="@+id/txt_name"
+            android:scaleType="center"
+            android:src="@mipmap/edit" />
 
         <TextView
             android:id="@+id/txt_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/txt_name"
-            android:textSize="12sp"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:text="共33人"
-            android:textColor="@color/textGray"/>
+            android:textColor="@color/textGray"
+            android:textSize="12sp" />
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/layout_info"
         android:layout_marginTop="50dp"
         android:background="@android:color/white"
-        android:paddingTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:paddingTop="10dp">
 
         <TextView
             android:id="@+id/txt_members"
-            android:text="群成员"
-            android:textSize="16sp"
-            android:layout_marginLeft="10dp"
-            android:textColor="#666666"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:text="群成员"
+            android:textColor="#666666"
+            android:textSize="16sp" />
 
 
         <Button
             android:id="@+id/btn_all_member"
-            android:text="查看所有群成员"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txt_members"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:background="@android:color/transparent"
             android:drawableRight="@mipmap/group_youjiao"
+            android:text="查看所有群成员"
             android:textColor="#999999"
-            android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignBottom="@+id/txt_members"/>
+            android:textSize="14sp" />
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/btn_all_member"
             android:layout_marginTop="15dp"
-            android:paddingBottom="15dp"
             android:background="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:paddingBottom="15dp">
 
             <TextView
                 android:id="@+id/txt_member1"
-                android:drawableTop="@mipmap/friends"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:drawableTop="@mipmap/friends"
+                android:gravity="center"
+                android:textColor="@color/textGray"
+                android:textSize="14sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txt_member2"
-                android:drawableTop="@mipmap/friends"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:drawableTop="@mipmap/friends"
+                android:gravity="center"
+                android:textColor="@color/textGray"
+                android:textSize="14sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txt_member3"
-                android:drawableTop="@mipmap/friends"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:layout_weight="1"/>
+                android:drawableTop="@mipmap/friends"
+                android:gravity="center"
+                android:textColor="@color/textGray"
+                android:textSize="14sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txt_member4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:drawableTop="@mipmap/friends"
+                android:gravity="center"
                 android:textColor="@color/textGray"
                 android:textSize="14sp"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:layout_weight="1"/>
+                android:visibility="gone" />
 
             <TextView
-                android:text="添加"
                 android:id="@+id/txt_member_add"
-                android:drawableTop="@mipmap/group_addmembers"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:drawableTop="@mipmap/group_addmembers"
+                android:gravity="center"
+                android:text="添加"
+                android:textColor="@color/textGray"
+                android:textSize="14sp" />
 
             <TextView
-                android:text="删除"
                 android:id="@+id/txt_member_remove"
-                android:drawableTop="@mipmap/group_minmembers"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:drawableTop="@mipmap/group_minmembers"
+                android:gravity="center"
+                android:text="删除"
+                android:textColor="@color/textGray"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:background="@color/main"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="删除并退出"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 
 </RelativeLayout>

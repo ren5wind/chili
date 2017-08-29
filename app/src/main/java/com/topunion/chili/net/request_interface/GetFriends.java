@@ -1,9 +1,12 @@
 package com.topunion.chili.net.request_interface;
 
+import com.topunion.chili.data.SortModel;
 import com.topunion.chili.net.response_model.BaseListResponse;
 import com.topunion.chili.net.response_model.ResponseData;
+import com.topunion.chili.view.CharacterParser;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -105,6 +108,29 @@ public class GetFriends {
 
     public static class GetFriendsResponse extends BaseListResponse{
         public List<Friend> result;
+        public List<SortModel> friendsTofilledData() {
+            List<SortModel> mSortList = new ArrayList<SortModel>();
+            if (result == null) {
+                return null;
+            }
+            for (int i = 0; i < result.size(); i++) {
+                SortModel sortModel = new SortModel();
+                sortModel.setName(result.get(i).nickname);
+                sortModel.setId(result.get(i).friendId);
+                sortModel.setIconUrl(result.get(i).headImg);
+                sortModel.setImName(result.get(i).friendId);
+                String pinyin = CharacterParser.getInstance().getSelling(result.get(i).nickname);
+                String sortString = pinyin.substring(0, 1).toUpperCase();
+
+                if (sortString.matches("[A-Z]")) {
+                    sortModel.setSortLetters(sortString.toUpperCase());
+                } else {
+                    sortModel.setSortLetters("#");
+                }
+                mSortList.add(sortModel);
+            }
+            return mSortList;
+        }
         public static class Friend implements Serializable {
             public String friendId;
             public String headImg;

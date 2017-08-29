@@ -17,7 +17,7 @@ import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
 import com.topunion.chili.net.request_interface.GetFriends;
-import com.topunion.chili.view.CharacterParser;
+import com.topunion.chili.net.request_interface.GetGroupDetails;
 import com.topunion.chili.view.PinyinComparator;
 import com.topunion.chili.wight.SideBar;
 import com.topunion.chili.view.SortAdapter;
@@ -31,7 +31,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +40,6 @@ import java.util.List;
 public class FriendsActivity extends Activity {
     private SortAdapter adapter; // 排序的适配器
 
-    private CharacterParser characterParser;
     private List<SortModel> SourceDateList; // 数据
 
     private PinyinComparator pinyinComparator;
@@ -48,11 +47,12 @@ public class FriendsActivity extends Activity {
 
     public final static int TYPE_SHOW_FRIENDS = 0;
     public final static int TYPE_SHOW_DEPT_NUMBERS = 1;
+    public final static int TYPE_SHOW_GROUP_MEMBER = 2;
 
     @ViewById
     LinearLayout top_layout;
     @ViewById
-    TextView top_char, dialog;
+    TextView top_char, dialog,btn_newFriend,txt_title;
     @ViewById
     SideBar sideBar;
     @ViewById
@@ -64,6 +64,8 @@ public class FriendsActivity extends Activity {
     int deptId;
     @Extra
     String deptName;
+    @Extra
+    Serializable group;
 
     @Click
     void btn_newFriend() {
@@ -77,7 +79,14 @@ public class FriendsActivity extends Activity {
 
     @AfterViews
     void init() {
-        characterParser = CharacterParser.getInstance();
+        if(showType == TYPE_SHOW_FRIENDS){
+            btn_newFriend.setVisibility(View.VISIBLE);
+            txt_title.setText("易投好友");
+        }else if(showType == TYPE_SHOW_DEPT_NUMBERS){
+            txt_title.setText(deptName);
+        }else if(showType == TYPE_SHOW_GROUP_MEMBER){
+            txt_title.setText("全部群成员");
+        }
 
         pinyinComparator = new PinyinComparator();
         sideBar.setTextView(dialog);
@@ -98,13 +107,8 @@ public class FriendsActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                SortModel shortModel = SourceDateList.get(position);
-//                Intent intent = new Intent();
-//                intent.putExtra(TalkingActivity_.INTENT_KEY_USER_ID, shortModel.getId());
-//                intent.putExtra(TalkingActivity_.INTENT_KEY_USER_NICKNAME, shortModel.getName());
-//                intent.setClass(FriendsActivity.this, GroupTalkingActivity_.class);
-//                startActivity(intent);
-                GroupTalkingActivity_.intent(FriendsActivity.this).targetId(SourceDateList.get(position).getImName()).start();
+                TalkingActivity_.intent(FriendsActivity.this).targetId(SourceDateList.get(position).getImName())
+                        .title(SourceDateList.get(position).getName()).start();
             }
 
         });
@@ -117,7 +121,6 @@ public class FriendsActivity extends Activity {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // TODO Auto-generated method stub
 
             }
 
@@ -163,71 +166,27 @@ public class FriendsActivity extends Activity {
         switch (showType) {
             case TYPE_SHOW_FRIENDS:
                 GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), 1, 20);
-                SourceDateList = friendsTofilledData(friends.result);
+                SourceDateList = friends.friendsTofilledData();
                 break;
             case TYPE_SHOW_DEPT_NUMBERS:
                 GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse deptNumbs = HttpHelper_.getInstance_(this).getDeptUsers(1, 20, deptId, deptName);
-                SourceDateList = deptTofilledData(deptNumbs.result);
+                SourceDateList = deptNumbs.deptTofilledData();
+                break;
+            case TYPE_SHOW_GROUP_MEMBER:
+                SourceDateList = ((GetGroupDetails.GetGroupDetailsResponse.Group)group).membersTofilledData();
                 break;
         }
 
         if (SourceDateList != null) {
             Collections.sort(SourceDateList, pinyinComparator);
         }
-        updata();
+        update();
     }
 
     @UiThread
-    void updata() {
+    void update() {
         adapter.updateListView(SourceDateList);
     }
 
-    private List<SortModel> friendsTofilledData(List<GetFriends.GetFriendsResponse.Friend> data) {
-        List<SortModel> mSortList = new ArrayList<SortModel>();
-        if (data == null) {
-            return null;
-        }
-        for (int i = 0; i < data.size(); i++) {
-            SortModel sortModel = new SortModel();
-            sortModel.setName(data.get(i).nickname);
-            sortModel.setId(data.get(i).friendId);
-            sortModel.setIconUrl(data.get(i).headImg);
-            sortModel.setImName(data.get(i).friendId);
-            String pinyin = characterParser.getSelling(data.get(i).nickname);
-            String sortString = pinyin.substring(0, 1).toUpperCase();
 
-            if (sortString.matches("[A-Z]")) {
-                sortModel.setSortLetters(sortString.toUpperCase());
-            } else {
-                sortModel.setSortLetters("#");
-            }
-            mSortList.add(sortModel);
-        }
-        return mSortList;
-    }
-
-    private List<SortModel> deptTofilledData(List<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse.User> data) {
-        List<SortModel> mSortList = new ArrayList<SortModel>();
-        if (data == null) {
-            return null;
-        }
-        for (int i = 0; i < data.size(); i++) {
-            SortModel sortModel = new SortModel();
-            sortModel.setName(data.get(i).nickname);
-            sortModel.setId(data.get(i).userId);
-            sortModel.setIconUrl(data.get(i).headImg);
-            sortModel.setImName(data.get(i).userId);
-            String pinyin = characterParser.getSelling(data.get(i).nickname);
-            String sortString = pinyin.substring(0, 1).toUpperCase();
-
-            if (sortString.matches("[A-Z]")) {
-                sortModel.setSortLetters(sortString.toUpperCase());
-            } else {
-                sortModel.setSortLetters("#");
-            }
-
-            mSortList.add(sortModel);
-        }
-        return mSortList;
-    }
 }

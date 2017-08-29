@@ -53,7 +53,7 @@
             app:paddingTexwithIcon="5dp"
             app:tabIconNormal="@mipmap/message"
             app:tabIconSelected="@mipmap/message_select"
-            app:tabText="消息"
+            app:tabText="通讯"
             app:tabTextSize="12sp"
             app:textColorNormal="@color/textGray"
             app:textColorSelected="@color/main" />

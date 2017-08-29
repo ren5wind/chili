@@ -16,21 +16,16 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
-import com.topunion.chili.net.request_interface.GetGroupDetails;
 import com.topunion.chili.net.request_interface.GetGroups;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cn.jpush.im.android.api.JMessageClient;
-import cn.jpush.im.android.api.callback.GetGroupIDListCallback;
 
 @EActivity(R.layout.activity_group_list)
 public class GroupListActivity extends AppCompatActivity {
@@ -49,10 +44,10 @@ public class GroupListActivity extends AppCompatActivity {
 
     @Click
     void btn_operation() {
-        ChoosePersonActivity_.intent(this)
-                .choose(new int[]{0, 0, 0, 0, 0, 0, 0})
-                .data(new String[]{"张三", "李四", "王五", "赵六", "田七", "猴八", "牛二"})
-                .title("选择联系人").startForResult(0);
+//        ChoosePersonActivity_.intent(this)
+//                .choose(new int[]{0, 0, 0, 0, 0, 0, 0})
+//                .data(new String[]{"张三", "李四", "王五", "赵六", "田七", "猴八", "牛二"})
+//                .title("选择联系人").startForResult(0);
     }
 
     @Override
@@ -74,14 +69,13 @@ public class GroupListActivity extends AppCompatActivity {
         btn_operation.setVisibility(View.VISIBLE);
         btn_operation.setImageResource(R.mipmap.add_friends);
 
-
         mDataList = new ArrayList<>();
         mAdapter = new Adapter(mDataList);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                GroupTalkingActivity_.intent(GroupListActivity.this).title(mAdapter.getItem(i).name).start();
+                TalkingActivity_.intent(GroupListActivity.this).title(mAdapter.getItem(i).name).groupId(Long.valueOf(mAdapter.getItem(i).pushGroupId)).start();
             }
         });
         initGroup();

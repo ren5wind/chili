@@ -1,5 +1,10 @@
 package com.topunion.chili.net.request_interface;
 
+import com.topunion.chili.data.SortModel;
+import com.topunion.chili.view.CharacterParser;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -87,19 +92,19 @@ public class GetGroupDetails {
 
     public interface IGetGroupDetails {
         @GET("app/contacts/group/getGroup")
-        Call<GetGroupDetails.GetGroupDetailsResponse> getGroupDetails(@Query("id") int id);
+        Call<GetGroupDetails.GetGroupDetailsResponse> getGroupDetails(@Query("pushGroupId") long groupImId);
     }
 
     public static class GetGroupDetailsResponse {
         public int state;
         public Group data;
-        public static class Group {
+        public static class Group implements Serializable {
             public String name;
             public String count;
             public String id;
             public String pushGroupId;
             public List<Member> members;
-            public static class Member {
+            public static class Member implements Serializable {
                 public String headImg;
                 public String logicNickname;
                 public String friendNickName;
@@ -107,6 +112,31 @@ public class GetGroupDetails {
                 public String isFriend;
                 public String id;
                 public String username;
+            }
+
+            public List<SortModel> membersTofilledData() {
+                List<SortModel> mSortList = new ArrayList<SortModel>();
+                if (members == null) {
+                    return null;
+                }
+                for (int i = 0; i < members.size(); i++) {
+                    SortModel sortModel = new SortModel();
+                    sortModel.setName(members.get(i).logicNickname);
+                    sortModel.setId(members.get(i).id);
+                    sortModel.setIconUrl(members.get(i).headImg);
+                    sortModel.setImName(members.get(i).id);
+                    String pinyin = CharacterParser.getInstance().getSelling(members.get(i).logicNickname);
+                    String sortString = pinyin.substring(0, 1).toUpperCase();
+
+                    if (sortString.matches("[A-Z]")) {
+                        sortModel.setSortLetters(sortString.toUpperCase());
+                    } else {
+                        sortModel.setSortLetters("#");
+                    }
+
+                    mSortList.add(sortModel);
+                }
+                return mSortList;
             }
         }
     }

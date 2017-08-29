@@ -1,7 +1,6 @@
 package com.topunion.chili.activity;
 
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -33,7 +32,6 @@ import com.topunion.chili.net.request_interface.GetETMemberDetails;
 import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
 import com.topunion.chili.net.request_interface.GetGroups;
-import com.topunion.chili.net.request_interface.GetUsers;
 import com.topunion.chili.util.SortConvList;
 import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.util.TimeFormat;
@@ -94,17 +92,13 @@ public class MessageMainFragment extends Fragment {
     @Click
     void btn_add_friend() {
         popMenu.setVisibility(View.GONE);
-        //TODO
         SearchFromManualActivity_.intent(getActivity()).viewType(SearchFromManualActivity_.TYPE_SEARCH).start();
     }
 
     @Click
     void btn_create_group() {
         popMenu.setVisibility(View.GONE);
-        ChoosePersonActivity_.intent(this)
-                .choose(new int[]{0, 0, 0, 0, 0, 0, 0})
-                .data(new String[]{"张三", "李四", "王五", "赵六", "田七", "猴八", "牛二"})
-                .title("选择联系人").startForResult(0);
+        ChoosePersonActivity_.intent(this).viewType(ChoosePersonActivity_.TYPE_CREATE_GROUP).start();
     }
 
     @Click
@@ -116,7 +110,6 @@ public class MessageMainFragment extends Fragment {
         msg_list.setVisibility(View.VISIBLE);
         contact_list.setVisibility(View.GONE);
         popMenu.setVisibility(View.GONE);
-        //TODO
     }
 
     @Click
@@ -277,10 +270,10 @@ public class MessageMainFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (msgAdapter.getItem(i).getTargetInfo() instanceof UserInfo) {
                     String tagerId = ((UserInfo) msgAdapter.getItem(i).getTargetInfo()).getUserName();
-                    GroupTalkingActivity_.intent(getActivity()).targetId(tagerId).start();
+                    TalkingActivity_.intent(getActivity()).targetId(tagerId).title(((MsgAdapter.ViewHolder) view.getTag()).txt_name.getText().toString().trim()).start();
                 } else {
                     long groupId = ((GroupInfo) msgAdapter.getItem(i).getTargetInfo()).getGroupID();
-                    GroupTalkingActivity_.intent(getActivity()).groupId(groupId).start();
+                    TalkingActivity_.intent(getActivity()).groupId(groupId).title(((MsgAdapter.ViewHolder) view.getTag()).txt_name.getText().toString().trim()).start();
                 }
             }
         });
@@ -320,8 +313,8 @@ public class MessageMainFragment extends Fragment {
     @Background
     void getGroup(GroupInfo groupInfo, final TextView txt_name) {
         final GetGroupDetails.GetGroupDetailsResponse response =
-                HttpHelper_.getInstance_(getActivity()).getGroupDetails((int) groupInfo.getGroupID());
-        if (response.data == null) {
+                HttpHelper_.getInstance_(getActivity()).getGroupDetails(groupInfo.getGroupID());
+        if (response == null || response.data == null) {
             return;
         }
         getActivity().runOnUiThread(new Runnable() {
@@ -335,7 +328,7 @@ public class MessageMainFragment extends Fragment {
     @Background
     void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
         final GetETMemberDetails.GetETMemberDetailsResponse response =
-                HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userInfo.getUserName());
+                HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userInfo.getUserName(),AccountManager.getInstance().getUserId());
         if (response != null && response.data != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override

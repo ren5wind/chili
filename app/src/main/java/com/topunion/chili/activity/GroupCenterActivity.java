@@ -1,23 +1,36 @@
 package com.topunion.chili.activity;
 
-import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.topunion.chili.MainActivity;
+import com.topunion.chili.MainActivity_;
 import com.topunion.chili.R;
+import com.topunion.chili.base.RxBus;
+import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetGroupDetails;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 @EActivity(R.layout.activity_group_center)
 public class GroupCenterActivity extends AppCompatActivity {
@@ -31,6 +44,11 @@ public class GroupCenterActivity extends AppCompatActivity {
     @ViewById
     SimpleDraweeView img_header;
 
+    @Extra
+    long groupImId;
+
+    private GetGroupDetails.GetGroupDetailsResponse.Group mGroup;
+
     @Click
     void img_edit() {
         final AlertDialog alertDialog = new AlertDialog.Builder(GroupCenterActivity.this).create();
@@ -41,6 +59,10 @@ public class GroupCenterActivity extends AppCompatActivity {
         window.setGravity(Gravity.CENTER);
         window.setContentView(R.layout.dialog_group_edit);
         final EditText edit_alert = (EditText) window.findViewById(R.id.edit_alert);
+        edit_alert.setFocusable(true);
+        edit_alert.setFocusableInTouchMode(true);
+        edit_alert.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         TextView txt_alert_title = (TextView) window.findViewById(R.id.txt_alert_title);
         txt_alert_title.setText("修改群名称");
         View.OnClickListener listener = new View.OnClickListener() {
@@ -54,13 +76,12 @@ public class GroupCenterActivity extends AppCompatActivity {
         window.findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name = edit_alert.getText().toString();
-
+                String name = edit_alert.getText().toString().trim();
                 if (name != null && name.length() > 0) {
-                    //TODO
                     alertDialog.dismiss();
+                    updateGroupName(name);
                 } else {
-                    Toast.makeText(GroupCenterActivity.this,"群名称不能为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupCenterActivity.this, "群名称不能为空", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -72,45 +93,132 @@ public class GroupCenterActivity extends AppCompatActivity {
     }
 
     @Click
-    void btn_operation() {
-        startActivityForResult(new Intent(this, RemarkActivity_.class), 0);
-    }
-
-    @Click
     void btn_all_member() {
-        GroupMembersActivity_.intent(this).start();
+        FriendsActivity_.intent(this).group(mGroup).showType(FriendsActivity_.TYPE_SHOW_GROUP_MEMBER).start();
     }
 
     @Click
     void txt_member_add() {
-        ChoosePersonActivity_.intent(this)
-                .choose(new int[]{0,0,0,0,0,0,0})
-                .data(new String[]{"张三","李四","王五","赵六","田七","猴八","牛二"})
-                .title("选择联系人").startForResult(0);
+        ChoosePersonActivity_.intent(this).viewType(ChoosePersonActivity_.TYPE_ADD_GROUP_MEMBER).group(mGroup).start();
+        RxBus.getInstance().register(ChoosePersonActivity_.RXBUS_GROUP_ADD_MEMBER);
+        Observable<Boolean> addGroupMemberCallBackobservable = RxBus.getInstance().register(ChoosePersonActivity_.RXBUS_GROUP_ADD_MEMBER);
+        addGroupMemberCallBackobservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean b) {
+                        RxBus.getInstance().unregister(ChoosePersonActivity_.RXBUS_GROUP_ADD_MEMBER);
+                        getGroupDetails();
+                    }
+                });
+
     }
 
     @Click
     void txt_member_remove() {
-        ChoosePersonActivity_.intent(this)
-                .choose(new int[]{0,0,0,0,0,0,0})
-                .data(new String[]{"张三","李四","王五","赵六","田七","猴八","牛二"})
-                .title("删除联系人").startForResult(0);
+        ChoosePersonActivity_.intent(this).viewType(ChoosePersonActivity_.TYPE_DELETE_GROUP_MEMBER).group(mGroup).start();
+        RxBus.getInstance().register(ChoosePersonActivity_.RXBUS_GROUP_DELETE_MEMBER);
+        Observable<Boolean> deleteGroupMemberCallBackobservable = RxBus.getInstance().register(ChoosePersonActivity_.RXBUS_GROUP_DELETE_MEMBER);
+        deleteGroupMemberCallBackobservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean b) {
+                        RxBus.getInstance().unregister(ChoosePersonActivity_.RXBUS_GROUP_DELETE_MEMBER);
+                        getGroupDetails();
+                    }
+                });
     }
 
+    @Click
+    void tv_exit() {
+        exitGroup();
+    }
 
     @AfterViews
     void init() {
-        txt_title.setText("群资料设置");
-        txt_name.setText("张三，李四，王五...");
-        txt_member1.setText("张三");
-        txt_member2.setText("李四");
-        txt_member3.setText("王五");
-        txt_member3.setVisibility(View.VISIBLE);
-        txt_member4.setText("赵六");
-        txt_member4.setVisibility(View.VISIBLE);
-        btn_operation.setImageResource(R.mipmap.more);
-        btn_operation.setVisibility(View.VISIBLE);
-        txt_count.setText("共33人");
+        getGroupDetails();
     }
 
+    @UiThread
+    void updateUi() {
+        if (mGroup == null) {
+            return;
+        }
+        txt_title.setText("群资料设置");
+        txt_name.setText(mGroup.name);
+        txt_member1.setVisibility(View.GONE);
+        txt_member2.setVisibility(View.GONE);
+        txt_member3.setVisibility(View.GONE);
+        txt_member4.setVisibility(View.GONE);
+
+        for (int i = 0; i < mGroup.members.size(); i++) {
+            switch (i) {
+                case 0:
+                    txt_member1.setText(mGroup.members.get(i).logicNickname);
+                    txt_member1.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    txt_member2.setText(mGroup.members.get(i).logicNickname);
+                    txt_member2.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    txt_member3.setText(mGroup.members.get(i).logicNickname);
+                    txt_member3.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    txt_member4.setText(mGroup.members.get(i).logicNickname);
+                    txt_member4.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+        btn_operation.setVisibility(View.GONE);
+        txt_count.setText("共" + mGroup.count + "人");
+    }
+
+    @Background
+    void getGroupDetails() {
+        GetGroupDetails.GetGroupDetailsResponse data = HttpHelper_.getInstance_(this).getGroupDetails(groupImId);
+        mGroup = data.data;
+        updateUi();
+    }
+
+    @Background
+    void updateGroupName(String name) {
+        boolean b = HttpHelper_.getInstance_(this).updateGroupName(mGroup.id, name);
+        if (b) {
+            mGroup.name = name;
+            updateUi();
+        } else {
+            Toast.makeText(GroupCenterActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Background
+    void exitGroup() {
+        boolean b = HttpHelper_.getInstance_(this).exitGroup(mGroup.id, AccountManager.getInstance().getUserId());
+        if (b) {
+            MainActivity_.intent(this).start();
+        } else {
+            Toast.makeText(GroupCenterActivity.this, "网络异常，退出失败", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

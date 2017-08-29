@@ -1,8 +1,8 @@
 package com.topunion.chili.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,36 +18,61 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetETMemberDetails;
+import com.topunion.chili.net.request_interface.GetGroupDetails;
+import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.enums.ContentType;
+import cn.jpush.im.android.api.enums.MessageDirect;
+import cn.jpush.im.android.api.model.Conversation;
+import cn.jpush.im.android.api.model.GroupInfo;
+import cn.jpush.im.android.api.model.Message;
+import cn.jpush.im.android.api.model.UserInfo;
+import cn.jpush.im.android.api.options.MessageSendingOptions;
 
 @EActivity(R.layout.activity_talking)
 public class TalkingActivity extends AppCompatActivity {
 
     @ViewById
     ListView mListView;
-    
     @ViewById
     TextView txt_title;
-
     @ViewById
     ImageButton btn_operation;
-
     @ViewById
     EditText mEditText;
+    @Extra
+    String title;
+    @Extra
+    String targetId;
+    @Extra
+    long groupId;
+    //文本
+    private final int TYPE_SEND_TXT = 0;
+    private final int TYPE_RECEIVE_TXT = 1;
 
-    public static final String INTENT_KEY_USER_ID = "intent_key_user_id";
-    public static final String INTENT_KEY_USER_NICKNAME = "intent_key_user_nickName";
+    private boolean mIsSingle = true;
+    private Conversation mConv;
+    private Conversation mSendConv;
 
-    private String mUserId;
-    private String mUserNickName;
+    int mOffset = 1000;
+    MessageSendingOptions options;
 
     @Click
     void btn_back() {
@@ -56,34 +81,73 @@ public class TalkingActivity extends AppCompatActivity {
 
     @Click
     void btn_send() {
-        final String text = mEditText.getText().toString();
-        if (text != null && text.length() > 0) {
-            adapter.addDataToAdapter(new MsgInfo(null, text));
-            adapter.notifyDataSetChanged();
-            mListView.setSelection(mListView.getBottom());
-        } else {
-            Toast.makeText(TalkingActivity.this, "不能发送空消息", Toast.LENGTH_SHORT).show();
-        }
+
+        String mcgContent = mEditText.getText().toString();
         mEditText.setText("");
+        if (mcgContent.equals("")) {
+            Toast.makeText(TalkingActivity.this, "不能发送空消息", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Message msg;
+        TextContent content = new TextContent(mcgContent);
+        msg = mConv.createSendMessage(content);
+        adapter.addDataToAdapter(new MsgInfo(null, msg));
+        adapter.notifyDataSetChanged();
+        mListView.setSelection(mListView.getBottom());
+        JMessageClient.sendMessage(msg, options);
     }
 
     private ListViewAdapter adapter;
 
+    @Click
+    void btn_operation() {
+        GroupCenterActivity_.intent(this).groupImId(groupId).start();
+    }
+
     @AfterViews
     void init() {
-        Intent intent = getIntent();
-        if(intent != null){//获取userid和usrnickname
-            mUserId = intent.getStringExtra(INTENT_KEY_USER_ID);
-            mUserNickName = intent.getStringExtra(INTENT_KEY_USER_NICKNAME);
+        options = new MessageSendingOptions();
+        options.setRetainOffline(true);//是否当对方用户不在线时让后台服务区保存这条消息的离线消息
+        options.setShowNotification(true);//是否让对方展示sdk默认的通知栏通知
+        if (!TextUtils.isEmpty(targetId)) {
+            //单聊
+            mIsSingle = true;
+            mConv = JMessageClient.getSingleConversation(targetId);
+            if (mConv == null) {
+                mConv = Conversation.createSingleConversation(targetId);
+            }
+        } else {
+            //群聊
+            mIsSingle = false;
+            mConv = JMessageClient.getGroupConversation(groupId);
+            if (mConv == null) {
+                mConv = Conversation.createGroupConversation(groupId);
+            }
         }
-        txt_title.setText(mUserNickName);
-        MsgInfo msg1 = new MsgInfo("Asdfasdf", null);
-        MsgInfo msg2 = new MsgInfo(null, "Asdfasdf");
         adapter = new ListViewAdapter(this);
-        adapter.addDataToAdapter(new MsgInfo(null, null));
-        adapter.addDataToAdapter(msg1);
-        adapter.addDataToAdapter(msg2);
-        adapter.addDataToAdapter(new MsgInfo(null, null));
+        //获取消息列表
+        List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
+        int size = messageList.size();
+        for (int i = 0; i < size; i++) {
+            Message message = messageList.get(i);
+            if (message.getContentType() == ContentType.text) {
+                int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
+                        : TYPE_RECEIVE_TXT;
+                if (direct == TYPE_SEND_TXT) {//发送方
+                    adapter.addDataToAdapter(new MsgInfo(null, message));
+                } else if (direct == TYPE_RECEIVE_TXT) {//接收方
+                    adapter.addDataToAdapter(new MsgInfo(message, null));
+                }
+            }
+        }
+
+        txt_title.setText(title);
+        if (!mIsSingle) {
+            btn_operation.setVisibility(View.VISIBLE);
+            btn_operation.setImageResource(R.mipmap.more);
+        }
+
+
         mListView.setAdapter(adapter);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -104,15 +168,47 @@ public class TalkingActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
     }
 
     class MsgInfo {
-        public String left_text;
-        public String right_text;
+        public Message left_msg;
+        public Message right_msg;
 
-        public MsgInfo(String left_text, String right_text) {
-            this.left_text = left_text;
-            this.right_text = right_text;
+        public MsgInfo(Message left_msg, Message right_msg) {
+            this.left_msg = left_msg;
+            this.right_msg = right_msg;
+        }
+    }
+
+    @Background
+    void getGroup(GroupInfo groupInfo, final TextView txt_name) {
+        final GetGroupDetails.GetGroupDetailsResponse response =
+                HttpHelper_.getInstance_(this).getGroupDetails(groupInfo.getGroupID());
+        if (response.data == null) {
+            return;
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txt_name.setText(response.data.name);
+            }
+        });
+    }
+
+    @Background
+    void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
+        final GetETMemberDetails.GetETMemberDetailsResponse response =
+                HttpHelper_.getInstance_(this).getETMemberDetails(userInfo.getUserName(),AccountManager.getInstance().getUserId());
+        if (response != null && response.data != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    img_header.setImageURI(response.data.headImg);
+                    txt_name.setText(response.data.logicNickname);
+                }
+            });
         }
     }
 
@@ -138,7 +234,7 @@ public class TalkingActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int position) {
+        public MsgInfo getItem(int position) {
             return datas.get(position);
         }
 
@@ -148,18 +244,12 @@ public class TalkingActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             if (convertView == null) {
 
                 LayoutInflater inflater = LayoutInflater.from(context);
                 convertView = inflater.inflate(R.layout.message_item, null);
-                convertView.findViewById(R.id.img_header_other).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startActivity(new Intent(TalkingActivity.this, PersonalCenterActivity_.class));
-                    }
-                });
                 viewHolder = new ViewHolder(convertView);
                 convertView.setTag(viewHolder);
 
@@ -168,28 +258,53 @@ public class TalkingActivity extends AppCompatActivity {
             }
 
             //获取adapter中的数据
-            String left = datas.get(position).left_text;
-            String right = datas.get(position).right_text;
+            Message left = datas.get(position).left_msg;
+            Message right = datas.get(position).right_msg;
 
             //如果数据为空，则将数据设置给右边，同时显示右边，隐藏左边
             if (right != null) {
-                viewHolder.text_right.setText(right);
+                viewHolder.text_right.setText(((TextContent) right.getContent()).getText());
                 viewHolder.right.setVisibility(View.VISIBLE);
                 viewHolder.left.setVisibility(View.GONE);
-                viewHolder.middle.setVisibility(View.GONE);
+                viewHolder.text_time.setText(TimeFormat.getDetailTime(TalkingActivity.this, right.getCreateTime()));
+                getETMember(right.getFromUser(), viewHolder.img_header, viewHolder.tv_name);
+                viewHolder.img_header.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UserInfo userInfo = null;
+                        Message message = null;
+                        message = getItem(position).right_msg;
+                        userInfo = message.getFromUser();
+                        PersonalCenterActivity_.intent(TalkingActivity.this).uid(userInfo.getUserName()).start();
+                    }
+                });
             } else if (left != null) {
-                viewHolder.text_left.setText(left);
+                viewHolder.text_left.setText(((TextContent) left.getContent()).getText());
                 viewHolder.left.setVisibility(View.VISIBLE);
                 viewHolder.right.setVisibility(View.GONE);
-                viewHolder.middle.setVisibility(View.GONE);
-            } else {
-                viewHolder.left.setVisibility(View.GONE);
-                viewHolder.right.setVisibility(View.GONE);
-                viewHolder.middle.setVisibility(View.VISIBLE);
-                if (position == 0) {
-                    viewHolder.text_info.setVisibility(View.GONE);
-                }
+                viewHolder.text_time.setText(TimeFormat.getDetailTime(TalkingActivity.this, left.getCreateTime()));
+//                viewHolder.img_header.setImageURI(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).headImg);
+//                viewHolder.tv_name.setText(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).nickname);
+                getETMember(left.getFromUser(), viewHolder.img_header_other, viewHolder.tv_name_other);
+                viewHolder.img_header_other.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UserInfo userInfo = null;
+                        Message message = null;
+                        message = getItem(position).left_msg;
+                        userInfo = message.getFromUser();
+                        PersonalCenterActivity_.intent(TalkingActivity.this).uid(userInfo.getUserName()).start();
+                    }
+                });
             }
+//            else {
+//                viewHolder.left.setVisibility(View.GONE);
+//                viewHolder.right.setVisibility(View.GONE);
+//                viewHolder.middle.setVisibility(View.VISIBLE);
+//                if (position == 0) {
+//                    viewHolder.text_info.setVisibility(View.GONE);
+//                }
+//            }
 
             return convertView;
 
@@ -204,6 +319,10 @@ public class TalkingActivity extends AppCompatActivity {
             public LinearLayout middle;
             public TextView text_time;
             public TextView text_info;
+            public SimpleDraweeView img_header_other;
+            public TextView tv_name_other;
+            public SimpleDraweeView img_header;
+            public TextView tv_name;
 
             public ViewHolder(View rootView) {
                 this.rootView = rootView;
@@ -212,8 +331,12 @@ public class TalkingActivity extends AppCompatActivity {
                 this.text_right = (TextView) rootView.findViewById(R.id.text_right);
                 this.right = (LinearLayout) rootView.findViewById(R.id.right);
                 this.middle = (LinearLayout) rootView.findViewById(R.id.layout_info);
-                this.text_time = (TextView) rootView.findViewById(R.id.txt_time);
+                this.text_time = (TextView) rootView.findViewById(R.id.text_time);
                 this.text_info = (TextView) rootView.findViewById(R.id.text_info);
+                this.img_header_other = (SimpleDraweeView) rootView.findViewById(R.id.img_header_other);
+                this.img_header = (SimpleDraweeView) rootView.findViewById(R.id.img_header);
+                this.tv_name_other = (TextView) rootView.findViewById(R.id.tv_name_other);
+                this.tv_name = (TextView) rootView.findViewById(R.id.tv_name);
             }
 
         }

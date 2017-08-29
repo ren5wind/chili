@@ -1,10 +1,10 @@
 package com.topunion.chili.net.request_interface;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -51,15 +51,16 @@ public class AddGroup {
         @Headers({"Content-Type: application/json", "Accept:  application/json"})
         @POST("app/contacts/group/insertGroup")
         Call<AddGroup.AddGroupResponse> addGroup(@Query("sender") String sender, @Query("name") String name,
-                                                 @Query("acceptorIds") List<String> acceptorIds);
+                                                 @Query("acceptorIds") JSONArray acceptorIds);
     }
 
     public static class AddGroupResponse {
         public int state;
+        public Data data;
 
         public static class Data {
-            public String id;
             public String pushGroupId;
+            public String id;
         }
     }
 }

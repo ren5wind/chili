@@ -20,7 +20,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_personal_center)
@@ -55,6 +54,7 @@ public class PersonalCenterActivity extends AppCompatActivity {
         if ("0".equals(mData.isFriend)) {//不是好友
             addETFriend();
         } else {
+            TalkingActivity_.intent(this).targetId(uid).title(mData.logicNickname).start();
 
         }
     }
@@ -85,7 +85,7 @@ public class PersonalCenterActivity extends AppCompatActivity {
 
     @Background
     void getUserDeetailRequest() {
-        GetETMemberDetails.GetETMemberDetailsResponse response = HttpHelper_.getInstance_(this).getETMemberDetails(uid);
+        GetETMemberDetails.GetETMemberDetailsResponse response = HttpHelper_.getInstance_(this).getETMemberDetails(uid, AccountManager.getInstance().getUserId());
         mData = response.data;
         updateUi();
     }

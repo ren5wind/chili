@@ -34,10 +34,10 @@ public class AccountManager {
         }
         SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_TOKEN, accountBean.getToken());
         SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_USERID, accountBean.getUid());
-        SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_NICKNAME, accountBean.getUid());
+        SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_NICKNAME, accountBean.getUsername());
         MyApplication_.getInstance().setToken(accountBean.getToken());
         MyApplication_.getInstance().setMyUserId(accountBean.getUid());
-        MyApplication_.getInstance().setNickName(accountBean.getNickName());
+        MyApplication_.getInstance().setNickName(accountBean.getUsername());
     }
 
     public AccountBean getAccount() {

@@ -107,7 +107,7 @@ public class HttpHelper {
         }
     }
 
-    public AddGroup.AddGroupResponse addGroup(String sender, String name, List<String> acceptorIds) {
+    public AddGroup.AddGroupResponse addGroup(String sender, String name, JSONArray acceptorIds) {
         try {
             AddGroup.IAddGroup request = retrofit.create(AddGroup.IAddGroup.class);
             Call<AddGroup.AddGroupResponse> call = request.addGroup(sender, name, acceptorIds);
@@ -119,10 +119,14 @@ public class HttpHelper {
         }
     }
 
-    public boolean addGroupMember(int groupId, List<String> acceptorIds) {
+    public boolean addGroupMember(String groupId, List<String> acceptorIds) {
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < acceptorIds.size(); i++) {
+            jsonArray.put(acceptorIds.get(i));
+        }
         try {
             AddGroupMember.IAddGroupMember request = retrofit.create(AddGroupMember.IAddGroupMember.class);
-            Call<BaseStateResponse> call = request.addGroupMember(groupId, acceptorIds);
+            Call<BaseStateResponse> call = request.addGroupMember(groupId, jsonArray);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {
@@ -143,10 +147,10 @@ public class HttpHelper {
         }
     }
 
-    public boolean exitGroup(int groupId, String acceptorId) {
+    public boolean exitGroup(String groupId, String acceptorId) {
         try {
             ExitGroup.IExitGroup request = retrofit.create(ExitGroup.IExitGroup.class);
-            Call<BaseStateResponse> call = request.exitGroup(groupId, acceptorId);
+            Call<BaseStateResponse> call = request.exitGroup(Integer.valueOf(groupId), acceptorId);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {
@@ -239,10 +243,10 @@ public class HttpHelper {
         }
     }
 
-    public GetETMemberDetails.GetETMemberDetailsResponse getETMemberDetails(String userId) {
+    public GetETMemberDetails.GetETMemberDetailsResponse getETMemberDetails(String userId,String operatorUserId) {
         try {
             GetETMemberDetails.IGetETMemberDetails request = retrofit.create(GetETMemberDetails.IGetETMemberDetails.class);
-            Call<GetETMemberDetails.GetETMemberDetailsResponse> call = request.getETMemberDetails(userId);
+            Call<GetETMemberDetails.GetETMemberDetailsResponse> call = request.getETMemberDetails(userId,operatorUserId);
             Response<GetETMemberDetails.GetETMemberDetailsResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
@@ -275,10 +279,10 @@ public class HttpHelper {
         }
     }
 
-    public GetGroupDetails.GetGroupDetailsResponse getGroupDetails(int id) {
+    public GetGroupDetails.GetGroupDetailsResponse getGroupDetails(long groupImId) {
         try {
             GetGroupDetails.IGetGroupDetails request = retrofit.create(GetGroupDetails.IGetGroupDetails.class);
-            Call<GetGroupDetails.GetGroupDetailsResponse> call = request.getGroupDetails(id);
+            Call<GetGroupDetails.GetGroupDetailsResponse> call = request.getGroupDetails(groupImId);
             Response<GetGroupDetails.GetGroupDetailsResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
@@ -383,10 +387,14 @@ public class HttpHelper {
         }
     }
 
-    public boolean removeGroupMember(int id, List<String> acceptorIds) {
+    public boolean removeGroupMember(String id, List<String> acceptorIds) {
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < acceptorIds.size(); i++) {
+            jsonArray.put(acceptorIds.get(i));
+        }
         try {
             RemoveGroupMember.IRemoveGroupMember request = retrofit.create(RemoveGroupMember.IRemoveGroupMember.class);
-            Call<BaseStateResponse> call = request.removeGroupMember(id, acceptorIds);
+            Call<BaseStateResponse> call = request.removeGroupMember(id, jsonArray);
             Response<BaseStateResponse> result = call.execute();
             return result.body().state == 200;
         } catch (IOException e) {
@@ -444,7 +452,7 @@ public class HttpHelper {
         }
     }
 
-    public boolean updateGroupName(int id, String name) {
+    public boolean updateGroupName(String id, String name) {
         try {
             UpdateGroupName.IUpdateGroupName request = retrofit.create(UpdateGroupName.IUpdateGroupName.class);
             Call<BaseStateResponse> call = request.updateGroupName(id, name);

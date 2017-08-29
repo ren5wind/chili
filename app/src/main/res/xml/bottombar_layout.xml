@@ -11,7 +11,7 @@
     <tab
         id="@+id/tab_message"
         icon="@drawable/message_selector"
-        title="消息" />
+        title="通讯" />
     <tab
         id="@+id/tab_square"
         icon="@drawable/square_selector"

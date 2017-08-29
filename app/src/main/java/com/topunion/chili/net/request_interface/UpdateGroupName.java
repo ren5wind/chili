@@ -43,7 +43,7 @@ public class UpdateGroupName {
     public interface IUpdateGroupName {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/contacts/group/updateGroupName")
-        Call<BaseStateResponse> updateGroupName(@Query("id") int id, @Query("name") String name);
+        Call<BaseStateResponse> updateGroupName(@Query("id") String id, @Query("name") String name);
     }
 
 }
