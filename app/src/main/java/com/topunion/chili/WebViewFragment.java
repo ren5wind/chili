@@ -71,12 +71,6 @@ public class WebViewFragment extends Fragment {
 
             @Override
             public void onLoadResource(WebView view, String url) {
-                // 分享
-                if (url.contains("/user/api/login.do")) {
-                    Toast.makeText(getActivity(), url, Toast.LENGTH_SHORT).show();
-                    System.out.println(url);
-                    return;
-                }
                 super.onLoadResource(view, url);
             }
         });

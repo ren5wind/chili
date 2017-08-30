@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.MyApplication;
 import com.topunion.chili.R;
+import com.topunion.chili.base.RxBus;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.business.ImInfoManager;
 import com.topunion.chili.data.Company;
@@ -42,6 +43,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -58,6 +60,9 @@ import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 @EFragment(R.layout.fragment_message_main)
 public class MessageMainFragment extends Fragment {
@@ -88,7 +93,8 @@ public class MessageMainFragment extends Fragment {
     private Organization mOrganization;
     private List<Object> dataList;
     private List<Conversation> msgList;
-
+    private MsgAdapter msgAdapter;
+    private ContactAdapter contactAdapter;
     @Click
     void btn_add_friend() {
         popMenu.setVisibility(View.GONE);
@@ -129,8 +135,6 @@ public class MessageMainFragment extends Fragment {
         popMenu.setVisibility(popMenu.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
-    MsgAdapter msgAdapter;
-    ContactAdapter contactAdapter;
 
     @Background
     void initCorps() {
@@ -141,6 +145,12 @@ public class MessageMainFragment extends Fragment {
         List<Company> companyList = mOrganization.analysisCompany(corps);
         List<Department> departmentList = null;
         //获取部门列表
+        dataList = null;
+        dataList = new ArrayList<>();
+        dataList.add("好友");
+        dataList.add("群组");
+        dataList.add("电话本");
+        contactAdapter.setData(dataList);
 
         for (int i = 0; companyList != null && i < companyList.size(); i++) {
             dataList.add(companyList.get(i));
@@ -150,7 +160,7 @@ public class MessageMainFragment extends Fragment {
         }
 
         contactAdapter.setData(dataList);
-        this.validList();
+        validList();
         //获取人员列表
         for (int j = 0; departmentList != null && j < departmentList.size(); j++) {
             GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse deptNumbs = HttpHelper_.getInstance_(getActivity()).
@@ -182,8 +192,9 @@ public class MessageMainFragment extends Fragment {
         });
     }
 
+    @UiThread
     void validList() {
-//        contactAdapter.notifyDataSetChanged();
+        contactAdapter.notifyDataSetChanged();
     }
 
 
@@ -247,7 +258,7 @@ public class MessageMainFragment extends Fragment {
         mSearchInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SearchFromManualActivity_.intent(getActivity()).start();
+                SearchFromManualActivity_.intent(getActivity()).viewType(SearchFromManualActivity_.TYPE_SEARCH).start();
             }
         });
 
@@ -299,15 +310,31 @@ public class MessageMainFragment extends Fragment {
                 }
             }
         });
-        dataList = new ArrayList<>();
-        dataList.add("好友");
-        dataList.add("群组");
-        dataList.add("电话本");
-        contactAdapter.setData(dataList);
 
         initCorps();
 //        getGroup();
 //        getFriend();
+
+        RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
+        Observable<Boolean> loginCallBackobservable = RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
+        loginCallBackobservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean b) {
+                        initCorps();
+                    }
+                });
+
     }
 
     @Background
@@ -328,7 +355,7 @@ public class MessageMainFragment extends Fragment {
     @Background
     void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
         final GetETMemberDetails.GetETMemberDetailsResponse response =
-                HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userInfo.getUserName(),AccountManager.getInstance().getUserId());
+                HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userInfo.getUserName(), AccountManager.getInstance().getUserId());
         if (response != null && response.data != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override

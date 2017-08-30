@@ -14,6 +14,9 @@ public class AccountManager {
     public static final String KEY_SP_ACCOUNT_TOKEN = "key_sp_account_token";
     public static final String KEY_SP_ACCOUNT_USERID = "key_sp_account_userId";
     public static final String KEY_SP_ACCOUNT_NICKNAME = "key_sp_account_nickname";
+
+    public static final String RXBUS_ACCOUNT_LOGIN = "rxbus_account_login";
+
     private static AccountManager instance;
     private final static Object syncLock = new Object();
 

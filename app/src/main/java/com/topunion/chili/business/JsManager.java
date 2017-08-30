@@ -3,6 +3,7 @@ package com.topunion.chili.business;
 import android.net.Uri;
 
 import com.google.gson.Gson;
+import com.topunion.chili.base.RxBus;
 import com.topunion.chili.data.AccountBean;
 
 /**
@@ -16,6 +17,7 @@ public class JsManager {
     private static JsManager instance;
     private final static Object syncLock = new Object();
     private Gson gson;
+
     public static JsManager getInstance() {
         if (instance == null) {
             synchronized (syncLock) {
@@ -27,27 +29,28 @@ public class JsManager {
         return instance;
     }
 
-    private JsManager(){
+    private JsManager() {
         gson = new Gson();
     }
 
-    public void parseUrl(String url){
+    public void parseUrl(String url) {
         Uri uri = Uri.parse(url);
-        if ( uri.getScheme().equals(TAG)) {
-            if(uri.getAuthority().equals(FUN_GETUSERINFO)){
+        if (uri.getScheme().equals(TAG)) {
+            if (uri.getAuthority().equals(FUN_GETUSERINFO)) {
                 getUserInfo(getJson(url));
             }
         }
     }
 
-    private String getJson(String url){
+    private String getJson(String url) {
         String[] sourceStrArray = url.split("\\?");
         return sourceStrArray[1];
     }
 
-    private void getUserInfo(String response){
+    private void getUserInfo(String response) {
         AccountBean accountBean = gson.fromJson(response, AccountBean.class);
         AccountManager.getInstance().saveAccount(accountBean);
+        RxBus.getInstance().post(AccountManager.RXBUS_ACCOUNT_LOGIN, true);
     }
 
 }

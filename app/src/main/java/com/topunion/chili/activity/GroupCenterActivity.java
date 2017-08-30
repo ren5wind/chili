@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.topunion.chili.MainActivity;
 import com.topunion.chili.MainActivity_;
 import com.topunion.chili.R;
 import com.topunion.chili.base.RxBus;
@@ -55,14 +54,15 @@ public class GroupCenterActivity extends AppCompatActivity {
         alertDialog.setCancelable(false);
         alertDialog.show();
         Window window = alertDialog.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         window.setBackgroundDrawableResource(R.drawable.dialog_bg);
         window.setGravity(Gravity.CENTER);
         window.setContentView(R.layout.dialog_group_edit);
         final EditText edit_alert = (EditText) window.findViewById(R.id.edit_alert);
-        edit_alert.setFocusable(true);
-        edit_alert.setFocusableInTouchMode(true);
-        edit_alert.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+//        edit_alert.setFocusable(true);
+//        edit_alert.setFocusableInTouchMode(true);
+//        edit_alert.requestFocus();
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         TextView txt_alert_title = (TextView) window.findViewById(R.id.txt_alert_title);
         txt_alert_title.setText("修改群名称");
         View.OnClickListener listener = new View.OnClickListener() {
