@@ -440,7 +440,7 @@ public class HttpHelper {
         }
     }
 
-    public boolean updateETFriendNickname(int id, String friendId, String nickname) {
+    public boolean updateETFriendNickname(String id, String friendId, String nickname) {
         try {
             UpdateETFriendNickname.IUpdateETFriendNickname request = retrofit.create(UpdateETFriendNickname.IUpdateETFriendNickname.class);
             Call<BaseStateResponse> call = request.updateETFriendNickname(id, friendId, nickname);

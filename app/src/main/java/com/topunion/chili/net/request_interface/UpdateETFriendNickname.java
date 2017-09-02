@@ -45,7 +45,7 @@ public class UpdateETFriendNickname {
     public interface IUpdateETFriendNickname {
         @Headers({"Content-Type: application/json","Accept:  application/json"})
         @POST("app/contacts/friend/updateFriendNickname")
-        Call<BaseStateResponse> updateETFriendNickname(@Query("userId") int userId, @Query("friendId") String friendId,
+        Call<BaseStateResponse> updateETFriendNickname(@Query("userId") String userId, @Query("friendId") String friendId,
                                                        @Query("nickname") String nickname);
     }
 

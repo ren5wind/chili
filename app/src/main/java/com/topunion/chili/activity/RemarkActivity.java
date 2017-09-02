@@ -2,8 +2,6 @@ package com.topunion.chili.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +15,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_remark)
@@ -41,8 +40,21 @@ public class RemarkActivity extends AppCompatActivity {
             Intent intent = new Intent();
             intent.putExtra("remark", remark);
             setResult(1, intent);
+            updateRequest(AccountManager.getInstance().getUserId(), uid, remark);
         }
-        this.finish();
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        String remark = mEditText.getText().toString();
+        if (remark != null && remark.length() > 0) {
+            Intent intent = new Intent();
+            intent.putExtra("remark", remark);
+            setResult(1, intent);
+            updateRequest(AccountManager.getInstance().getUserId(), uid, remark);
+        }
+        finish();
     }
 
     @Click
@@ -52,11 +64,11 @@ public class RemarkActivity extends AppCompatActivity {
 
     @Click
     void btn_confirm() {
-        updateRequest(Integer.valueOf(AccountManager.getInstance().getUserId()), uid, mEditText.getText().toString());
+        updateRequest(AccountManager.getInstance().getUserId(), uid, mEditText.getText().toString());
     }
 
     @Background
-    void updateRequest(int userId, String friendId, String nickname) {
+    void updateRequest(String userId, String friendId, String nickname) {
         boolean isSuccess = HttpHelper_.getInstance_(this).updateETFriendNickname(userId, friendId, nickname);
         updateUi(isSuccess, nickname);
     }
@@ -69,18 +81,13 @@ public class RemarkActivity extends AppCompatActivity {
     }
 
 
-    private void updateUi(final boolean isSuccess, final String nickname) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isSuccess) {
-                    mEditText.setText(nickname);
-                } else {
-                    Toast.makeText(RemarkActivity.this, "网络不稳，修改备注失败", Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
+    @UiThread
+    void updateUi(final boolean isSuccess, final String nickname) {
+        if (isSuccess) {
+//            mEditText.setText(nickname);
+        } else {
+            Toast.makeText(RemarkActivity.this, "网络不稳，修改备注失败", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @AfterViews

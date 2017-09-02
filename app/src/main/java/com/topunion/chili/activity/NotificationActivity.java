@@ -10,13 +10,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.topunion.chili.R;
+import com.topunion.chili.data.Notifiy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.Date;
+import java.util.List;
 
 @EActivity(R.layout.activity_notifycation)
 public class NotificationActivity extends AppCompatActivity {
@@ -27,6 +30,9 @@ public class NotificationActivity extends AppCompatActivity {
     @ViewById
     ListView mListView;
 
+    private List<Notifiy> mDataList;
+    private NotificationAdapter mNotificationAdapter;
+
     @Click
     void btn_back() {
         this.finish();
@@ -35,20 +41,21 @@ public class NotificationActivity extends AppCompatActivity {
     @AfterViews
     void init() {
         txt_title.setText("易投通知");
-
-        mListView.setAdapter(new NotificationAdapter());
+        mNotificationAdapter = new NotificationAdapter();
+        mListView.setAdapter(mNotificationAdapter);
     }
 
 
     class NotificationAdapter extends BaseAdapter {
+
         @Override
         public int getCount() {
-            return 2;
+            return (mDataList == null) ? 0 : mDataList.size();
         }
 
         @Override
-        public Object getItem(int i) {
-            return null;
+        public Notifiy getItem(int i) {
+            return (mDataList == null) ? null : mDataList.get(i);
         }
 
         @Override
@@ -68,28 +75,12 @@ public class NotificationActivity extends AppCompatActivity {
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-
-            switch (i) {
-                case 0:
-                    viewHolder.title.setText("张三回答了你的问题");
-                    viewHolder.content.setText("抢占沙发");
-                    viewHolder.time.setText(new Date().toLocaleString());
-                    break;
-
-                case 1:
-
-                    viewHolder.title.setText("易投问答：");
-                    viewHolder.content.setText("阿斯顿发送到付阿斯顿发送到付阿斯顿发" +
-                            "送到付阿斯顿发送到付阿斯顿发送到付阿斯顿发送到付阿斯顿发送" +
-                            "到付阿斯顿发送到付阿斯顿发送到付阿斯顿发送到付阿斯顿发送到" +
-                            "付阿斯顿发送到付阿斯顿发送到付阿斯顿发送到付阿斯顿发送到付" +
-                            "阿斯顿发送到付阿斯顿发送到付阿斯顿发送到付阿斯顿发送到付阿" +
-                            "斯顿发送到付阿斯顿发送到付阿斯顿发送到付");
-                    viewHolder.time.setText(new Date().toLocaleString());
-                    break;
+            Notifiy data = mDataList.get(i);
+            if (data != null) {
+                viewHolder.title.setText(data.title);
+                viewHolder.content.setText(data.msg);
+                viewHolder.time.setText(data.time + "");
             }
-
-
             return convertView;
         }
 

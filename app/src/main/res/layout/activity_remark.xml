@@ -30,10 +30,9 @@
         android:text="删除好友"
         android:textColor="@android:color/white"
         android:layout_width="match_parent"
-        android:layout_centerInParent="true"
         android:background="@drawable/delete_friend_bg"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -13,17 +13,20 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.MyApplication;
+import com.topunion.chili.MyReceiver;
 import com.topunion.chili.R;
 import com.topunion.chili.base.RxBus;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.business.ImInfoManager;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
+import com.topunion.chili.data.Notifiy;
 import com.topunion.chili.data.Organization;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpDepts;
@@ -54,6 +57,7 @@ import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.content.CustomContent;
 import cn.jpush.im.android.api.content.MessageContent;
 import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.enums.ContentType;
 import cn.jpush.im.android.api.enums.ConversationType;
 import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.GroupInfo;
@@ -66,10 +70,8 @@ import rx.android.schedulers.AndroidSchedulers;
 
 @EFragment(R.layout.fragment_message_main)
 public class MessageMainFragment extends Fragment {
-
     @App
     MyApplication application;
-
     @FragmentArg
     String mParam1;
     @FragmentArg
@@ -85,16 +87,23 @@ public class MessageMainFragment extends Fragment {
     ListView msg_list, contact_list;
 
     @ViewById
-    TextView mSearchInput;
+    TextView mSearchInput, txt_notifiy_name, txt_notifiy_msg, txt_notifiy_time;
 
     @ViewById
     LinearLayout popMenu;
+
+    @ViewById
+    SimpleDraweeView img_notifiy;
+
+    @ViewById
+    RelativeLayout rl_notifiy;
 
     private Organization mOrganization;
     private List<Object> dataList;
     private List<Conversation> msgList;
     private MsgAdapter msgAdapter;
     private ContactAdapter contactAdapter;
+
     @Click
     void btn_add_friend() {
         popMenu.setVisibility(View.GONE);
@@ -116,6 +125,7 @@ public class MessageMainFragment extends Fragment {
         msg_list.setVisibility(View.VISIBLE);
         contact_list.setVisibility(View.GONE);
         popMenu.setVisibility(View.GONE);
+        rl_notifiy.setVisibility(View.VISIBLE);
     }
 
     @Click
@@ -127,7 +137,7 @@ public class MessageMainFragment extends Fragment {
         msg_list.setVisibility(View.GONE);
         contact_list.setVisibility(View.VISIBLE);
         popMenu.setVisibility(View.GONE);
-        //TODO
+        rl_notifiy.setVisibility(View.GONE);
     }
 
     @Click
@@ -135,6 +145,10 @@ public class MessageMainFragment extends Fragment {
         popMenu.setVisibility(popMenu.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
+    @Click
+    void rl_notifiy() {
+        NotificationActivity_.intent(this).start();
+    }
 
     @Background
     void initCorps() {
@@ -167,7 +181,10 @@ public class MessageMainFragment extends Fragment {
                     getDeptUsers(1, 20, Integer.parseInt(departmentList.get(j).getId()), departmentList.get(j).getName());
             departmentList.get(j).analysisEmployee(deptNumbs);
         }
+    }
 
+    @Background
+    void loginIm() {
         JMessageClient.login(AccountManager.getInstance().getUserId(), "YiTou123", new BasicCallback() {
             @Override
             public void gotResult(int responseCode, String responseMessage) {
@@ -219,9 +236,21 @@ public class MessageMainFragment extends Fragment {
 
     //得到会话列表
     private void initConvListAdapter() {
-        msgList = JMessageClient.getConversationList();
-        if (msgList != null && msgList.size() > 0) {
-//            mConvListView.setNullConversation(true);
+        if(msgList != null) {
+            msgList.clear();
+        }
+        List<Conversation> tempMsgList = JMessageClient.getConversationList();
+        if (tempMsgList != null && tempMsgList.size() > 0) {
+            for (int i = 0; i < tempMsgList.size(); i++) {
+                if (tempMsgList.get(i) == null || tempMsgList.get(i).getLatestMessage() == null ||
+                        tempMsgList.get(i).getLatestMessage().getContentType() == null){
+                    continue;
+                }
+                    if (tempMsgList.get(i).getLatestMessage().getContentType() == ContentType.text) {
+                        msgList.add(tempMsgList.get(i));
+                    }
+            }
+
             SortConvList sortConvList = new SortConvList();
             Collections.sort(msgList, sortConvList);
         } else {
@@ -246,6 +275,12 @@ public class MessageMainFragment extends Fragment {
         }
         //如果是新的会话
         msgList.add(0, conv);
+    }
+
+    private void pushReceiverDateChange(Notifiy data) {
+        txt_notifiy_name.setText(data.title);
+        txt_notifiy_msg.setText(data.msg);
+        txt_notifiy_time.setText(data.time + "");
     }
 
     @AfterViews
@@ -312,9 +347,10 @@ public class MessageMainFragment extends Fragment {
         });
 
         initCorps();
+        loginIm();
 //        getGroup();
 //        getFriend();
-
+        //监听登录
         RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
         Observable<Boolean> loginCallBackobservable = RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
         loginCallBackobservable.observeOn(AndroidSchedulers.mainThread())
@@ -332,9 +368,49 @@ public class MessageMainFragment extends Fragment {
                     @Override
                     public void onNext(Boolean b) {
                         initCorps();
+                        loginIm();
                     }
                 });
+        //监听push
+        RxBus.getInstance().register(MyReceiver.RXBUS_PUSH);
+        Observable<Notifiy> pushCallBackobservable = RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
+        pushCallBackobservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Notifiy>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Notifiy data) {
+                        pushReceiverDateChange(data);
+                    }
+                });
+        //监听企业管理
+        RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
+        Observable<Boolean> companyCallBackobservable = RxBus.getInstance().register(CompanyManageActivity_.RXBUS_UPDATE_COMPANY);
+        companyCallBackobservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean b) {
+                        initCorps();
+                    }
+                });
     }
 
     @Background
@@ -576,4 +652,10 @@ public class MessageMainFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onResume() {
+        initConvListAdapter();
+        super.onResume();
+    }
 }

@@ -20,6 +20,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_personal_center)
@@ -61,7 +62,7 @@ public class PersonalCenterActivity extends AppCompatActivity {
 
     @Click
     void btn_operation() {
-        startActivityForResult(new Intent(this, RemarkActivity_.class), 0);
+        RemarkActivity_.intent(this).uid(uid).logicNickname(mData.logicNickname).startForResult(0);
     }
 
     @AfterViews
@@ -90,41 +91,40 @@ public class PersonalCenterActivity extends AppCompatActivity {
         updateUi();
     }
 
-    private void updateUi() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                txt_name.setText(mData.nickname);
-                img_header.setImageURI(mData.headImg);
-                btn_operation.setImageResource(R.mipmap.more);
-                btn_operation.setVisibility(View.VISIBLE);
-                txt_company.setText(mData.corpName);
-                txt_position.setText(mData.corpTitleName);
-                if ("male".equals(mData.gender)) {
-                    img_sex.setImageResource(R.mipmap.sex_boy);
-                } else if ("female".equals(mData.gender)) {
-                    img_sex.setImageResource(R.mipmap.sex_girl);
-                } else {
-                    img_sex.setVisibility(View.GONE);
-                }
-                if (mData.hasIdentify) {
-                    txt_verify1.setText("已实名认证");
-                } else {
-                    txt_verify1.setVisibility(View.GONE);
-                }
-                if (mData.hasCorp) {
-                    txt_verify2.setText("已企业认证");
-                } else {
-                    txt_verify2.setVisibility(View.GONE);
-                }
-                if ("0".equals(mData.isFriend)) {//不是好友
-                    btn_send.setText("添加好友");
-                } else {
-                    btn_send.setText("发消息");
-                }
-
-            }
-        });
+    @UiThread
+    void updateUi() {
+        txt_name.setText(mData.nickname);
+        img_header.setImageURI(mData.headImg);
+        if ("1".equals(mData.isFriend)) {
+            btn_operation.setImageResource(R.mipmap.more);
+            btn_operation.setVisibility(View.VISIBLE);
+        } else {
+            btn_operation.setVisibility(View.GONE);
+        }
+        txt_company.setText(mData.corpName);
+        txt_position.setText(mData.corpTitleName);
+        if ("male".equals(mData.gender)) {
+            img_sex.setImageResource(R.mipmap.sex_boy);
+        } else if ("female".equals(mData.gender)) {
+            img_sex.setImageResource(R.mipmap.sex_girl);
+        } else {
+            img_sex.setVisibility(View.GONE);
+        }
+        if (mData.hasIdentify) {
+            txt_verify1.setText("已实名认证");
+        } else {
+            txt_verify1.setVisibility(View.GONE);
+        }
+        if (mData.hasCorp) {
+            txt_verify2.setText("已企业认证");
+        } else {
+            txt_verify2.setVisibility(View.GONE);
+        }
+        if ("0".equals(mData.isFriend)) {//不是好友
+            btn_send.setText("添加好友");
+        } else {
+            btn_send.setText("发消息");
+        }
     }
 
     @Override

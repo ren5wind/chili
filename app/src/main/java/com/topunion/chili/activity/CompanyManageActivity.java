@@ -35,6 +35,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.lang.annotation.Retention;
@@ -71,6 +72,7 @@ public class CompanyManageActivity extends AppCompatActivity {
     private MyAdapter myAdapter;
 
     public static final int REQUEST_CODE_GET_EMPLOYEE = 1;
+    public static final String RXBUS_UPDATE_COMPANY = "rxbus_update_company";
 
     @Click
     void btn_back() {
@@ -79,7 +81,7 @@ public class CompanyManageActivity extends AppCompatActivity {
 
     @Click
     void mSearchInput() {
-        SearchFromManualActivity_.intent(this).startForResult(0);
+        SearchFromManualActivity_.intent(this).company(company).startForResult(0);
     }
 
 //    @Override
@@ -313,18 +315,15 @@ public class CompanyManageActivity extends AppCompatActivity {
 
     }
 
+    @UiThread
     void updateAdapter(final boolean isUpdate, final String toast) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isUpdate) {
-                    myAdapter.setData(itemDataList);
-                    myAdapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(CompanyManageActivity.this, toast, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        if (isUpdate) {
+            myAdapter.setData(itemDataList);
+            myAdapter.notifyDataSetChanged();
+            RxBus.getInstance().post(RXBUS_UPDATE_COMPANY, true);
+        } else {
+            Toast.makeText(CompanyManageActivity.this, toast, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void addEmployee(List<Employee> addEmployeeList, String departmentId) {

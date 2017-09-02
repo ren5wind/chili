@@ -69,7 +69,6 @@ public class TalkingActivity extends AppCompatActivity {
 
     private boolean mIsSingle = true;
     private Conversation mConv;
-    private Conversation mSendConv;
 
     int mOffset = 1000;
     MessageSendingOptions options;
@@ -101,7 +100,12 @@ public class TalkingActivity extends AppCompatActivity {
 
     @Click
     void btn_operation() {
-        GroupCenterActivity_.intent(this).groupImId(groupId).start();
+
+        if (mIsSingle) {
+            PersonalCenterActivity_.intent(this).uid(targetId).start();
+        } else {
+            GroupCenterActivity_.intent(this).groupImId(groupId).start();
+        }
     }
 
     @AfterViews
@@ -127,7 +131,7 @@ public class TalkingActivity extends AppCompatActivity {
         adapter = new ListViewAdapter(this);
         //获取消息列表
         List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
-        int size = messageList.size();
+        int size = (messageList == null) ? 0 : messageList.size();
         for (int i = 0; i < size; i++) {
             Message message = messageList.get(i);
             if (message.getContentType() == ContentType.text) {
@@ -142,10 +146,8 @@ public class TalkingActivity extends AppCompatActivity {
         }
 
         txt_title.setText(title);
-        if (!mIsSingle) {
-            btn_operation.setVisibility(View.VISIBLE);
-            btn_operation.setImageResource(R.mipmap.more);
-        }
+        btn_operation.setVisibility(View.VISIBLE);
+        btn_operation.setImageResource(R.mipmap.more);
 
 
         mListView.setAdapter(adapter);
@@ -200,7 +202,7 @@ public class TalkingActivity extends AppCompatActivity {
     @Background
     void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
         final GetETMemberDetails.GetETMemberDetailsResponse response =
-                HttpHelper_.getInstance_(this).getETMemberDetails(userInfo.getUserName(),AccountManager.getInstance().getUserId());
+                HttpHelper_.getInstance_(this).getETMemberDetails(userInfo.getUserName(), AccountManager.getInstance().getUserId());
         if (response != null && response.data != null) {
             runOnUiThread(new Runnable() {
                 @Override
