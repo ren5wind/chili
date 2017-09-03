@@ -28,6 +28,7 @@ import cn.jpush.android.api.JPushInterface;
 public class MyReceiver extends BroadcastReceiver {
     private static final String TAG = "JIGUANG-Example";
     public static final String RXBUS_PUSH = "rxbus_push";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
@@ -47,14 +48,14 @@ public class MyReceiver extends BroadcastReceiver {
                 Log.d(TAG, "[MyReceiver] 接收到推送下来的通知");
                 int notifactionId = bundle.getInt(JPushInterface.EXTRA_NOTIFICATION_ID);
                 Log.d(TAG, "[MyReceiver] 接收到推送下来的通知的ID: " + notifactionId);
+                String alert = bundle.getString(JPushInterface.EXTRA_ALERT);
 
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
                 Log.d(TAG, "[MyReceiver] 用户点击打开了通知");
-
                 //打开自定义的Activity
-                Intent i = new Intent(context, MainActivity.class);
-                i.putExtras(bundle);
-                //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent i = new Intent(context, MainActivity_.class);
+//                i.putExtras(bundle);
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(i);
 
@@ -71,7 +72,6 @@ public class MyReceiver extends BroadcastReceiver {
         } catch (Exception e) {
 
         }
-
     }
 
     // 打印所有的 intent extra 数据

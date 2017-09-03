@@ -4,6 +4,7 @@ package com.topunion.chili.activity;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,12 +54,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cn.jpush.android.api.JPushInterface;
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.content.CustomContent;
 import cn.jpush.im.android.api.content.MessageContent;
 import cn.jpush.im.android.api.content.TextContent;
-import cn.jpush.im.android.api.enums.ContentType;
 import cn.jpush.im.android.api.enums.ConversationType;
+import cn.jpush.im.android.api.event.MessageEvent;
 import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.Message;
@@ -70,6 +72,7 @@ import rx.android.schedulers.AndroidSchedulers;
 
 @EFragment(R.layout.fragment_message_main)
 public class MessageMainFragment extends Fragment {
+    public static int sequence = 1;
     @App
     MyApplication application;
     @FragmentArg
@@ -125,7 +128,7 @@ public class MessageMainFragment extends Fragment {
         msg_list.setVisibility(View.VISIBLE);
         contact_list.setVisibility(View.GONE);
         popMenu.setVisibility(View.GONE);
-        rl_notifiy.setVisibility(View.VISIBLE);
+        rl_notifiy.setVisibility(View.GONE);
     }
 
     @Click
@@ -185,28 +188,30 @@ public class MessageMainFragment extends Fragment {
 
     @Background
     void loginIm() {
+        //设置 Alias
+        sequence++;
+        JPushInterface.setAlias(MyApplication.getContext(), sequence, AccountManager.getInstance().getUserId());
         JMessageClient.login(AccountManager.getInstance().getUserId(), "YiTou123", new BasicCallback() {
             @Override
             public void gotResult(int responseCode, String responseMessage) {
                 if (responseCode == 0) {
-                    UserInfo myInfo = JMessageClient.getMyInfo();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), "登陆成功", Toast.LENGTH_SHORT).show();
-                            initConvListAdapter();
-                        }
-                    });
+                    showToast("登录成功");
+                    initConvListAdapter();
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), "登陆失败", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    showToast("登录失败");
                 }
             }
         });
+        JMessageClient.registerEventReceiver(this);
+    }
+
+    public void onEventMainThread(MessageEvent event) {
+        initConvListAdapter();
+    }
+
+    @UiThread
+    void showToast(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @UiThread
@@ -236,20 +241,20 @@ public class MessageMainFragment extends Fragment {
 
     //得到会话列表
     private void initConvListAdapter() {
-        if(msgList != null) {
+        if (msgList != null) {
             msgList.clear();
         }
-        List<Conversation> tempMsgList = JMessageClient.getConversationList();
-        if (tempMsgList != null && tempMsgList.size() > 0) {
-            for (int i = 0; i < tempMsgList.size(); i++) {
-                if (tempMsgList.get(i) == null || tempMsgList.get(i).getLatestMessage() == null ||
-                        tempMsgList.get(i).getLatestMessage().getContentType() == null){
-                    continue;
-                }
-                    if (tempMsgList.get(i).getLatestMessage().getContentType() == ContentType.text) {
-                        msgList.add(tempMsgList.get(i));
-                    }
-            }
+        msgList = JMessageClient.getConversationList();
+        if (msgList != null && msgList.size() > 0) {
+//            for (int i = 0; i < tempMsgList.size(); i++) {
+//                if (tempMsgList.get(i) == null || tempMsgList.get(i).getLatestMessage() == null ||
+//                        tempMsgList.get(i).getLatestMessage().getContentType() == null) {
+//                    continue;
+//                }
+//                if (tempMsgList.get(i).getLatestMessage().getContentType() == ContentType.text) {
+//                    msgList.add(tempMsgList.get(i));
+//                }
+//            }
 
             SortConvList sortConvList = new SortConvList();
             Collections.sort(msgList, sortConvList);
@@ -650,6 +655,7 @@ public class MessageMainFragment extends Fragment {
         public long getItemId(int i) {
             return i;
         }
+
     }
 
 
@@ -657,5 +663,11 @@ public class MessageMainFragment extends Fragment {
     public void onResume() {
         initConvListAdapter();
         super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        JMessageClient.unRegisterEventReceiver(this);
+        super.onDestroy();
     }
 }

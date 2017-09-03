@@ -117,6 +117,7 @@
         android:id="@+id/rl_notifiy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_below="@id/line_bottom">
 
         <com.facebook.drawee.view.SimpleDraweeView

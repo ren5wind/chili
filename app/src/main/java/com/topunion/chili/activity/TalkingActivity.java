@@ -31,6 +31,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.content.TextContent;
 import cn.jpush.im.android.api.enums.ContentType;
 import cn.jpush.im.android.api.enums.MessageDirect;
+import cn.jpush.im.android.api.event.MessageEvent;
 import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.Message;
@@ -72,6 +74,7 @@ public class TalkingActivity extends AppCompatActivity {
 
     int mOffset = 1000;
     MessageSendingOptions options;
+    private List<MsgInfo> mDataList;
 
     @Click
     void btn_back() {
@@ -90,7 +93,7 @@ public class TalkingActivity extends AppCompatActivity {
         Message msg;
         TextContent content = new TextContent(mcgContent);
         msg = mConv.createSendMessage(content);
-        adapter.addDataToAdapter(new MsgInfo(null, msg));
+        mDataList.add(new MsgInfo(null, msg));
         adapter.notifyDataSetChanged();
         mListView.setSelection(mListView.getBottom());
         JMessageClient.sendMessage(msg, options);
@@ -110,45 +113,16 @@ public class TalkingActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
+        mDataList = new ArrayList<>();
         options = new MessageSendingOptions();
         options.setRetainOffline(true);//是否当对方用户不在线时让后台服务区保存这条消息的离线消息
         options.setShowNotification(true);//是否让对方展示sdk默认的通知栏通知
-        if (!TextUtils.isEmpty(targetId)) {
-            //单聊
-            mIsSingle = true;
-            mConv = JMessageClient.getSingleConversation(targetId);
-            if (mConv == null) {
-                mConv = Conversation.createSingleConversation(targetId);
-            }
-        } else {
-            //群聊
-            mIsSingle = false;
-            mConv = JMessageClient.getGroupConversation(groupId);
-            if (mConv == null) {
-                mConv = Conversation.createGroupConversation(groupId);
-            }
-        }
-        adapter = new ListViewAdapter(this);
-        //获取消息列表
-        List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
-        int size = (messageList == null) ? 0 : messageList.size();
-        for (int i = 0; i < size; i++) {
-            Message message = messageList.get(i);
-            if (message.getContentType() == ContentType.text) {
-                int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
-                        : TYPE_RECEIVE_TXT;
-                if (direct == TYPE_SEND_TXT) {//发送方
-                    adapter.addDataToAdapter(new MsgInfo(null, message));
-                } else if (direct == TYPE_RECEIVE_TXT) {//接收方
-                    adapter.addDataToAdapter(new MsgInfo(message, null));
-                }
-            }
-        }
 
         txt_title.setText(title);
         btn_operation.setVisibility(View.VISIBLE);
         btn_operation.setImageResource(R.mipmap.more);
-
+        initImMessage();
+        JMessageClient.registerEventReceiver(this);
 
         mListView.setAdapter(adapter);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -170,8 +144,48 @@ public class TalkingActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
+    private void initImMessage() {
+        if (!TextUtils.isEmpty(targetId)) {
+            //单聊
+            mIsSingle = true;
+            mConv = JMessageClient.getSingleConversation(targetId);
+            if (mConv == null) {
+                mConv = Conversation.createSingleConversation(targetId);
+            }
+        } else {
+            //群聊
+            mIsSingle = false;
+            mConv = JMessageClient.getGroupConversation(groupId);
+            if (mConv == null) {
+                mConv = Conversation.createGroupConversation(groupId);
+            }
+        }
+        //获取消息列表
+        List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
+        int size = (messageList == null) ? 0 : messageList.size();
+        for (int i = 0; i < size; i++) {
+            Message message = messageList.get(i);
+            if (message.getContentType() == ContentType.text) {
+                int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
+                        : TYPE_RECEIVE_TXT;
+                if (direct == TYPE_SEND_TXT) {//发送方
+                    mDataList.add(new MsgInfo(null, message));
+                } else if (direct == TYPE_RECEIVE_TXT) {//接收方
+                    mDataList.add(new MsgInfo(message, null));
+                }
+            }
+        }
+        if (adapter == null) {
+            adapter = new ListViewAdapter(this, mDataList);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
+    }
 
+    public void onEventMainThread(MessageEvent event) {
+        initImMessage();
     }
 
     class MsgInfo {
@@ -217,27 +231,28 @@ public class TalkingActivity extends AppCompatActivity {
     public class ListViewAdapter extends BaseAdapter {
 
         private Context context;
-        private List<MsgInfo> datas = new ArrayList<>();
+        private List<MsgInfo> dataList = new ArrayList<>();
 
         private ViewHolder viewHolder;
 
-        //给adapter添加数据
-        public void addDataToAdapter(MsgInfo e) {
-            datas.add(e);
-        }
+//        //给adapter添加数据
+//        public void addDataToAdapter(MsgInfo e) {
+//            datas.add(e);
+//        }
 
-        public ListViewAdapter(Context context) {
+        public ListViewAdapter(Context context, List<MsgInfo> datas) {
             this.context = context;
+            dataList = datas;
         }
 
         @Override
         public int getCount() {
-            return datas.size();
+            return dataList.size();
         }
 
         @Override
         public MsgInfo getItem(int position) {
-            return datas.get(position);
+            return dataList.get(position);
         }
 
         @Override
@@ -260,8 +275,8 @@ public class TalkingActivity extends AppCompatActivity {
             }
 
             //获取adapter中的数据
-            Message left = datas.get(position).left_msg;
-            Message right = datas.get(position).right_msg;
+            Message left = dataList.get(position).left_msg;
+            Message right = dataList.get(position).right_msg;
 
             //如果数据为空，则将数据设置给右边，同时显示右边，隐藏左边
             if (right != null) {
@@ -350,5 +365,11 @@ public class TalkingActivity extends AppCompatActivity {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        JMessageClient.unRegisterEventReceiver(this);
+        super.onDestroy();
     }
 }
