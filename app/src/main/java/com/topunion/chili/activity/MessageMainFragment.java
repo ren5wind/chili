@@ -4,7 +4,6 @@ package com.topunion.chili.activity;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -155,20 +154,20 @@ public class MessageMainFragment extends Fragment {
 
     @Background
     void initCorps() {
-        //获取组织结构
-        //获取企业列表
-        GetCorps.GetCorpsResponse corps = HttpHelper_.getInstance_(getActivity()).getCorps(AccountManager.getInstance().getUserId());
-        mOrganization = new Organization();
-        List<Company> companyList = mOrganization.analysisCompany(corps);
-        List<Department> departmentList = null;
-        //获取部门列表
         dataList = null;
         dataList = new ArrayList<>();
+        //获取部门列表
         dataList.add("好友");
         dataList.add("群组");
         dataList.add("电话本");
         contactAdapter.setData(dataList);
-
+        //获取组织结构
+        //获取企业列表
+        GetCorps.GetCorpsResponse corps = HttpHelper_.getInstance_(getActivity()).getCorps(AccountManager.getInstance().getUserId());
+        mOrganization = null;
+        mOrganization = new Organization();
+        List<Company> companyList = mOrganization.analysisCompany(corps);
+        List<Department> departmentList = null;
         for (int i = 0; companyList != null && i < companyList.size(); i++) {
             dataList.add(companyList.get(i));
             GetCorpDepts.GetCorpDeptsResponse depts = HttpHelper_.getInstance_(getActivity()).getCorpDepts(1, 20, Integer.parseInt(companyList.get(i).getId()));
@@ -196,6 +195,9 @@ public class MessageMainFragment extends Fragment {
             public void gotResult(int responseCode, String responseMessage) {
                 if (responseCode == 0) {
                     showToast("登录成功");
+                    if (msgList != null) {
+                        msgList.clear();
+                    }
                     initConvListAdapter();
                 } else {
                     showToast("登录失败");
@@ -211,7 +213,7 @@ public class MessageMainFragment extends Fragment {
 
     @UiThread
     void showToast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MyApplication.getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @UiThread
@@ -435,6 +437,9 @@ public class MessageMainFragment extends Fragment {
 
     @Background
     void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
+        if (userInfo == null) {
+            return;
+        }
         final GetETMemberDetails.GetETMemberDetailsResponse response =
                 HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userInfo.getUserName(), AccountManager.getInstance().getUserId());
         if (response != null && response.data != null) {
@@ -468,14 +473,14 @@ public class MessageMainFragment extends Fragment {
         @Override
         public View getView(int position, View view, ViewGroup viewGroup) {
             Conversation data = mDataList.get(position);
-            if (data.getType().equals(ConversationType.single)) {
-                UserInfo feedBack = (UserInfo) data.getTargetInfo();
-                if (feedBack.getUserName().equals("feedback_Android")) {
-                    JMessageClient.deleteSingleConversation("feedback_Android", feedBack.getAppKey());
-                    mDataList.remove(position);
-                    notifyDataSetChanged();
-                }
-            }
+//            if (data.getType().equals(ConversationType.single)) {
+//                UserInfo feedBack = (UserInfo) data.getTargetInfo();
+//                if (feedBack.getUserName().equals("feedback_Android")) {
+//                    JMessageClient.deleteSingleConversation("feedback_Android", feedBack.getAppKey());
+//                    mDataList.remove(position);
+//                    notifyDataSetChanged();
+//                }
+//            }
 
             ViewHolder holder;
             if (view == null) {

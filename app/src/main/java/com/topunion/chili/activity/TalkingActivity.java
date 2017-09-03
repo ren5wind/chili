@@ -31,7 +31,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -96,6 +95,11 @@ public class TalkingActivity extends AppCompatActivity {
         mDataList.add(new MsgInfo(null, msg));
         adapter.notifyDataSetChanged();
         mListView.setSelection(mListView.getBottom());
+        options.setRetainOffline(true);//是否当对方用户不在线时让后台服务区保存这条消息的离线消息
+        options.setShowNotification(true);//是否让对方展示sdk默认的通知栏通知
+        options.setCustomNotificationEnabled(true);
+        options.setNotificationTitle("易投");
+        options.setNotificationText(AccountManager.getInstance().getNickName() + "：" + mcgContent);
         JMessageClient.sendMessage(msg, options);
     }
 
@@ -114,15 +118,12 @@ public class TalkingActivity extends AppCompatActivity {
     @AfterViews
     void init() {
         mDataList = new ArrayList<>();
-        options = new MessageSendingOptions();
-        options.setRetainOffline(true);//是否当对方用户不在线时让后台服务区保存这条消息的离线消息
-        options.setShowNotification(true);//是否让对方展示sdk默认的通知栏通知
-
         txt_title.setText(title);
         btn_operation.setVisibility(View.VISIBLE);
         btn_operation.setImageResource(R.mipmap.more);
         initImMessage();
         JMessageClient.registerEventReceiver(this);
+        options = new MessageSendingOptions();
 
         mListView.setAdapter(adapter);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
