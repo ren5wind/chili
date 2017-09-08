@@ -1,5 +1,8 @@
 package com.topunion.chili.business;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 
 import com.google.gson.Gson;
@@ -51,6 +54,22 @@ public class JsManager {
         AccountBean accountBean = gson.fromJson(response, AccountBean.class);
         AccountManager.getInstance().saveAccount(accountBean);
         RxBus.getInstance().post(AccountManager.RXBUS_ACCOUNT_LOGIN, true);
+    }
+
+    private void upLoadHead(Context context){
+        final CharSequence[] charSequences = {"相册","拍照"};
+        AlertDialog.Builder builder= new AlertDialog.Builder(context);
+
+        builder.setTitle("ok")
+                .setItems(charSequences, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+
+                    }
+                }).show();
     }
 
 }

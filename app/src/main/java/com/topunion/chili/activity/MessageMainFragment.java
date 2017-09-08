@@ -23,7 +23,6 @@ import com.topunion.chili.MyReceiver;
 import com.topunion.chili.R;
 import com.topunion.chili.base.RxBus;
 import com.topunion.chili.business.AccountManager;
-import com.topunion.chili.business.ImInfoManager;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
 import com.topunion.chili.data.Notifiy;
@@ -33,11 +32,8 @@ import com.topunion.chili.net.request_interface.GetCorpDepts;
 import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
 import com.topunion.chili.net.request_interface.GetCorps;
 import com.topunion.chili.net.request_interface.GetETMemberDetails;
-import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
-import com.topunion.chili.net.request_interface.GetGroups;
 import com.topunion.chili.util.SortConvList;
-import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
@@ -222,23 +218,23 @@ public class MessageMainFragment extends Fragment {
     }
 
 
-    @Background
-    void getGroup() {
-        String uid = AccountManager.getInstance().getUserId();
-        if (!StringUtil.isEmpt(uid)) {
-            GetGroups.GetGroupsResponse response = HttpHelper_.getInstance_(getActivity()).getGroups(1, 1000, uid);
-            ImInfoManager.getInstance().addGroupList(response.result);
-        }
-    }
-
-    @Background
-    void getFriend() {
-        String uid = AccountManager.getInstance().getUserId();
-        if (!StringUtil.isEmpt(uid)) {
-            GetFriends.GetFriendsResponse response = HttpHelper_.getInstance_(getActivity()).getFriends(uid, 1, 1000);
-            ImInfoManager.getInstance().addFriendList(response.result);
-        }
-    }
+//    @Background
+//    void getGroup() {
+//        String uid = AccountManager.getInstance().getUserId();
+//        if (!StringUtil.isEmpt(uid)) {
+//            GetGroups.GetGroupsResponse response = HttpHelper_.getInstance_(getActivity()).getGroups(1, 1000, uid);
+//            ImInfoManager.getInstance().addGroupList(response.result);
+//        }
+//    }
+//
+//    @Background
+//    void getFriend() {
+//        String uid = AccountManager.getInstance().getUserId();
+//        if (!StringUtil.isEmpt(uid)) {
+//            GetFriends.GetFriendsResponse response = HttpHelper_.getInstance_(getActivity()).getFriends(uid, 1, 1000);
+//            ImInfoManager.getInstance().addFriendList(response.result);
+//        }
+//    }
 
 
     //得到会话列表
@@ -422,6 +418,9 @@ public class MessageMainFragment extends Fragment {
 
     @Background
     void getGroup(GroupInfo groupInfo, final TextView txt_name) {
+        if (groupInfo == null || txt_name == null) {
+            return;
+        }
         final GetGroupDetails.GetGroupDetailsResponse response =
                 HttpHelper_.getInstance_(getActivity()).getGroupDetails(groupInfo.getGroupID());
         if (response == null || response.data == null) {
@@ -437,7 +436,7 @@ public class MessageMainFragment extends Fragment {
 
     @Background
     void getETMember(UserInfo userInfo, final SimpleDraweeView img_header, final TextView txt_name) {
-        if (userInfo == null) {
+        if (userInfo == null || img_header == null || txt_name == null) {
             return;
         }
         final GetETMemberDetails.GetETMemberDetailsResponse response =
@@ -564,6 +563,7 @@ public class MessageMainFragment extends Fragment {
             if (data.getType().equals(ConversationType.single)) {//单聊头像
                 UserInfo userInfo = (UserInfo) data.getTargetInfo();
                 getETMember(userInfo, holder.img_header, holder.txt_name);
+
             } else {//群聊头像
                 GroupInfo groupInfo = (GroupInfo) data.getTargetInfo();
                 getGroup(groupInfo, holder.txt_name);
