@@ -171,7 +171,7 @@ public class HttpHelper {
         }
     }
 
-    public GetCorpMemberDetails.GetCorpMemberDetailsResponse getCorpMemberDetails(int id) {
+    public GetCorpMemberDetails.GetCorpMemberDetailsResponse getCorpMemberDetails(String id) {
         try {
             GetCorpMemberDetails.IGetCorpMemberDetails request = retrofit.create(GetCorpMemberDetails.IGetCorpMemberDetails.class);
             Call<GetCorpMemberDetails.GetCorpMemberDetailsResponse> call = request.getCorpMemberDetails(id);

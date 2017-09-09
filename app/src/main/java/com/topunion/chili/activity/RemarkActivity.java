@@ -2,6 +2,8 @@ package com.topunion.chili.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,26 +35,27 @@ public class RemarkActivity extends AppCompatActivity {
     @ViewById
     EditText mEditText;
 
+    @ViewById
+    Button btn_confirm;
+
+    String remark;
+
     @Click
     void btn_back() {
-        String remark = mEditText.getText().toString();
         if (remark != null && remark.length() > 0) {
             Intent intent = new Intent();
             intent.putExtra("remark", remark);
             setResult(1, intent);
-            updateRequest(AccountManager.getInstance().getUserId(), uid, remark);
         }
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        String remark = mEditText.getText().toString();
         if (remark != null && remark.length() > 0) {
             Intent intent = new Intent();
             intent.putExtra("remark", remark);
             setResult(1, intent);
-            updateRequest(AccountManager.getInstance().getUserId(), uid, remark);
         }
         finish();
     }
@@ -70,6 +73,9 @@ public class RemarkActivity extends AppCompatActivity {
     @Background
     void updateRequest(String userId, String friendId, String nickname) {
         boolean isSuccess = HttpHelper_.getInstance_(this).updateETFriendNickname(userId, friendId, nickname);
+        if(isSuccess){
+            remark = nickname;
+        }
         updateUi(isSuccess, nickname);
     }
 
@@ -85,8 +91,9 @@ public class RemarkActivity extends AppCompatActivity {
     void updateUi(final boolean isSuccess, final String nickname) {
         if (isSuccess) {
 //            mEditText.setText(nickname);
+            Toast.makeText(RemarkActivity.this, "修改备注成功", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(RemarkActivity.this, "网络不稳，修改备注失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RemarkActivity.this, "修改备注失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -94,6 +101,9 @@ public class RemarkActivity extends AppCompatActivity {
     void init() {
         txt_title.setText("资料设置");
         mEditText.setText(logicNickname);
+        remark = logicNickname;
+        btn_confirm.setVisibility(View.VISIBLE);
+        btn_confirm.setText("确定");
     }
 
 }
