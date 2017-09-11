@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,19 +26,16 @@ public class RemarkActivity extends AppCompatActivity {
 
     @Extra
     String logicNickname;
-
     @Extra
     String uid;
-
     @ViewById
     TextView txt_title;
-
     @ViewById
     EditText mEditText;
-
     @ViewById
     Button btn_confirm;
-
+    @ViewById
+    RelativeLayout search;
     String remark;
 
     @Click
@@ -104,6 +102,8 @@ public class RemarkActivity extends AppCompatActivity {
         remark = logicNickname;
         btn_confirm.setVisibility(View.VISIBLE);
         btn_confirm.setText("确定");
+        search.setVisibility(View.VISIBLE);
+
     }
 
 }

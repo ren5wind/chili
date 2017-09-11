@@ -44,10 +44,7 @@ public class GroupListActivity extends AppCompatActivity {
 
     @Click
     void btn_operation() {
-//        ChoosePersonActivity_.intent(this)
-//                .choose(new int[]{0, 0, 0, 0, 0, 0, 0})
-//                .data(new String[]{"张三", "李四", "王五", "赵六", "田七", "猴八", "牛二"})
-//                .title("选择联系人").startForResult(0);
+        ChoosePersonActivity_.intent(this).viewType(ChoosePersonActivity_.TYPE_CREATE_GROUP).start();
     }
 
     @Override

@@ -157,7 +157,7 @@ public class MessageMainFragment extends Fragment {
         dataList.add("群组");
         dataList.add("电话本");
         contactAdapter.setData(dataList);
-        //获取组织结构
+        //
         //获取企业列表
         GetCorps.GetCorpsResponse corps = HttpHelper_.getInstance_(getActivity()).getCorps(AccountManager.getInstance().getUserId());
         mOrganization = null;

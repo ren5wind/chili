@@ -1,5 +1,6 @@
 package com.topunion.chili.data;
 
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.request_interface.GetCorps;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class Organization extends BaseData {
             Company company = new Company();
             company.setId(corp.id);
             company.setName(corp.name);
+            company.setAdministrators((AccountManager.getInstance().getUserId().equals(corp.userId)) ? true : false);
             companyList.add(company);
         }
         return companyList;
