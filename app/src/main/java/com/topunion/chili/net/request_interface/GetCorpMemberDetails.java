@@ -76,7 +76,7 @@ public class GetCorpMemberDetails {
 
     public interface IGetCorpMemberDetails {
         @GET("app/corp/corpUser/getCorpUser")
-        Call<GetCorpMemberDetails.GetCorpMemberDetailsResponse> getCorpMemberDetails(@Query("id") int id);
+        Call<GetCorpMemberDetails.GetCorpMemberDetailsResponse> getCorpMemberDetails(@Query("id") String id);
     }
 
     public static class GetCorpMemberDetailsResponse {

@@ -14,6 +14,7 @@ public class Company extends BaseData{
     private String name;
     private String headUrl;
     private List<Department> departmentList;
+    private boolean isAdministrators;
 
     public List<Department> analysisDepartment(GetCorpDepts.GetCorpDeptsResponse depts){
         departmentList = new ArrayList<>();
@@ -44,6 +45,14 @@ public class Company extends BaseData{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isAdministrators() {
+        return isAdministrators;
+    }
+
+    public void setAdministrators(boolean administrators) {
+        isAdministrators = administrators;
     }
 
     public String getHeadUrl() {

@@ -1,17 +1,16 @@
 package com.topunion.chili.activity;
 
 
-import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +24,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @EActivity(R.layout.activity_choose_person)
 public class InviteContactActivity extends AppCompatActivity {
@@ -40,17 +40,35 @@ public class InviteContactActivity extends AppCompatActivity {
     @ViewById
     ListView mListView;
 
+    @ViewById
+    EditText et_search;
+
+    private List<Contact> contacts = new ArrayList<>();
+    private List<Contact> mSreachList = new ArrayList<>();
+    private Adapter mAdapter;
+
+    @Click
+    void btn_search() {
+        mSreachList.clear();
+        String keyword = et_search.getText().toString().trim();
+        int size = (contacts == null) ? 0 : contacts.size();
+        for (int i = 0; i < size; i++) {
+            if (contacts.get(i).name.contains(keyword) || contacts.get(i).phone.contains(keyword)) {
+                mSreachList.add(contacts.get(i));
+            }
+        }
+        mAdapter.setData(mSreachList);
+    }
+
     @AfterViews
     void init() {
         getContact();
         txt_title.setText("电话本");
 
-        final Adapter mAdapter = new Adapter();
+        mAdapter = new Adapter(contacts);
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
     }
-
-    ArrayList<Contact> contacts = new ArrayList<>();
 
     class Contact {
         String name;
@@ -91,14 +109,25 @@ public class InviteContactActivity extends AppCompatActivity {
     }
 
     class Adapter extends BaseAdapter {
+        private List<Contact> mDataList;
+
+        public Adapter(List<Contact> list) {
+            mDataList = list;
+        }
+
+        public void setData(List<Contact> list) {
+            mDataList = list;
+            notifyDataSetChanged();
+        }
+
         @Override
         public int getCount() {
-            return contacts.size();
+            return (mDataList == null) ? 0 : mDataList.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return contacts.get(i);
+            return (mDataList == null) ? null : mDataList.get(i);
         }
 
         @Override
@@ -117,8 +146,8 @@ public class InviteContactActivity extends AppCompatActivity {
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
-            viewHolder.txt_name.setText(contacts.get(i).name);
-            viewHolder.txt_phone.setText(contacts.get(i).phone);
+            viewHolder.txt_name.setText(mDataList.get(i).name);
+            viewHolder.txt_phone.setText(mDataList.get(i).phone);
             viewHolder.btn_invite.setVisibility(View.VISIBLE);
             viewHolder.btn_invite.setOnClickListener(new View.OnClickListener() {
                 @Override

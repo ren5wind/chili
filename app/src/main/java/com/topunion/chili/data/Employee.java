@@ -11,6 +11,7 @@ public class Employee extends BaseData{
     private String deptId;
     private String deptName;
     private String companyId;
+    private String role;
 
 
     public String getId() {
@@ -59,5 +60,13 @@ public class Employee extends BaseData{
 
     public void setCompanyId(String companyId) {
         this.companyId = companyId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

@@ -29,6 +29,8 @@ import com.topunion.chili.data.AddEmployess;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
 import com.topunion.chili.data.Employee;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.net.request_interface.GetCorpMemberDetails;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -281,28 +283,28 @@ public class CompanyManageActivity extends AppCompatActivity {
 
         boolean isSuccess = mCompanyManager.addEmployee(corpId, userIds, corpDeptId, roleId);
         addEmployee(employees, String.valueOf(corpDeptId));
-        updateAdapter(isSuccess, "当前网络不佳，添加员工失败");
+        updateAdapter(isSuccess, "添加员工失败");
     }
 
     @Background
     void deleteEmployeeRequest(int employeeId, int departmentId) {
         boolean isSuccess = mCompanyManager.deleteEmployee(employeeId);
         deleteEmployee(String.valueOf(departmentId), String.valueOf(employeeId));
-        updateAdapter(isSuccess, "当前网络不佳，删除员工失败");
+        updateAdapter(isSuccess, "删除员工失败");
     }
 
     @Background
     void addDeparmentRequest(int companyId, String name) {
         int id = mCompanyManager.addDepartMent(companyId, name);
         addDeparment(name, id);
-        updateAdapter(id != -1, "当前网络不佳，添加部门失败");
+        updateAdapter(id != -1, "添加部门失败");
     }
 
     @Background
     void updateDeparmentRequest(int id, String name) {
         boolean isSuccess = mCompanyManager.updateDepartment(id, name);
         updateDeparment(name, String.valueOf(id));
-        updateAdapter(isSuccess, "当前网络不佳，修改部门失败");
+        updateAdapter(isSuccess, "修改部门失败");
 
     }
 
@@ -310,8 +312,23 @@ public class CompanyManageActivity extends AppCompatActivity {
     void deleteDepartmentRequest(int id) {
         boolean isSuccess = mCompanyManager.deleteDepartment(id);
         deleteDepartment(String.valueOf(id));
-        updateAdapter(isSuccess, "当前网络不佳，删除部门失败");
+        updateAdapter(isSuccess, "删除部门失败");
 
+    }
+
+    @Background
+    void getRole(final TextView textView, String id, final String name) {
+        //获取角色
+        final GetCorpMemberDetails.GetCorpMemberDetailsResponse numbs = HttpHelper_.getInstance_(CompanyManageActivity.this).
+                getCorpMemberDetails(id);
+        if (numbs.data == null)
+            return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText(name + " | " + numbs.data.roleName);
+            }
+        });
     }
 
     @UiThread
@@ -396,6 +413,7 @@ public class CompanyManageActivity extends AppCompatActivity {
         }
         itemDataList = analysisOrganization(company);
     }
+
 
     class MyAdapter extends BaseAdapter {
         private List<ItemData> dataList;
@@ -484,7 +502,7 @@ public class CompanyManageActivity extends AppCompatActivity {
                     txt_name = (TextView) view.findViewById(R.id.txt_name);
                     txt_name.setText(data.name);
                     txt_department = (TextView) view.findViewById(R.id.txt_department);
-                    txt_department.setText(data.parentName);
+                    getRole(txt_department, data.employeeid, data.parentName);
                     btn_dustbin = (ImageButton) view.findViewById(R.id.btn_dustbin);
                     btn_dustbin.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -496,7 +514,6 @@ public class CompanyManageActivity extends AppCompatActivity {
             }
             return view;
         }
-
 
         @Override
         public int getCount() {
@@ -521,6 +538,7 @@ public class CompanyManageActivity extends AppCompatActivity {
         String parentName;
         String companyId;
         String departmentId;
+        String role;
     }
 
     private static final int TYPE_ADD_DEPARMENT = 0;

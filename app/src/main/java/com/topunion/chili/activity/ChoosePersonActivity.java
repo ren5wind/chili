@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,8 @@ public class ChoosePersonActivity extends AppCompatActivity {
     Button btn_confirm;
     @ViewById
     ListView mListView;
+    @ViewById
+    RelativeLayout search;
     @Extra
     int viewType;
     @Extra
@@ -105,6 +108,7 @@ public class ChoosePersonActivity extends AppCompatActivity {
                 showMembers();
                 break;
         }
+        search.setVisibility(View.GONE);
         txt_title.setText(title);
 
         mAdapter = new Adapter(this, mDateList);
@@ -170,7 +174,7 @@ public class ChoosePersonActivity extends AppCompatActivity {
     }
 
     @UiThread
-    void showToast(String msg){
+    void showToast(String msg) {
         Toast.makeText(ChoosePersonActivity.this, msg, Toast.LENGTH_SHORT).show();
 
     }
@@ -205,16 +209,15 @@ public class ChoosePersonActivity extends AppCompatActivity {
         if (data.data != null) {
             showToast("创建群组成功");
             //去群聊
-            jumpToGroupTalking(Long.valueOf(data.data.pushGroupId),groupName);
+            jumpToGroupTalking(Long.valueOf(data.data.pushGroupId), groupName);
         } else {
             showToast("创建群组失败");
         }
     }
 
 
-
     //跳转群聊界面
-    private void jumpToGroupTalking(long groupId,String title) {
+    private void jumpToGroupTalking(long groupId, String title) {
         TalkingActivity_.intent(this).groupId(groupId).title(title).start();
     }
 
