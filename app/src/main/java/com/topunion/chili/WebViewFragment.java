@@ -62,10 +62,11 @@ public class WebViewFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                JsManager.getInstance().parseUrl(url);
-                return super.shouldOverrideUrlLoading(view, url);
-
+                boolean b = JsManager.getInstance().parseUrl(url, getActivity());
+                if (!b) {
+                    view.loadUrl(url);
+                }
+                return b;
             }
 
             @Override

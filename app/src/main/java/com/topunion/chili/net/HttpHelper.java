@@ -1,5 +1,8 @@
 package com.topunion.chili.net;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.topunion.chili.net.request_interface.AddCorpDept;
 import com.topunion.chili.net.request_interface.AddDeptMember;
 import com.topunion.chili.net.request_interface.AddETFriend;
@@ -37,14 +40,25 @@ import com.topunion.chili.net.response_model.ResponseData;
 import org.androidannotations.annotations.EBean;
 import org.json.JSONArray;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static java.lang.String.valueOf;
 
 /**
  * Created by Shawn on 7/17/17.
@@ -243,10 +257,10 @@ public class HttpHelper {
         }
     }
 
-    public GetETMemberDetails.GetETMemberDetailsResponse getETMemberDetails(String userId,String operatorUserId) {
+    public GetETMemberDetails.GetETMemberDetailsResponse getETMemberDetails(String userId, String operatorUserId) {
         try {
             GetETMemberDetails.IGetETMemberDetails request = retrofit.create(GetETMemberDetails.IGetETMemberDetails.class);
-            Call<GetETMemberDetails.GetETMemberDetailsResponse> call = request.getETMemberDetails(userId,operatorUserId);
+            Call<GetETMemberDetails.GetETMemberDetailsResponse> call = request.getETMemberDetails(userId, operatorUserId);
             Response<GetETMemberDetails.GetETMemberDetailsResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
@@ -462,5 +476,60 @@ public class HttpHelper {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void uploadImage(Context context, String userId, File file, uploadListener listener) {
+        mListener = listener;
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+
+        postFile(context, DEBUG_SERVER + "user/api/updateImgUrl.do", map, file);
+    }
+
+    uploadListener mListener;
+
+    public interface uploadListener {
+        void onSuccess();
+
+        void onFail();
+    }
+
+    private void postFile(Context context, final String url, final Map<String, Object> map, File file) {
+        OkHttpClient client = new OkHttpClient();
+        // form 表单形式上传
+        MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        if (file != null) {
+            // MediaType.parse() 里面是上传的文件类型。
+            RequestBody body = RequestBody.create(MediaType.parse("image/*"), file);
+            // 参数分别为， 请求key ，文件名称 ， RequestBody
+            requestBody.addFormDataPart("headImage", file.getName(), body);
+        }
+        if (map != null) {
+            // map 里面是请求中所需要的 key 和 value
+            for (Map.Entry entry : map.entrySet()) {
+                requestBody.addFormDataPart(valueOf(entry.getKey()), valueOf(entry.getValue()));
+            }
+        }
+        Request request = new Request.Builder().url(url).post(requestBody.build()).tag(context).build();
+        // readTimeout("请求超时时间" , 时间单位);
+        client.newBuilder().readTimeout(5000, TimeUnit.MILLISECONDS).build().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                Log.i("lfq", "onFailure");
+                mListener.onFail();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String str = response.body().toString();
+                    Log.i("lfq", response.message() + " , body " + str);
+                    mListener.onSuccess();
+                } else {
+                    Log.i("lfq", response.message() + " error : body " + response.body().toString());
+                    mListener.onFail();
+                }
+            }
+        });
     }
 }

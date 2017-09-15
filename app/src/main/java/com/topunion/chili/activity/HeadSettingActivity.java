@@ -1,10 +1,13 @@
 package com.topunion.chili.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -18,6 +21,8 @@ import com.topunion.chili.base.RxBus;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author      : renxiaoming
@@ -29,11 +34,12 @@ public class HeadSettingActivity extends Activity {
     private final int START_ALBUM_REQUESTCODE = 1;
     private final int CAMERA_WITH_DATA = 2;
     private final int CROP_RESULT_CODE = 3;
-    public static final String TMP_PATH = "01youle/account/";
+    public static final String TMP_PATH = "01yitou/account/";
     public static final String INTENT_BUNDLE_KEY_HEADSETTING_TYPE = "intent_bundle_key_headsetting_type";
     public static final int HEADSETTING_TYPE_CAMERA = 0;
     public static final int HEADSETTING_TYPE_LOCAL = 1;
-
+    private final int CODE_FOR_PERMISSION = 200;
+    public static final String RXBUS_USER_HEAD_PATH = "rxbus_user_head_path";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +72,7 @@ public class HeadSettingActivity extends Activity {
             case CROP_RESULT_CODE:
                 String path = data.getStringExtra(ClipImageActivity.RESULT_PATH);
 //                Bitmap photo = BitmapFactory.decodeFile(path);
-//                RxBus.getInstance().post(UserParams.RXBUS_USER_HEAD_PATH, path);
+                RxBus.getInstance().post(RXBUS_USER_HEAD_PATH, path);
                 //TODO 发送路径上传图片
                 finish();
                 break;
@@ -107,10 +113,69 @@ public class HeadSettingActivity extends Activity {
         }
     }
 
+    String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+
+    private boolean requestPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            List<String> permissionsNeeded = new ArrayList<>();
+
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.CAMERA);
+            }
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if (permissionsNeeded.size() == 0) {
+                return true;
+            }
+            String[] permissions = new String[permissionsNeeded.size()];
+            for (int i = 0; i < permissionsNeeded.size(); i++) {
+                permissions[i] = permissionsNeeded.get(i);
+            }
+            requestPermissions(permissions, CODE_FOR_PERMISSION);
+        } else if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                        CODE_FOR_PERMISSION);
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int hasPermission = 0;
+            for (int i = 0; i < permission.length; i++) {
+                hasPermission = checkSelfPermission(permission[i]);
+                if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return true;
+        }
+    }
+
     private void startCapture() {
+        if (!requestPermission()) {
+            return;
+        }
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(
-                Environment.getExternalStorageDirectory() + "/" + TMP_PATH, "temp.jpg")));
+        File file = new File(
+                Environment.getExternalStorageDirectory() + "/" + TMP_PATH, "temp.jpg");
+        Uri uri = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ContentValues contentValues = new ContentValues(1);
+            contentValues.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
+            uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        } else {
+            uri = Uri.fromFile(file);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, CAMERA_WITH_DATA);
     }
 
@@ -227,5 +292,27 @@ public class HeadSettingActivity extends Activity {
             }
         }
         return null;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (permissions.length == 0 || grantResults.length == 0) {
+            return;
+        }
+        if (requestCode == CODE_FOR_PERMISSION) {
+            int permissionCount = 0;
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    permissionCount++;
+                }
+            }
+            if (permissionCount == permissions.length) {
+                startCapture();
+            } else {
+                finish();
+            }
+        }
+
     }
 }

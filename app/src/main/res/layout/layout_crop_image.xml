@@ -5,7 +5,7 @@
     android:background="#000000"
     android:orientation="vertical" >
 
-    <com.caiyi.youle.user.view.ClipImageLayout
+    <com.topunion.chili.view.ClipImageLayout
         android:id="@+id/clipImageLayout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
