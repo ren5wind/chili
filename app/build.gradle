@@ -26,6 +26,21 @@ android {
         ]
     }
     buildTypes {
+        debug {
+            versionNameSuffix "-debug"
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+        }
+        signingConfigs {
+            debug {
+                keyPassword 'password'
+                storeFile file('../yitou.jks')
+                storePassword 'password'
+                keyAlias 'yitou'
+            }
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 import com.topunion.chili.activity.MessageMainFragment_;
+import com.topunion.chili.net.HttpHelper_;
 import com.yinglan.alphatabs.AlphaTabsIndicator;
 
 import org.androidannotations.annotations.AfterViews;
@@ -29,11 +30,11 @@ public class MainActivity extends FragmentActivity {
     protected void afterViews(){
         List<Fragment> listFragment = new ArrayList<>();
 
-        Fragment find = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/home.html");
-        Fragment bid = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/bid-management/bid-on.html");
+        Fragment find = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/home.html");
+        Fragment bid = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/bid-management/bid-on.html");
         Fragment message = MessageMainFragment_.builder().build();
-        Fragment square = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/square/index.html");
-        Fragment my = WebViewFragment.newInstance("http://tmit.f3322.net:2051/chili-2.0/assets/user/index.html");
+        Fragment square = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/square/index.html");
+        Fragment my = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/user/index.html");
 
         listFragment.add(find);
         listFragment.add(bid);

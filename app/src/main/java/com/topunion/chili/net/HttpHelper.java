@@ -66,7 +66,7 @@ import static java.lang.String.valueOf;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class HttpHelper {
-    public static final String DEBUG_SERVER = "http://tmit.f3322.net:2051/chili-2.0/";
+    public static final String DEBUG_SERVER = "http://www.yibidding.com/chili-2.0-demo/";
     public static final int PAGE_COUNT = 20;
 
     public OkHttpClient.Builder builder = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor());
@@ -500,7 +500,7 @@ public class HttpHelper {
         MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
         if (file != null) {
             // MediaType.parse() 里面是上传的文件类型。
-            RequestBody body = RequestBody.create(MediaType.parse("image/*"), file);
+            RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), file);
             // 参数分别为， 请求key ，文件名称 ， RequestBody
             requestBody.addFormDataPart("headImage", file.getName(), body);
         }

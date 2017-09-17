@@ -111,12 +111,12 @@ public class JsManager {
                     public void onNext(String path) {
                         RxBus.getInstance().unregister(HeadSettingActivity.RXBUS_USER_HEAD_PATH);
                         if (!StringUtil.isEmpt(path)) {
-                            String localPath = "file://" + path;
+                            String localPath = path;
                             HttpHelper_.getInstance_(activity).uploadImage(activity, AccountManager.getInstance().getUserId(), new File(localPath),
                                     new HttpHelper.uploadListener() {
                                         @Override
                                         public void onSuccess() {
-
+                                            System.out.println("11111111111");
                                         }
 
                                         @Override
