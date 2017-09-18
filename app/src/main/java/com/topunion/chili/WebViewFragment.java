@@ -67,7 +67,7 @@ public class WebViewFragment extends Fragment {
         bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new JavaScriptInterface(), "JavaScriptClient");
+        webView.addJavascriptInterface(new JavaScriptInterface(), "");
 
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
