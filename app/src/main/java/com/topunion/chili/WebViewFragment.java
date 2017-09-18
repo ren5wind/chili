@@ -13,7 +13,14 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.topunion.chili.base.RxBus;
+import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.business.JavaScriptInterface;
 import com.topunion.chili.business.JsManager;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class WebViewFragment extends Fragment {
 
@@ -60,6 +67,8 @@ public class WebViewFragment extends Fragment {
         bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new JavaScriptInterface(), "JavaScriptClient");
+
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 boolean b = JsManager.getInstance().parseUrl(url, getActivity());
@@ -120,6 +129,26 @@ public class WebViewFragment extends Fragment {
 //        wv.setMovementMethod(LinkMovementMethod.getInstance());
 //        wv.setText(mSpannableString);
 
+        RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
+        Observable<String> refreshCallBackobservable = RxBus.getInstance().register(JsManager.RXBUS_WEB_REFRESH_VIEW);
+        refreshCallBackobservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String url) {
+                        webView.loadUrl(url);
+                    }
+                });
+
         return rootView;
     }
 
@@ -128,4 +157,6 @@ public class WebViewFragment extends Fragment {
         super.onStart();
         Log.e("Shawn", urlStr);
     }
+
+
 }

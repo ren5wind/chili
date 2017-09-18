@@ -500,9 +500,9 @@ public class HttpHelper {
         MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
         if (file != null) {
             // MediaType.parse() 里面是上传的文件类型。
-            RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), file);
+            RequestBody body = RequestBody.create(MediaType.parse("image/png"), file);
             // 参数分别为， 请求key ，文件名称 ， RequestBody
-            requestBody.addFormDataPart("headImage", file.getName(), body);
+            requestBody.addFormDataPart("file", file.getName(), body);
         }
         if (map != null) {
             // map 里面是请求中所需要的 key 和 value

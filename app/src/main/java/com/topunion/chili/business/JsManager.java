@@ -2,11 +2,11 @@ package com.topunion.chili.business;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
 import com.topunion.chili.activity.HeadSettingActivity;
@@ -29,6 +29,7 @@ import rx.android.schedulers.AndroidSchedulers;
 public class JsManager {
     private final String TAG = "ttlc";
     private final String FUN_GETUSERINFO = "getUserInfo";
+    public static final String RXBUS_WEB_REFRESH_VIEW = "rxbux_web_refresh_view";
 
     private static JsManager instance;
     private final static Object syncLock = new Object();
@@ -57,7 +58,7 @@ public class JsManager {
                 return false;
             }
         } else if (url.contains("user/setting/picture.html")) {
-            upLoadHead(activity);
+            upLoadHead(activity, url);
             return true;
         }
         return false;
@@ -74,7 +75,7 @@ public class JsManager {
         RxBus.getInstance().post(AccountManager.RXBUS_ACCOUNT_LOGIN, true);
     }
 
-    private void upLoadHead(final Activity activity) {
+    private void upLoadHead(final Activity activity, final String url) {
         final CharSequence[] charSequences = {"相册", "拍照"};
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setItems(charSequences, new DialogInterface.OnClickListener() {
@@ -116,7 +117,7 @@ public class JsManager {
                                     new HttpHelper.uploadListener() {
                                         @Override
                                         public void onSuccess() {
-                                            System.out.println("11111111111");
+                                            RxBus.getInstance().post(RXBUS_WEB_REFRESH_VIEW, "http://www.yibidding.com/chili-2.0-demo//assets/user/setting.html");
                                         }
 
                                         @Override
@@ -128,4 +129,5 @@ public class JsManager {
                     }
                 });
     }
+
 }
