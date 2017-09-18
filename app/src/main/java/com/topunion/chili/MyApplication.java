@@ -12,6 +12,7 @@ import com.topunion.chili.util.StringUtil;
 
 import org.androidannotations.annotations.EApplication;
 
+import cn.jiguang.share.android.api.JShareInterface;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.im.android.api.JMessageClient;
 
@@ -55,6 +56,8 @@ public class MyApplication extends Application {
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);
         baseApplication = this;
+        JShareInterface.init(this);
+
 
     }
 
