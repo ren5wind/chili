@@ -127,7 +127,7 @@ public class WebViewFragment extends Fragment {
 //                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 //        urlStr = "file:///android_asset/a.html";
 //        urlStr = "http://tmit.f3322.net:2051//chili-2.0/assets/article/article-detail.html?bid=1&cid=1&aid=17082700000002";
-        urlStr = "http://tmit.f3322.net:2051/chili-2.0/assets/enterprise/company.html?cid=34";
+//        urlStr = "http://tmit.f3322.net:2051/chili-2.0/assets/enterprise/company.html?cid=34";
         webView.loadUrl(urlStr);
 //        wv.setMovementMethod(LinkMovementMethod.getInstance());
 //        wv.setText(mSpannableString);
