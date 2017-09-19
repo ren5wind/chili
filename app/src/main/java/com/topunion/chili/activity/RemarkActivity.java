@@ -71,7 +71,7 @@ public class RemarkActivity extends AppCompatActivity {
     @Background
     void updateRequest(String userId, String friendId, String nickname) {
         boolean isSuccess = HttpHelper_.getInstance_(this).updateETFriendNickname(userId, friendId, nickname);
-        if(isSuccess){
+        if (isSuccess) {
             remark = nickname;
         }
         updateUi(isSuccess, nickname);
@@ -102,7 +102,8 @@ public class RemarkActivity extends AppCompatActivity {
         remark = logicNickname;
         btn_confirm.setVisibility(View.VISIBLE);
         btn_confirm.setText("确定");
-        search.setVisibility(View.VISIBLE);
+        if (search != null)
+            search.setVisibility(View.VISIBLE);
 
     }
 

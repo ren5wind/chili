@@ -8,11 +8,11 @@
         RedirectUrl="微博开放平台填写的授权回调页"/>
 
     <QQ
-        AppId="QQ的AppId"
-        AppKey="QQ的AppKey"/>
+        AppId="1106425728"
+        AppKey="wLu4dMh6agNOt0qC"/>
 
     <Wechat
-        AppId="微信的AppId"
-        AppSecret="微信的AppSectet"/>
+        AppId="wx76eb85b12a3e0408"
+        AppSecret="0124e3f0103a7429908093637a65aa39"/>
 
 </DevInfor>

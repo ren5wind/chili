@@ -164,17 +164,19 @@ public class TalkingActivity extends AppCompatActivity {
             }
         }
         //获取消息列表
-        List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
-        int size = (messageList == null) ? 0 : messageList.size();
-        for (int i = 0; i < size; i++) {
-            Message message = messageList.get(i);
-            if (message.getContentType() == ContentType.text) {
-                int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
-                        : TYPE_RECEIVE_TXT;
-                if (direct == TYPE_SEND_TXT) {//发送方
-                    mDataList.add(new MsgInfo(null, message));
-                } else if (direct == TYPE_RECEIVE_TXT) {//接收方
-                    mDataList.add(new MsgInfo(message, null));
+        if(mConv != null) {
+            List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
+            int size = (messageList == null) ? 0 : messageList.size();
+            for (int i = 0; i < size; i++) {
+                Message message = messageList.get(i);
+                if (message.getContentType() == ContentType.text) {
+                    int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
+                            : TYPE_RECEIVE_TXT;
+                    if (direct == TYPE_SEND_TXT) {//发送方
+                        mDataList.add(new MsgInfo(null, message));
+                    } else if (direct == TYPE_RECEIVE_TXT) {//接收方
+                        mDataList.add(new MsgInfo(message, null));
+                    }
                 }
             }
         }

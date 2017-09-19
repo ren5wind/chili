@@ -1,7 +1,17 @@
 package com.topunion.chili.business;
 
-import android.os.Message;
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.webkit.JavascriptInterface;
+
+import com.topunion.chili.R;
+import com.topunion.chili.activity.HeadSettingActivity;
+import com.topunion.chili.net.HttpHelper;
+import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.util.StringUtil;
+
+import org.androidannotations.annotations.Background;
 
 import java.util.HashMap;
 
@@ -9,7 +19,7 @@ import cn.jiguang.share.android.api.JShareInterface;
 import cn.jiguang.share.android.api.PlatActionListener;
 import cn.jiguang.share.android.api.Platform;
 import cn.jiguang.share.android.api.ShareParams;
-import cn.jiguang.share.android.utils.Logger;
+import cn.jiguang.share.wechat.Wechat;
 
 /**
  * Author      : renxiaoming
@@ -17,18 +27,51 @@ import cn.jiguang.share.android.utils.Logger;
  * Description :
  */
 public class JavaScriptInterface {
-    public JavaScriptInterface() {
+    private Context context;
+
+    public JavaScriptInterface(Context context) {
+        this.context = context;
     }
 
     @JavascriptInterface
-    public void getsharedata(String dicShare, int type) {
-        System.out.println("dicShare = " + dicShare + ", type = " + type);
+    public void getsharedata(int type, String text, String image, String link, String title, String audio, String video, String app, String file, String emoticon) {
         ShareParams shareParams = new ShareParams();
         shareParams.setShareType(type);
-        shareParams.setTitle("title");
-        shareParams.setText("text");
-        shareParams.setUrl("url");
-        JShareInterface.share(dicShare, shareParams, mShareListener);
+        if (!StringUtil.isEmpt(title))
+            shareParams.setTitle(title);
+        if (!StringUtil.isEmpt(text))
+            shareParams.setText(text);
+        if (!StringUtil.isEmpt(link))
+            shareParams.setUrl(link);
+        if (type == Platform.SHARE_IMAGE) {
+            download(image, shareParams);
+        } else {
+            shareParams.setImageData(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
+            JShareInterface.share(Wechat.Name, shareParams, mShareListener);
+        }
+
+    }
+
+    void download(String url, final ShareParams shareParams) {
+        HttpHelper_.getInstance_(context).download(url,
+                Environment.getExternalStorageDirectory() + "/01yitou/account/",
+                new HttpHelper.OnDownloadListener() {
+                    @Override
+                    public void onDownloadSuccess(String path) {
+                        shareParams.setImagePath(path);
+                        JShareInterface.share(Wechat.Name, shareParams, mShareListener);
+                    }
+
+                    @Override
+                    public void onDownloading(int progress) {
+
+                    }
+
+                    @Override
+                    public void onDownloadFailed() {
+
+                    }
+                });
     }
 
     private PlatActionListener mShareListener = new PlatActionListener() {
@@ -47,7 +90,7 @@ public class JavaScriptInterface {
     };
 
 
-    class ShareDate{
+    class ShareDate {
         String title;
         String link;
     }

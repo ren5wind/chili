@@ -52,7 +52,7 @@ public class FriendsActivity extends Activity {
     @ViewById
     LinearLayout top_layout;
     @ViewById
-    TextView top_char, dialog,btn_newFriend,txt_title;
+    TextView top_char, dialog, btn_newFriend, txt_title;
     @ViewById
     SideBar sideBar;
     @ViewById
@@ -79,12 +79,12 @@ public class FriendsActivity extends Activity {
 
     @AfterViews
     void init() {
-        if(showType == TYPE_SHOW_FRIENDS){
+        if (showType == TYPE_SHOW_FRIENDS) {
             btn_newFriend.setVisibility(View.VISIBLE);
             txt_title.setText("易投好友");
-        }else if(showType == TYPE_SHOW_DEPT_NUMBERS){
+        } else if (showType == TYPE_SHOW_DEPT_NUMBERS) {
             txt_title.setText(deptName);
-        }else if(showType == TYPE_SHOW_GROUP_MEMBER){
+        } else if (showType == TYPE_SHOW_GROUP_MEMBER) {
             txt_title.setText("全部群成员");
         }
 
@@ -166,14 +166,16 @@ public class FriendsActivity extends Activity {
         switch (showType) {
             case TYPE_SHOW_FRIENDS:
                 GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), 1, 20);
-                SourceDateList = friends.friendsTofilledData();
+                if (friends != null)
+                    SourceDateList = friends.friendsTofilledData();
                 break;
             case TYPE_SHOW_DEPT_NUMBERS:
                 GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse deptNumbs = HttpHelper_.getInstance_(this).getDeptUsers(1, 20, deptId, deptName);
-                SourceDateList = deptNumbs.deptTofilledData();
+                if (deptNumbs != null)
+                    SourceDateList = deptNumbs.deptTofilledData();
                 break;
             case TYPE_SHOW_GROUP_MEMBER:
-                SourceDateList = ((GetGroupDetails.GetGroupDetailsResponse.Group)group).membersTofilledData();
+                SourceDateList = ((GetGroupDetails.GetGroupDetailsResponse.Group) group).membersTofilledData();
                 break;
         }
 

@@ -11,14 +11,19 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.base.RxBus;
+import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.net.HttpHelper_;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
@@ -47,6 +52,8 @@ public class InviteContactActivity extends AppCompatActivity {
     private List<Contact> mSreachList = new ArrayList<>();
     private Adapter mAdapter;
 
+    private final String RXBUS_CONTACT_INVITE = "rxbus_contact_invite";
+
     @Click
     void btn_search() {
         mSreachList.clear();
@@ -68,6 +75,7 @@ public class InviteContactActivity extends AppCompatActivity {
         mAdapter = new Adapter(contacts);
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+
     }
 
     class Contact {
@@ -108,6 +116,25 @@ public class InviteContactActivity extends AppCompatActivity {
         }
     }
 
+    @Background
+    void sendInvite(String phone) {
+        Boolean b = HttpHelper_.getInstance_(this).sendInvite("18910231436", AccountManager.getInstance().getNickName());
+        toast(b);
+    }
+
+    void toast(boolean b) {
+
+        String msg = "";
+        if (b) {
+            msg = "邀请已发送";
+        } else {
+            msg = "邀请发送失败";
+        }
+
+        Toast.makeText(InviteContactActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+    }
+
     class Adapter extends BaseAdapter {
         private List<Contact> mDataList;
 
@@ -146,13 +173,14 @@ public class InviteContactActivity extends AppCompatActivity {
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
-            viewHolder.txt_name.setText(mDataList.get(i).name);
-            viewHolder.txt_phone.setText(mDataList.get(i).phone);
+            final Contact data = mDataList.get(i);
+            viewHolder.txt_name.setText(data.name);
+            viewHolder.txt_phone.setText(data.phone);
             viewHolder.btn_invite.setVisibility(View.VISIBLE);
             viewHolder.btn_invite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(InviteContactActivity.this, "邀请已发送", Toast.LENGTH_SHORT).show();
+                    sendInvite(data.phone);
                 }
             });
             return view;

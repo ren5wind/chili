@@ -24,7 +24,7 @@ android {
                 JPUSH_APPKEY : "908625460b415cfaa8ddcc2a", //JPush上注册的包名对应的appkey.
                 JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
                 JSHARE_PKGNAME : applicationId,
-                TENCENT_APPID: "QQ开发者应用的appID",//腾讯开放平台注册应用得到的appId
+                TENCENT_APPID: "1106425728",//腾讯开放平台注册应用得到的appId
         ]
     }
     buildTypes {

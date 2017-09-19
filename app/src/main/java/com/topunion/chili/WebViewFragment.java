@@ -67,7 +67,7 @@ public class WebViewFragment extends Fragment {
         bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new JavaScriptInterface(), "");
+        webView.addJavascriptInterface(new JavaScriptInterface(getActivity()), "androidClient");
 
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -125,6 +125,9 @@ public class WebViewFragment extends Fragment {
         // 设置超链接 （需要添加setMovementMethod方法附加响应）
 //        mSpannableString.setSpan(new URLSpan(urlStr), 0, 4,
 //                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        urlStr = "file:///android_asset/a.html";
+//        urlStr = "http://tmit.f3322.net:2051//chili-2.0/assets/article/article-detail.html?bid=1&cid=1&aid=17082700000002";
+        urlStr = "http://tmit.f3322.net:2051/chili-2.0/assets/enterprise/company.html?cid=34";
         webView.loadUrl(urlStr);
 //        wv.setMovementMethod(LinkMovementMethod.getInstance());
 //        wv.setText(mSpannableString);
