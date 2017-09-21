@@ -26,6 +26,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -118,12 +119,15 @@ public class InviteContactActivity extends AppCompatActivity {
 
     @Background
     void sendInvite(String phone) {
-        Boolean b = HttpHelper_.getInstance_(this).sendInvite("18910231436", AccountManager.getInstance().getNickName());
+        phone = phone.replaceAll(" ","");
+        phone = phone.replaceAll("-","");
+
+        Boolean b = HttpHelper_.getInstance_(this).sendInvite(phone, AccountManager.getInstance().getNickName());
         toast(b);
     }
 
+    @UiThread
     void toast(boolean b) {
-
         String msg = "";
         if (b) {
             msg = "邀请已发送";

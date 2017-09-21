@@ -60,9 +60,6 @@ public class WebViewFragment extends Fragment {
             urlStr = arguments.getString(ARG_URL);
         }
 
-//        TextView wv = new TextView(getActivity());
-//        WebView wv = new WebView(getActivity());
-//        wv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         webView = (WebView) rootView.findViewById(R.id.webView);
         bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
@@ -119,23 +116,11 @@ public class WebViewFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && BuildConfig.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
-
-//        SpannableString mSpannableString = new SpannableString(
-//                "打开百度,拨打电话,发送短信,发送邮件,发送彩信,打开地图");
-        // 设置超链接 （需要添加setMovementMethod方法附加响应）
-//        mSpannableString.setSpan(new URLSpan(urlStr), 0, 4,
-//                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        urlStr = "file:///android_asset/a.html";
-//        urlStr = "http://tmit.f3322.net:2051//chili-2.0/assets/article/article-detail.html?bid=1&cid=1&aid=17082700000002";
-//        urlStr = "http://tmit.f3322.net:2051/chili-2.0/assets/enterprise/company.html?cid=34";
         webView.loadUrl(urlStr);
-//        wv.setMovementMethod(LinkMovementMethod.getInstance());
-//        wv.setText(mSpannableString);
-
         RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
-        Observable<String> refreshCallBackobservable = RxBus.getInstance().register(JsManager.RXBUS_WEB_REFRESH_VIEW);
+        Observable<Boolean> refreshCallBackobservable = RxBus.getInstance().register(JsManager.RXBUS_WEB_REFRESH_VIEW);
         refreshCallBackobservable.observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<String>() {
+                .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
 
@@ -147,8 +132,10 @@ public class WebViewFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(String url) {
-                        webView.loadUrl(url);
+                    public void onNext(Boolean b) {
+                        if (b) {
+                            webView.loadUrl(urlStr);
+                        }
                     }
                 });
 

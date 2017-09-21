@@ -2,6 +2,7 @@ package com.topunion.chili;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -92,5 +93,14 @@ public class MyApplication extends Application {
         return myUserId;
     }
 
-
+    /**
+     * 分包
+     *
+     * @param base
+     */
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 }

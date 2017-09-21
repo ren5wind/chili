@@ -71,7 +71,7 @@ import static java.lang.String.valueOf;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class HttpHelper {
-        public static final String DEBUG_SERVER = "http://www.yibidding.com/chili-2.0-demo/";
+    public static final String DEBUG_SERVER = "http://www.yibidding.com/chili-2.0-demo/";
 //    public static final String DEBUG_SERVER = "http://tmit.f3322.net:2051/chili-2.0/";
 
 
@@ -110,7 +110,7 @@ public class HttpHelper {
 
             Call<BaseStateResponse> call = request.addDeptMember(corpId, jsonArray, corpDeptId, role);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -122,7 +122,7 @@ public class HttpHelper {
             AddETFriend.IAddETFriend request = retrofit.create(AddETFriend.IAddETFriend.class);
             Call<BaseStateResponse> call = request.addETFriend(sender, acceptor, acceptorNickname);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -150,7 +150,7 @@ public class HttpHelper {
             AddGroupMember.IAddGroupMember request = retrofit.create(AddGroupMember.IAddGroupMember.class);
             Call<BaseStateResponse> call = request.addGroupMember(groupId, jsonArray);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -174,7 +174,7 @@ public class HttpHelper {
             ExitGroup.IExitGroup request = retrofit.create(ExitGroup.IExitGroup.class);
             Call<BaseStateResponse> call = request.exitGroup(Integer.valueOf(groupId), acceptorId);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -222,7 +222,7 @@ public class HttpHelper {
             GetCorpOrDeptUsers.IGetCorpOrDeptUsers request = retrofit.create(GetCorpOrDeptUsers.IGetCorpOrDeptUsers.class);
             Call<ResponseData<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse>> call = request.getDeptUsers(pageNo, pageSize, deptId, corpName);
             Response<ResponseData<GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse>> result = call.execute();
-            return result.body().data;
+            return (result.body() == null) ? null : result.body().data;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -294,7 +294,7 @@ public class HttpHelper {
             GetFriends.IGetFriends request = retrofit.create(GetFriends.IGetFriends.class);
             Call<ResponseData<GetFriends.GetFriendsResponse>> call = request.getFriends(userId, pageNo, pageSize);
             Response<ResponseData<GetFriends.GetFriendsResponse>> result = call.execute();
-            return result.body().data;
+            return (result.body() == null) ? null : result.body().data;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -330,7 +330,7 @@ public class HttpHelper {
             GetGroupMembersCount.IGetGroupMembersCount request = retrofit.create(GetGroupMembersCount.IGetGroupMembersCount.class);
             Call<GetGroupMembersCount.GetGroupMembersCountResponse> call = request.getGroupMembersCount(groupId);
             Response<GetGroupMembersCount.GetGroupMembersCountResponse> result = call.execute();
-            return result.body().data;
+            return (result.body() == null) ? null : result.body().data;
         } catch (IOException e) {
             e.printStackTrace();
             return 0;
@@ -342,7 +342,7 @@ public class HttpHelper {
             GetGroups.IGetGroups request = retrofit.create(GetGroups.IGetGroups.class);
             Call<ResponseData<GetGroups.GetGroupsResponse>> call = request.getGroups(pageNo, pageSize, acceptorId);
             Response<ResponseData<GetGroups.GetGroupsResponse>> result = call.execute();
-            return result.body().data;
+            return (result.body() == null) ? null : result.body().data;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -366,7 +366,7 @@ public class HttpHelper {
             RemoveCorpDept.IRemoveCorpDept request = retrofit.create(RemoveCorpDept.IRemoveCorpDept.class);
             Call<BaseStateResponse> call = request.removeCorpDept(id);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -378,7 +378,7 @@ public class HttpHelper {
             RemoveDeptMember.IRemoveDeptMember request = retrofit.create(RemoveDeptMember.IRemoveDeptMember.class);
             Call<BaseStateResponse> call = request.removeDeptMember(id);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -390,7 +390,7 @@ public class HttpHelper {
             RemoveETFriend.IRemoveETFriend request = retrofit.create(RemoveETFriend.IRemoveETFriend.class);
             Call<BaseStateResponse> call = request.removeETFriend(userId, friendId);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -402,7 +402,7 @@ public class HttpHelper {
             RemoveGroup.IRemoveGroup request = retrofit.create(RemoveGroup.IRemoveGroup.class);
             Call<BaseStateResponse> call = request.removeGroup(id);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -418,7 +418,7 @@ public class HttpHelper {
             RemoveGroupMember.IRemoveGroupMember request = retrofit.create(RemoveGroupMember.IRemoveGroupMember.class);
             Call<BaseStateResponse> call = request.removeGroupMember(id, jsonArray);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -430,7 +430,7 @@ public class HttpHelper {
             UpdateCorpDept.IUpdateCorpDept request = retrofit.create(UpdateCorpDept.IUpdateCorpDept.class);
             Call<BaseStateResponse> call = request.updateCorpDept(id, name, description);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -442,7 +442,7 @@ public class HttpHelper {
             UpdateDeptMember.IUpdateDeptMember request = retrofit.create(UpdateDeptMember.IUpdateDeptMember.class);
             Call<BaseStateResponse> call = request.updateDeptMember(id, corpDeptId, role);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -455,7 +455,7 @@ public class HttpHelper {
                     UpdateETFriendApplyAgree.IUpdateETFriendApplyAgree.class);
             Call<BaseStateResponse> call = request.updateETFriendApplyAgree(id);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -467,7 +467,7 @@ public class HttpHelper {
             UpdateETFriendNickname.IUpdateETFriendNickname request = retrofit.create(UpdateETFriendNickname.IUpdateETFriendNickname.class);
             Call<BaseStateResponse> call = request.updateETFriendNickname(id, friendId, nickname);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -479,7 +479,7 @@ public class HttpHelper {
             UpdateGroupName.IUpdateGroupName request = retrofit.create(UpdateGroupName.IUpdateGroupName.class);
             Call<BaseStateResponse> call = request.updateGroupName(id, name);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -491,7 +491,8 @@ public class HttpHelper {
             SendInvite.ISendInvite request = retrofit.create(SendInvite.ISendInvite.class);
             Call<BaseStateResponse> call = request.sendInvite(phone, inviter);
             Response<BaseStateResponse> result = call.execute();
-            return result.body().state == 200;
+
+            return (result.body() == null) ? false : result.body().state == 200;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
