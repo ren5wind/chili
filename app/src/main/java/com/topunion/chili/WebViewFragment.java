@@ -31,6 +31,7 @@ public class WebViewFragment extends Fragment {
 
     private String urlStr;
 
+
     public WebViewFragment() {
     }
 
@@ -68,6 +69,7 @@ public class WebViewFragment extends Fragment {
 
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                System.out.println("url = " + url);
                 boolean b = JsManager.getInstance().parseUrl(url, getActivity());
                 if (!b) {
                     view.loadUrl(url);
@@ -138,8 +140,20 @@ public class WebViewFragment extends Fragment {
                         }
                     }
                 });
-
         return rootView;
+    }
+
+    public void initfresh() {
+        webView.reload();
+    }
+
+    public boolean back() {
+        if (webView.canGoBack()) {
+            webView.goBack();// 返回前一个页面
+            System.out.println(webView.getUrl());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -147,6 +161,5 @@ public class WebViewFragment extends Fragment {
         super.onStart();
         Log.e("Shawn", urlStr);
     }
-
 
 }
