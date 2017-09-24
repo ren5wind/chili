@@ -52,11 +52,23 @@
         android:layout_below="@+id/mTitleLayout"
         android:background="#999999" />
 
+    <TextView
+        android:id="@+id/btn_imlogin"
+        android:layout_below="@id/line_top"
+        android:background="#55000000"
+        android:padding="5dp"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:text="登陆失败，请点击重试"
+        />
+
     <LinearLayout
         android:id="@+id/layout_tab"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:layout_below="@+id/line_top"
+        android:layout_below="@+id/btn_imlogin"
         android:orientation="horizontal">
 
         <RelativeLayout

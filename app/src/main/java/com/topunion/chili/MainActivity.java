@@ -102,7 +102,7 @@ public class MainActivity extends FragmentActivity {
                     fragment = my;
                     break;
             }
-            if (fragment.back()) {
+            if (postion != 2 && fragment.back()) {
                 return true;
             }
             // 判断是否在两秒之内连续点击返回键，是则退出，否则不退出

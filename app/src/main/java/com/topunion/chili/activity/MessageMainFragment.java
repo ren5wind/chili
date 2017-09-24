@@ -52,8 +52,10 @@ import java.util.List;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.content.CustomContent;
+import cn.jpush.im.android.api.content.EventNotificationContent;
 import cn.jpush.im.android.api.content.MessageContent;
 import cn.jpush.im.android.api.content.TextContent;
+import cn.jpush.im.android.api.enums.ContentType;
 import cn.jpush.im.android.api.enums.ConversationType;
 import cn.jpush.im.android.api.event.MessageEvent;
 import cn.jpush.im.android.api.model.Conversation;
@@ -95,6 +97,9 @@ public class MessageMainFragment extends Fragment {
 
     @ViewById
     RelativeLayout rl_notifiy;
+
+    @ViewById
+    TextView btn_imlogin;
 
     private Organization mOrganization;
     private List<Object> dataList;
@@ -148,6 +153,22 @@ public class MessageMainFragment extends Fragment {
         NotificationActivity_.intent(this).start();
     }
 
+    @Click
+    void btn_imlogin() {
+        btn_imlogin.setText("正在登陆......");
+        loginIm();
+    }
+
+    @UiThread
+    void updateImLogin(boolean isLogin) {
+        if (isLogin) {
+            btn_imlogin.setVisibility(View.GONE);
+        } else {
+            btn_imlogin.setText("登陆失败，请点击重试");
+            btn_imlogin.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Background
     void initCorps() {
         dataList = null;
@@ -191,12 +212,14 @@ public class MessageMainFragment extends Fragment {
             public void gotResult(int responseCode, String responseMessage) {
                 if (responseCode == 0) {
                     showToast("登录成功");
+                    updateImLogin(true);
                     if (msgList != null) {
                         msgList.clear();
                     }
                     initConvListAdapter();
                 } else {
                     showToast("登录失败");
+                    updateImLogin(false);
                 }
             }
         });
@@ -242,18 +265,25 @@ public class MessageMainFragment extends Fragment {
         if (msgList != null) {
             msgList.clear();
         }
-        msgList = JMessageClient.getConversationList();
-        if (msgList != null && msgList.size() > 0) {
-//            for (int i = 0; i < tempMsgList.size(); i++) {
-//                if (tempMsgList.get(i) == null || tempMsgList.get(i).getLatestMessage() == null ||
-//                        tempMsgList.get(i).getLatestMessage().getContentType() == null) {
-//                    continue;
-//                }
-//                if (tempMsgList.get(i).getLatestMessage().getContentType() == ContentType.text) {
-//                    msgList.add(tempMsgList.get(i));
-//                }
-//            }
-
+        List<Conversation> tempMsgList = JMessageClient.getConversationList();
+        if (tempMsgList != null && tempMsgList.size() > 0) {
+            for (int i = 0; i < tempMsgList.size(); i++) {
+                Conversation conversation = tempMsgList.get(i);
+                if (conversation == null) {
+                    continue;
+                }
+                Message message = conversation.getLatestMessage();
+                if (message == null) {
+                    continue;
+                }
+                ContentType contentType = message.getContentType();
+                if (contentType == null) {
+                    continue;
+                }
+                if (contentType == ContentType.text || contentType == ContentType.eventNotification) {
+                    msgList.add(conversation);
+                }
+            }
             SortConvList sortConvList = new SortConvList();
             Collections.sort(msgList, sortConvList);
         } else {
@@ -525,7 +555,19 @@ public class MessageMainFragment extends Fragment {
                         contentStr = getContext().getString(R.string.type_video);
                         break;
                     case eventNotification:
-                        contentStr = getContext().getString(R.string.group_notification);
+                        EventNotificationContent eventNotificationContent = (EventNotificationContent) lastMsg.getContent();
+                        contentStr = eventNotificationContent.getEventText();
+//                        switch (eventNotificationContent.getEventNotificationType()) {
+//                            case group_member_added:
+//                                //群成员加群事件
+//                                break;
+//                            case group_member_removed:
+//                                //群成员被踢事件
+//                                break;
+//                            case group_member_exit:
+//                                //群成员退群事件
+//                                break;
+//                        }
                         break;
                     case custom:
                         CustomContent customContent = (CustomContent) lastMsg.getContent();
@@ -542,7 +584,7 @@ public class MessageMainFragment extends Fragment {
 
                 MessageContent msgContent = lastMsg.getContent();
 
-                if (lastMsg.getTargetType() == ConversationType.group && !contentStr.equals("[群成员变动]")) {
+                if (lastMsg.getTargetType() == ConversationType.group && lastMsg.getContentType() == ContentType.text) {
                     UserInfo info = lastMsg.getFromUser();
                     String fromName = info.getNotename();
                     if (TextUtils.isEmpty(fromName)) {

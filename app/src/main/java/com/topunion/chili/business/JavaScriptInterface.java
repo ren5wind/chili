@@ -6,12 +6,10 @@ import android.os.Environment;
 import android.webkit.JavascriptInterface;
 
 import com.topunion.chili.R;
-import com.topunion.chili.activity.HeadSettingActivity;
+import com.topunion.chili.WebViewFragment;
 import com.topunion.chili.net.HttpHelper;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.util.StringUtil;
-
-import org.androidannotations.annotations.Background;
 
 import java.util.HashMap;
 
@@ -28,9 +26,11 @@ import cn.jiguang.share.wechat.Wechat;
  */
 public class JavaScriptInterface {
     private Context context;
+    private WebViewFragment fragment;
 
-    public JavaScriptInterface(Context context) {
+    public JavaScriptInterface(Context context, WebViewFragment fragment) {
         this.context = context;
+        this.fragment = fragment;
     }
 
     @JavascriptInterface
@@ -49,10 +49,15 @@ public class JavaScriptInterface {
             shareParams.setImageData(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
             JShareInterface.share(Wechat.Name, shareParams, mShareListener);
         }
-
     }
 
-    void download(String url, final ShareParams shareParams) {
+    @JavascriptInterface
+    public void getBackState(boolean isBack) {
+        System.out.println("isBack = " + isBack);
+        fragment.setEixt(!isBack);
+    }
+
+    public void download(String url, final ShareParams shareParams) {
         HttpHelper_.getInstance_(context).download(url,
                 Environment.getExternalStorageDirectory() + "/01yitou/account/",
                 new HttpHelper.OnDownloadListener() {

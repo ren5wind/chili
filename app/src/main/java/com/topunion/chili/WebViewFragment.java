@@ -31,6 +31,8 @@ public class WebViewFragment extends Fragment {
 
     private String urlStr;
 
+    private boolean isExit;
+
 
     public WebViewFragment() {
     }
@@ -65,16 +67,17 @@ public class WebViewFragment extends Fragment {
         bar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new JavaScriptInterface(getActivity()), "androidClient");
-
+        webView.addJavascriptInterface(new JavaScriptInterface(getActivity(), this), "androidClient");
+        webView.getSettings()
+                .setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 System.out.println("url = " + url);
                 boolean b = JsManager.getInstance().parseUrl(url, getActivity());
-                if (!b) {
-                    view.loadUrl(url);
-                }
-                return b;
+//                if (!b) {
+//                    view.loadUrl(url);
+//                }
+                return super.shouldOverrideUrlLoading(view,url);
             }
 
             @Override
@@ -110,7 +113,7 @@ public class WebViewFragment extends Fragment {
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
         webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         webView.getSettings().setAppCacheEnabled(false);
         String appCachePath = getActivity().getCacheDir().getAbsolutePath();
         webView.getSettings().setAppCachePath(appCachePath);
@@ -118,6 +121,7 @@ public class WebViewFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && BuildConfig.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
+//        urlStr = "file:///android_asset/b.html";
         webView.loadUrl(urlStr);
         RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
         Observable<Boolean> refreshCallBackobservable = RxBus.getInstance().register(JsManager.RXBUS_WEB_REFRESH_VIEW);
@@ -143,17 +147,29 @@ public class WebViewFragment extends Fragment {
         return rootView;
     }
 
+    public void setEixt(boolean isExit) {
+        this.isExit = isExit;
+    }
+
     public void initfresh() {
-        webView.reload();
+        if (webView != null) {
+            webView.loadUrl(urlStr);
+        }
     }
 
     public boolean back() {
-        if (webView.canGoBack()) {
-            webView.goBack();// 返回前一个页面
-            System.out.println(webView.getUrl());
-            return true;
+        if (webView == null)
+            return false;
+        if (isExit) {
+            return false;
         }
-        return false;
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl("javascript:goBack()");
+            }
+        });
+        return true;
     }
 
     @Override

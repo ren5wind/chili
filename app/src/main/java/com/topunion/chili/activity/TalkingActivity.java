@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.content.EventNotificationContent;
 import cn.jpush.im.android.api.content.TextContent;
 import cn.jpush.im.android.api.enums.ContentType;
 import cn.jpush.im.android.api.enums.MessageDirect;
@@ -91,8 +93,12 @@ public class TalkingActivity extends AppCompatActivity {
         }
         Message msg;
         TextContent content = new TextContent(mcgContent);
+        if (mConv == null) {
+            Toast.makeText(TalkingActivity.this, "请登陆", Toast.LENGTH_SHORT).show();
+            return;
+        }
         msg = mConv.createSendMessage(content);
-        mDataList.add(new MsgInfo(null, msg));
+        mDataList.add(new MsgInfo(null, msg, null));
         adapter.notifyDataSetChanged();
         mListView.setSelection(mListView.getBottom());
         options.setRetainOffline(true);//是否当对方用户不在线时让后台服务区保存这条消息的离线消息
@@ -164,7 +170,7 @@ public class TalkingActivity extends AppCompatActivity {
             }
         }
         //获取消息列表
-        if(mConv != null) {
+        if (mConv != null) {
             List<Message> messageList = mConv.getMessagesFromOldest(0, mOffset);
             int size = (messageList == null) ? 0 : messageList.size();
             for (int i = 0; i < size; i++) {
@@ -173,10 +179,12 @@ public class TalkingActivity extends AppCompatActivity {
                     int direct = message.getDirect() == MessageDirect.send ? TYPE_SEND_TXT
                             : TYPE_RECEIVE_TXT;
                     if (direct == TYPE_SEND_TXT) {//发送方
-                        mDataList.add(new MsgInfo(null, message));
+                        mDataList.add(new MsgInfo(null, message, null));
                     } else if (direct == TYPE_RECEIVE_TXT) {//接收方
-                        mDataList.add(new MsgInfo(message, null));
+                        mDataList.add(new MsgInfo(message, null, null));
                     }
+                } else if (message.getContentType() == ContentType.eventNotification) {
+                    mDataList.add(new MsgInfo(null, null, message));
                 }
             }
         }
@@ -194,10 +202,13 @@ public class TalkingActivity extends AppCompatActivity {
     class MsgInfo {
         public Message left_msg;
         public Message right_msg;
+        public Message mid_msg;
 
-        public MsgInfo(Message left_msg, Message right_msg) {
+
+        public MsgInfo(Message left_msg, Message right_msg, Message mid_msg) {
             this.left_msg = left_msg;
             this.right_msg = right_msg;
+            this.mid_msg = mid_msg;
         }
     }
 
@@ -280,12 +291,16 @@ public class TalkingActivity extends AppCompatActivity {
             //获取adapter中的数据
             Message left = dataList.get(position).left_msg;
             Message right = dataList.get(position).right_msg;
+            Message mid = dataList.get(position).mid_msg;
+
 
             //如果数据为空，则将数据设置给右边，同时显示右边，隐藏左边
             if (right != null) {
                 viewHolder.text_right.setText(((TextContent) right.getContent()).getText());
                 viewHolder.right.setVisibility(View.VISIBLE);
                 viewHolder.left.setVisibility(View.GONE);
+                viewHolder.text_info.setVisibility(View.GONE);
+
                 viewHolder.text_time.setText(TimeFormat.getDetailTime(TalkingActivity.this, right.getCreateTime()));
                 getETMember(right.getFromUser(), viewHolder.img_header, viewHolder.tv_name);
                 viewHolder.img_header.setOnClickListener(new View.OnClickListener() {
@@ -302,6 +317,8 @@ public class TalkingActivity extends AppCompatActivity {
                 viewHolder.text_left.setText(((TextContent) left.getContent()).getText());
                 viewHolder.left.setVisibility(View.VISIBLE);
                 viewHolder.right.setVisibility(View.GONE);
+                viewHolder.text_info.setVisibility(View.GONE);
+
                 viewHolder.text_time.setText(TimeFormat.getDetailTime(TalkingActivity.this, left.getCreateTime()));
 //                viewHolder.img_header.setImageURI(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).headImg);
 //                viewHolder.tv_name.setText(ImInfoManager.getInstance().getFriendById((int) left.getFromUser().getUserID()).nickname);
@@ -316,6 +333,15 @@ public class TalkingActivity extends AppCompatActivity {
                         PersonalCenterActivity_.intent(TalkingActivity.this).uid(userInfo.getUserName()).start();
                     }
                 });
+            } else if (mid != null) {
+                viewHolder.left.setVisibility(View.GONE);
+                viewHolder.right.setVisibility(View.GONE);
+                viewHolder.text_info.setVisibility(View.VISIBLE);
+                if (mid.getContent() != null) {
+                    EventNotificationContent eventNotificationContent = (EventNotificationContent) mid.getContent();
+                    viewHolder.text_info.setText(eventNotificationContent.getEventText());
+                }
+                viewHolder.text_time.setText(TimeFormat.getDetailTime(TalkingActivity.this, mid.getCreateTime()));
             }
 //            else {
 //                viewHolder.left.setVisibility(View.GONE);
@@ -335,7 +361,7 @@ public class TalkingActivity extends AppCompatActivity {
             public TextView text_left;
             public LinearLayout left;
             public TextView text_right;
-            public LinearLayout right;
+            public RelativeLayout right;
             public LinearLayout middle;
             public TextView text_time;
             public TextView text_info;
@@ -349,7 +375,7 @@ public class TalkingActivity extends AppCompatActivity {
                 this.text_left = (TextView) rootView.findViewById(R.id.text_left);
                 this.left = (LinearLayout) rootView.findViewById(R.id.left);
                 this.text_right = (TextView) rootView.findViewById(R.id.text_right);
-                this.right = (LinearLayout) rootView.findViewById(R.id.right);
+                this.right = (RelativeLayout) rootView.findViewById(R.id.right);
                 this.middle = (LinearLayout) rootView.findViewById(R.id.layout_info);
                 this.text_time = (TextView) rootView.findViewById(R.id.text_time);
                 this.text_info = (TextView) rootView.findViewById(R.id.text_info);
