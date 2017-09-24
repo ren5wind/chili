@@ -160,11 +160,11 @@ public class MessageMainFragment extends Fragment {
     }
 
     @UiThread
-    void updateImLogin(boolean isLogin) {
+    void updateImLogin(boolean isLogin, int code) {
         if (isLogin) {
             btn_imlogin.setVisibility(View.GONE);
         } else {
-            btn_imlogin.setText("登陆失败，请点击重试");
+            btn_imlogin.setText("登陆失败,错误码" + code + "，请点击重试或联系客服");
             btn_imlogin.setVisibility(View.VISIBLE);
         }
     }
@@ -211,15 +211,13 @@ public class MessageMainFragment extends Fragment {
             @Override
             public void gotResult(int responseCode, String responseMessage) {
                 if (responseCode == 0) {
-                    showToast("登录成功");
-                    updateImLogin(true);
+                    updateImLogin(true, responseCode);
                     if (msgList != null) {
                         msgList.clear();
                     }
                     initConvListAdapter();
                 } else {
-                    showToast("登录失败");
-                    updateImLogin(false);
+                    updateImLogin(false, responseCode);
                 }
             }
         });
