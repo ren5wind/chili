@@ -178,7 +178,7 @@ public class MessageMainFragment extends Fragment {
         dataList.add("群组");
         dataList.add("电话本");
         contactAdapter.setData(dataList);
-        //
+
         //获取企业列表
         GetCorps.GetCorpsResponse corps = HttpHelper_.getInstance_(getActivity()).getCorps(AccountManager.getInstance().getUserId());
         mOrganization = null;
@@ -186,6 +186,8 @@ public class MessageMainFragment extends Fragment {
         List<Company> companyList = mOrganization.analysisCompany(corps);
         List<Department> departmentList = null;
         for (int i = 0; companyList != null && i < companyList.size(); i++) {
+            if (!companyList.get(i).isAdministrators())
+                continue;
             dataList.add(companyList.get(i));
             GetCorpDepts.GetCorpDeptsResponse depts = HttpHelper_.getInstance_(getActivity()).getCorpDepts(1, 20, Integer.parseInt(companyList.get(i).getId()));
             departmentList = companyList.get(i).analysisDepartment(depts);
