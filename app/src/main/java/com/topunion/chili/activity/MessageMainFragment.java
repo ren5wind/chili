@@ -34,6 +34,7 @@ import com.topunion.chili.net.request_interface.GetCorps;
 import com.topunion.chili.net.request_interface.GetETMemberDetails;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
 import com.topunion.chili.util.SortConvList;
+import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
@@ -480,6 +481,33 @@ public class MessageMainFragment extends Fragment {
         }
     }
 
+    @Background
+    void getETMember(final String msg, final TextView txt_msg) {
+
+        List<String> con = StringUtil.extractMessageByRegular(msg);
+        String userId = "";
+        if (con != null && con.size() > 0) {
+            userId = con.get(0);
+            userId.replace("[","");
+            userId.replace("]","");
+        }
+
+        if (StringUtil.isEmpt(userId)) {
+            return;
+        }
+        final GetETMemberDetails.GetETMemberDetailsResponse response =
+                HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userId, AccountManager.getInstance().getUserId());
+        if (response != null && response.data != null) {
+            msg.replace("userId", response.data.logicNickname);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    txt_msg.setText(msg);
+                }
+            });
+        }
+    }
+
     class MsgAdapter extends BaseAdapter {
         private List<Conversation> mDataList;
 
@@ -555,6 +583,7 @@ public class MessageMainFragment extends Fragment {
                     case eventNotification:
                         EventNotificationContent eventNotificationContent = (EventNotificationContent) lastMsg.getContent();
                         contentStr = eventNotificationContent.getEventText();
+                        getETMember(contentStr, holder.txt_msg);
 //                        switch (eventNotificationContent.getEventNotificationType()) {
 //                            case group_member_added:
 //                                //群成员加群事件

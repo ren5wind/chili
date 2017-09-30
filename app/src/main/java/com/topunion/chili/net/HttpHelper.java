@@ -89,7 +89,7 @@ public class HttpHelper {
         try {
             AddCorpDept.IAddCorpDept request = retrofit.create(AddCorpDept.IAddCorpDept.class);
             Call<AddCorpDept.AddCorpDeptResponse> call = request.addCorpDept(corpId, name, description);
-            Response<AddCorpDept.AddCorpDeptResponse> result = call.execute();
+              Response<AddCorpDept.AddCorpDeptResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
             e.printStackTrace();
