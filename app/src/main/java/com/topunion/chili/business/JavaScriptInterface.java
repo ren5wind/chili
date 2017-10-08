@@ -49,6 +49,8 @@ public class JavaScriptInterface {
             shareParams.setImageData(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
             JShareInterface.share(Wechat.Name, shareParams, mShareListener);
         }
+
+//        Wechat.Name、WechatMoments.Name、WechatFavorite.Name、SinaWeibo.Name、SinaWeiboMessage.Name、QQ.Name、QZone.Name。
     }
 
     @JavascriptInterface
@@ -94,9 +96,4 @@ public class JavaScriptInterface {
         }
     };
 
-
-    class ShareDate {
-        String title;
-        String link;
-    }
 }

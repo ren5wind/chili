@@ -445,6 +445,27 @@ public class MessageMainFragment extends Fragment {
                         initCorps();
                     }
                 });
+        //监听登出
+        RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGOUT);
+        Observable<Boolean> logOutCallBackobservable = RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGOUT);
+        logOutCallBackobservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean b) {
+                        initCorps();
+                        loginIm();
+                    }
+                });
     }
 
     @Background
@@ -490,8 +511,8 @@ public class MessageMainFragment extends Fragment {
         String userId = "";
         if (con != null && con.size() > 0) {
             userId = con.get(0);
-            userId.replace("[","");
-            userId.replace("]","");
+            userId.replace("[", "");
+            userId.replace("]", "");
         }
 
         if (StringUtil.isEmpt(userId)) {
