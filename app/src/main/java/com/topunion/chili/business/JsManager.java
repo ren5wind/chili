@@ -59,6 +59,10 @@ public class JsManager {
         } else if (url.contains("user/setting/picture.html")) {
             upLoadHead(activity, url);
             return true;
+        } else if (url.contains("login.html")) {
+            AccountManager.getInstance().clearAccount();
+            RxBus.getInstance().post(AccountManager.RXBUS_ACCOUNT_LOGOUT, true);
+            return true;
         }
         return false;
     }

@@ -1,8 +1,14 @@
 package com.topunion.chili.business;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 
 import com.topunion.chili.R;
@@ -17,7 +23,12 @@ import cn.jiguang.share.android.api.JShareInterface;
 import cn.jiguang.share.android.api.PlatActionListener;
 import cn.jiguang.share.android.api.Platform;
 import cn.jiguang.share.android.api.ShareParams;
+import cn.jiguang.share.qqmodel.QQ;
+import cn.jiguang.share.qqmodel.QZone;
 import cn.jiguang.share.wechat.Wechat;
+import cn.jiguang.share.wechat.WechatFavorite;
+import cn.jiguang.share.wechat.WechatMoments;
+import cn.jiguang.share.weibo.SinaWeibo;
 
 /**
  * Author      : renxiaoming
@@ -34,21 +45,59 @@ public class JavaScriptInterface {
     }
 
     @JavascriptInterface
-    public void getsharedata(int type, String text, String image, String link, String title, String audio, String video, String app, String file, String emoticon) {
-        ShareParams shareParams = new ShareParams();
-        shareParams.setShareType(type);
-        if (!StringUtil.isEmpt(title))
-            shareParams.setTitle(title);
-        if (!StringUtil.isEmpt(text))
-            shareParams.setText(text);
-        if (!StringUtil.isEmpt(link))
-            shareParams.setUrl(link);
-        if (type == Platform.SHARE_IMAGE) {
-            download(image, shareParams);
-        } else {
-            shareParams.setImageData(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
-            JShareInterface.share(Wechat.Name, shareParams, mShareListener);
-        }
+    public void getsharedata(final int type, final String text, final String image, final String link, final String title, final String audio, final String video, final String app, final String file, final String emoticon) {
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_share, null);
+        // 设置style 控制默认dialog带来的边距问题
+        final Dialog dialog = new Dialog(context, R.style.uilib_dialog_style);
+        dialog.setContentView(view);
+        dialog.show();
+
+        // 监听
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.Wechat:
+                        // 分享到微信
+                        share(Wechat.Name, type, text, image, link, title, audio, video, app, file, emoticon);
+                        break;
+                    case R.id.WechatMoments:
+                        // 分享到朋友圈
+                        share(WechatMoments.Name, type, text, image, link, title, audio, video, app, file, emoticon);
+                        break;
+                    case R.id.WechatFavorite:
+                        share(WechatFavorite.Name, type, text, image, link, title, audio, video, app, file, emoticon);
+                        break;
+                    case R.id.SinaWeibo:
+                        share(SinaWeibo.Name, type, text, image, link, title, audio, video, app, file, emoticon);
+                        break;
+                    case R.id.QQ:
+                        share(QQ.Name, type, text, image, link, title, audio, video, app, file, emoticon);
+                        break;
+                    case R.id.QZone:
+                        share(QZone.Name, type, text, image, link, title, audio, video, app, file, emoticon);
+                        break;
+                }
+                dialog.dismiss();
+            }
+        };
+
+        view.findViewById(R.id.Wechat).setOnClickListener(listener);
+        view.findViewById(R.id.WechatMoments).setOnClickListener(listener);
+        view.findViewById(R.id.WechatFavorite).setOnClickListener(listener);
+        view.findViewById(R.id.SinaWeibo).setOnClickListener(listener);
+        view.findViewById(R.id.QQ).setOnClickListener(listener);
+        view.findViewById(R.id.QZone).setOnClickListener(listener);
+
+        // 设置相关位置，一定要在 show()之后
+        Window window = dialog.getWindow();
+        window.getDecorView().setPadding(0, 0, 0, 0);
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.gravity = Gravity.BOTTOM;
+        window.setAttributes(params);
+
+
     }
 
     @JavascriptInterface
@@ -94,9 +143,21 @@ public class JavaScriptInterface {
         }
     };
 
-
-    class ShareDate {
-        String title;
-        String link;
+    private void share(String name, int type, String text, String image, String link, String title, String audio, String video, String app, String file, String emoticon) {
+        ShareParams shareParams = new ShareParams();
+        shareParams.setShareType(type);
+        if (!StringUtil.isEmpt(title))
+            shareParams.setTitle(title);
+        if (!StringUtil.isEmpt(text))
+            shareParams.setText(text);
+        if (!StringUtil.isEmpt(link))
+            shareParams.setUrl(link);
+        if (type == Platform.SHARE_IMAGE) {
+            download(image, shareParams);
+        } else {
+            shareParams.setImageData(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
+            JShareInterface.share(name, shareParams, mShareListener);
+        }
     }
+
 }

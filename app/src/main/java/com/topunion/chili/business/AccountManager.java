@@ -16,6 +16,7 @@ public class AccountManager {
     public static final String KEY_SP_ACCOUNT_NICKNAME = "key_sp_account_nickname";
 
     public static final String RXBUS_ACCOUNT_LOGIN = "rxbus_account_login";
+    public static final String RXBUS_ACCOUNT_LOGOUT = "rxbus_account_logOut";
 
     private static AccountManager instance;
     private final static Object syncLock = new Object();
@@ -42,6 +43,16 @@ public class AccountManager {
         MyApplication_.getInstance().setMyUserId(accountBean.getUid());
         MyApplication_.getInstance().setNickName(accountBean.getUsername());
     }
+
+    public void clearAccount() {
+        SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_TOKEN, "");
+        SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_USERID, "");
+        SPUtil.setSharedStringData(MyApplication_.getAppContext(), KEY_SP_ACCOUNT_NICKNAME, "");
+        MyApplication_.getInstance().setToken("");
+        MyApplication_.getInstance().setMyUserId("");
+        MyApplication_.getInstance().setNickName("");
+    }
+
 
     public AccountBean getAccount() {
         AccountBean accountBean = new AccountBean();
