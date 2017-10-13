@@ -28,7 +28,11 @@ android {
                 TENCENT_APPID : "1106425728",//腾讯开放平台注册应用得到的appId
         ]
     }
-
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
     afterEvaluate {
         tasks.matching {
             it.name.startsWith('dex')

@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
+    android:padding="20dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -15,6 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:drawableTop="@mipmap/wechat"
             android:gravity="center"
             android:text="微信" />
 
@@ -23,6 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:drawableTop="@mipmap/wechat_moment"
             android:gravity="center"
             android:text="微信朋友圈" />
 
@@ -31,6 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:drawableTop="@mipmap/wechat_fav"
             android:gravity="center"
             android:text="微信收藏" />
 
@@ -39,6 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:drawableTop="@mipmap/weibo"
             android:gravity="center"
             android:text="新浪微博" />
     </LinearLayout>
@@ -47,18 +52,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="4">
+
         <TextView
             android:id="@+id/QQ"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:drawableTop="@mipmap/qq"
             android:gravity="center"
             android:text="QQ" />
+
         <TextView
             android:id="@+id/QZone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:drawableTop="@mipmap/qzone"
             android:gravity="center"
             android:text="QQ空间" />
 

@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper;
+import com.topunion.chili.util.AppUtil;
 import com.topunion.chili.util.SPUtil;
 import com.topunion.chili.util.StringUtil;
 
@@ -52,13 +53,13 @@ public class MyApplication extends Application {
         //请求图片的库，配合 com.facebook.drawee.view.SimpleDraweeView 使用
         Fresco.initialize(this);
 
-        JMessageClient.setDebugMode(true);
+        JMessageClient.setDebugMode(AppUtil.isApkDebugable(this));
         JMessageClient.init(this);
-        JPushInterface.setDebugMode(true);
+        JPushInterface.setDebugMode(AppUtil.isApkDebugable(this));
         JPushInterface.init(this);
         baseApplication = this;
         JShareInterface.init(this);
-
+        JShareInterface.setDebugMode(AppUtil.isApkDebugable(this));
 
     }
 

@@ -2,17 +2,11 @@
 <DevInfor>
 
     <!-- 如果不需要支持某平台，可缺省该平台的配置-->
-    <SinaWeibo
-        AppKey="3524484394"
-        AppSecret="21a20eca6ca0444bfd4d572887c3e18f"
-        RedirectUrl="微博开放平台填写的授权回调页"/>
+    <SinaWeibo AppKey="3524484394" AppSecret="21a20eca6ca0444bfd4d572887c3e18f"
+        RedirectUrl="https://api.weibo.com/oauth2/default.html" />
 
-    <QQ
-        AppId="1106425728"
-        AppKey="wLu4dMh6agNOt0qC"/>
+    <QQ AppId="1106425728" AppKey="wLu4dMh6agNOt0qC" />
 
-    <Wechat
-        AppId="wx76eb85b12a3e0408"
-        AppSecret="0124e3f0103a7429908093637a65aa39"/>
+    <Wechat AppId="wx76eb85b12a3e0408" AppSecret="0124e3f0103a7429908093637a65aa39" />
 
 </DevInfor>
