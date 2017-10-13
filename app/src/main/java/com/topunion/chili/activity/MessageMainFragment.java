@@ -385,7 +385,6 @@ public class MessageMainFragment extends Fragment {
 //        getGroup();
 //        getFriend();
         //监听登录
-        RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
         Observable<Boolean> loginCallBackobservable = RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
         loginCallBackobservable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Boolean>() {
@@ -406,8 +405,7 @@ public class MessageMainFragment extends Fragment {
                     }
                 });
         //监听push
-        RxBus.getInstance().register(MyReceiver.RXBUS_PUSH);
-        Observable<Notifiy> pushCallBackobservable = RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
+        Observable<Notifiy> pushCallBackobservable = RxBus.getInstance().register(MyReceiver.RXBUS_PUSH);
         pushCallBackobservable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Notifiy>() {
                     @Override
@@ -426,7 +424,6 @@ public class MessageMainFragment extends Fragment {
                     }
                 });
         //监听企业管理
-        RxBus.getInstance().register(AccountManager.RXBUS_ACCOUNT_LOGIN);
         Observable<Boolean> companyCallBackobservable = RxBus.getInstance().register(CompanyManageActivity_.RXBUS_UPDATE_COMPANY);
         companyCallBackobservable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Boolean>() {
@@ -490,8 +487,8 @@ public class MessageMainFragment extends Fragment {
         String userId = "";
         if (con != null && con.size() > 0) {
             userId = con.get(0);
-            userId.replace("[","");
-            userId.replace("]","");
+            userId.replace("[", "");
+            userId.replace("]", "");
         }
 
         if (StringUtil.isEmpt(userId)) {
