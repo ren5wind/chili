@@ -161,7 +161,12 @@ public class MessageMainFragment extends Fragment {
     }
 
     @UiThread
-    void updateImLogin(boolean isLogin, int code) {
+    void updateImLogin(boolean isLogin, int code, boolean hasUserId) {
+        if (!hasUserId) {
+            btn_imlogin.setText("您还没有登录，无法获取消息,请到“我的”里登录");
+            btn_imlogin.setVisibility(View.VISIBLE);
+            return;
+        }
         if (isLogin) {
             btn_imlogin.setVisibility(View.GONE);
         } else {
@@ -207,6 +212,10 @@ public class MessageMainFragment extends Fragment {
 
     @Background
     void loginIm() {
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+            updateImLogin(true, 0, false);
+            return;
+        }
         //设置 Alias
         sequence++;
         JPushInterface.setAlias(MyApplication.getContext(), sequence, AccountManager.getInstance().getUserId());
@@ -214,13 +223,13 @@ public class MessageMainFragment extends Fragment {
             @Override
             public void gotResult(int responseCode, String responseMessage) {
                 if (responseCode == 0) {
-                    updateImLogin(true, responseCode);
+                    updateImLogin(true, responseCode, true);
                     if (msgList != null) {
                         msgList.clear();
                     }
                     initConvListAdapter();
                 } else {
-                    updateImLogin(false, responseCode);
+                    updateImLogin(false, responseCode, true);
                 }
             }
         });

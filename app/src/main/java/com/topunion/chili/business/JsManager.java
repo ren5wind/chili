@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.topunion.chili.activity.HeadSettingActivity;
+import com.topunion.chili.activity.PayActivity_;
 import com.topunion.chili.base.RxBus;
 import com.topunion.chili.data.AccountBean;
 import com.topunion.chili.net.HttpHelper;
@@ -63,8 +64,15 @@ public class JsManager {
             AccountManager.getInstance().clearAccount();
             RxBus.getInstance().post(AccountManager.RXBUS_ACCOUNT_LOGOUT, true);
             return true;
+        } else if (url.contains("user/score-recharge.html")) {
+            startPayView(activity);
+            return true;
         }
         return false;
+    }
+
+    private void startPayView(Activity activity) {
+        activity.startActivity(new Intent(activity, PayActivity_.class));
     }
 
     private String getJson(String url) {

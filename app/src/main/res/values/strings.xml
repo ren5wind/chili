@@ -53,4 +53,5 @@
     <string name="jmui_month">月</string>
     <string name="jmui_day">日</string>
     <string name="second">秒</string>
+    <string name="pay_result_callback_msg" formatted="false">微信支付结果：%s</string>
 </resources>

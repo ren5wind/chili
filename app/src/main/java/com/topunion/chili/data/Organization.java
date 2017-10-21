@@ -14,7 +14,7 @@ public class Organization extends BaseData {
     private List<Company> companyList;
 
     public List<Company> analysisCompany(GetCorps.GetCorpsResponse corps) {
-        if (corps == null) {
+        if (corps == null || corps.data == null) {
             return null;
         }
         companyList = new ArrayList<>();

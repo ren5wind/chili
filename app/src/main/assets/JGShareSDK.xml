@@ -5,7 +5,7 @@
     <SinaWeibo AppKey="3524484394" AppSecret="21a20eca6ca0444bfd4d572887c3e18f"
         RedirectUrl="https://api.weibo.com/oauth2/default.html" />
 
-    <QQ AppId="1106425728" AppKey="wLu4dMh6agNOt0qC" />
+    <QQ AppId="1106407130" AppKey="KEYZ51rjBB5HOdnLgDC" />
 
     <Wechat AppId="wx76eb85b12a3e0408" AppSecret="0124e3f0103a7429908093637a65aa39" />
 

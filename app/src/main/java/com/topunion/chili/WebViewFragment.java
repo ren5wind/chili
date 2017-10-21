@@ -73,6 +73,7 @@ public class WebViewFragment extends Fragment {
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 System.out.println("url = " + url);
+                isExit = false;
                 boolean b = JsManager.getInstance().parseUrl(url, getActivity());
 //                if (!b) {
 //                    view.loadUrl(url);
@@ -85,21 +86,21 @@ public class WebViewFragment extends Fragment {
                 super.onLoadResource(view, url);
             }
         });
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                if (newProgress == 100) {
-                    bar.setVisibility(View.INVISIBLE);
-                } else {
-                    if (View.INVISIBLE == bar.getVisibility()) {
-                        bar.setVisibility(View.VISIBLE);
-                    }
-                    bar.setProgress(newProgress);
-                }
-                super.onProgressChanged(view, newProgress);
-            }
-
-        });
+//        webView.setWebChromeClient(new WebChromeClient() {
+//            @Override
+//            public void onProgressChanged(WebView view, int newProgress) {
+//                if (newProgress == 100) {
+//                    bar.setVisibility(View.INVISIBLE);
+//                } else {
+//                    if (View.INVISIBLE == bar.getVisibility()) {
+//                        bar.setVisibility(View.VISIBLE);
+//                    }
+//                    bar.setProgress(newProgress);
+//                }
+//                super.onProgressChanged(view, newProgress);
+//            }
+//
+//        });
 
         //魅族手机设置LayerType为LAYER_TYPE_NONE
         if (Build.MANUFACTURER.equals("Meizu")) {

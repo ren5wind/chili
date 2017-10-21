@@ -76,7 +76,7 @@
         <service
             android:name="cn.jpush.android.service.PushService"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.REGISTER" />
                 <action android:name="cn.jpush.android.intent.REPORT" />
@@ -237,6 +237,11 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activity.ClipImageActivity"
+            android:label="@string/title_activity_remark"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".activity.PayActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
