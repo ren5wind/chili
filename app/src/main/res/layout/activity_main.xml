@@ -87,7 +87,7 @@
             app:textColorSelected="@color/main" />
     </com.yinglan.alphatabs.AlphaTabsIndicator>
 
-    <android.support.v4.view.ViewPager
+    <com.topunion.chili.wight.NoScrollViewPager
         android:id="@+id/mViewPager"
         android:layout_above="@id/alphaIndicator"
         android:layout_width="match_parent"
