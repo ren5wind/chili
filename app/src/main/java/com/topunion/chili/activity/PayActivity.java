@@ -131,9 +131,9 @@ public class PayActivity extends AppCompatActivity {
     }
 
     //因为支付宝返回的8000,所以需要等待支付结果 laoding...
-    WaitingDialogFragment mWaitingDialog = new WaitingDialogFragment();
+    static WaitingDialogFragment mWaitingDialog = new WaitingDialogFragment();
 
-    class WaitingDialogFragment extends DialogFragment {
+    public static class WaitingDialogFragment extends DialogFragment {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -151,7 +151,7 @@ public class PayActivity extends AppCompatActivity {
     /**
      * 因为支付宝返回的8000 等待中的支付结果，需要等待结果的task
      */
-    ServiceTask<RechargeResult> mWaitingPayTask = new ServiceTask<RechargeResult>() {
+    static ServiceTask<RechargeResult> mWaitingPayTask = new ServiceTask<RechargeResult>() {
         @Override
         protected void onComplete(int resultCode, RechargeResult rr) {
             if (resultCode == Constants.STATE_CODE_SUCCESS && rr != null) {
@@ -164,7 +164,7 @@ public class PayActivity extends AppCompatActivity {
     /**
      * 充值成功后的操作
      */
-    private void onRechargeSuccess(RechargeResult rechargeResult) {
+    private static void onRechargeSuccess(RechargeResult rechargeResult) {
     }
 
     @Click
