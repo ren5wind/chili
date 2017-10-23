@@ -75,9 +75,10 @@ public class WebViewFragment extends Fragment {
                 System.out.println("url = " + url);
                 isExit = false;
                 boolean b = JsManager.getInstance().parseUrl(url, getActivity());
-//                if (!b) {
-//                    view.loadUrl(url);
-//                }
+                if (!b) {
+                    view.loadUrl(url);
+                    return false;
+                }
                 return super.shouldOverrideUrlLoading(view,url);
             }
 

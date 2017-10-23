@@ -3,18 +3,17 @@ package com.topunion.chili;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.topunion.chili.activity.MessageMainFragment_;
 import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.wight.NoScrollViewPager;
 import com.yinglan.alphatabs.AlphaTabsIndicator;
 import com.yinglan.alphatabs.OnTabChangedListner;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class MainActivity extends FragmentActivity {
 
 
     @ViewById(R.id.mViewPager)
-    ViewPager mViewPager;
+    NoScrollViewPager mViewPager;
 
     @ViewById(R.id.alphaIndicator)
     AlphaTabsIndicator alphaIndicator;
@@ -61,20 +60,37 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onTabSelected(int tabNum) {
                 postion = tabNum;
+//                find.initfresh();
+//                bid.initfresh();
+//                square.initfresh();
+//                my.initfresh();
+
                 switch (tabNum) {
                     case 0:
-                        find.initfresh();
+//                        find.initfresh();
+                        bid.initfresh();
+                        square.initfresh();
+                        my.initfresh();
                         break;
                     case 1:
-                        bid.initfresh();
+                        find.initfresh();
+//                        bid.initfresh();
+                        square.initfresh();
+                        my.initfresh();
                         break;
                     case 2:
                         break;
                     case 3:
-                        square.initfresh();
+                        find.initfresh();
+                        bid.initfresh();
+//                        square.initfresh();
+                        my.initfresh();
                         break;
                     case 4:
-                        my.initfresh();
+                        find.initfresh();
+                        bid.initfresh();
+                        square.initfresh();
+//                        my.initfresh();
                         break;
                 }
             }

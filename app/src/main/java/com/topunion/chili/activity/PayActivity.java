@@ -131,7 +131,7 @@ public class PayActivity extends AppCompatActivity {
     }
 
     //因为支付宝返回的8000,所以需要等待支付结果 laoding...
-    static WaitingDialogFragment mWaitingDialog = new WaitingDialogFragment();
+    private static WaitingDialogFragment mWaitingDialog = new WaitingDialogFragment();
 
     public static class WaitingDialogFragment extends DialogFragment {
         @Nullable
