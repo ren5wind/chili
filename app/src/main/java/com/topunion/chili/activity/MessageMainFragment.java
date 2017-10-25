@@ -27,6 +27,7 @@ import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Department;
 import com.topunion.chili.data.Notifiy;
 import com.topunion.chili.data.Organization;
+import com.topunion.chili.greendao.GreenDaoManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpDepts;
 import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
@@ -94,9 +95,6 @@ public class MessageMainFragment extends Fragment {
     LinearLayout popMenu;
 
     @ViewById
-    SimpleDraweeView img_notifiy;
-
-    @ViewById
     RelativeLayout rl_notifiy;
 
     @ViewById
@@ -129,7 +127,7 @@ public class MessageMainFragment extends Fragment {
         msg_list.setVisibility(View.VISIBLE);
         contact_list.setVisibility(View.GONE);
         popMenu.setVisibility(View.GONE);
-        rl_notifiy.setVisibility(View.GONE);
+        rl_notifiy.setVisibility(View.VISIBLE);
     }
 
     @Click
@@ -151,6 +149,11 @@ public class MessageMainFragment extends Fragment {
 
     @Click
     void rl_notifiy() {
+        Notifiy notifiy = new Notifiy();
+        notifiy.setTitle("title");
+        notifiy.setMsg("message");
+        notifiy.setTime(System.currentTimeMillis());
+        GreenDaoManager.getInstance().getSession().getNotifiyDao().insert(notifiy);
         NotificationActivity_.intent(this).start();
     }
 

@@ -54,15 +54,14 @@
 
     <TextView
         android:id="@+id/btn_imlogin"
-        android:layout_below="@id/line_top"
-        android:background="#55000000"
-        android:padding="5dp"
-        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
+        android:layout_below="@id/line_top"
+        android:background="#55000000"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
         android:text="登陆失败，请点击重试"
-        />
+        android:textColor="@android:color/black" />
 
     <LinearLayout
         android:id="@+id/layout_tab"
@@ -129,25 +128,22 @@
         android:id="@+id/rl_notifiy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_below="@id/line_bottom">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <ImageView
             android:id="@+id/img_notifiy"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_margin="10dp"
-            fresco:placeholderImage="@mipmap/ic_launcher"
-            fresco:placeholderImageScaleType="fitXY"
-            fresco:roundAsCircle="true" />
+            android:src="@mipmap/ic_launcher" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/img_header"
+            android:layout_toRightOf="@+id/img_notifiy"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -155,6 +151,7 @@
                 android:id="@+id/txt_notifiy_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="消息列表"
                 android:textColor="#666666"
                 android:textSize="15sp" />
 
@@ -163,6 +160,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
+                android:text="查看订阅信息、系统信息"
                 android:textColor="@color/textGray"
                 android:textSize="12sp" />
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.topunion.chili.R;
 import com.topunion.chili.data.Notifiy;
+import com.topunion.chili.greendao.GreenDaoManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -41,8 +42,13 @@ public class NotificationActivity extends AppCompatActivity {
     @AfterViews
     void init() {
         txt_title.setText("易投通知");
+        getData();
         mNotificationAdapter = new NotificationAdapter();
         mListView.setAdapter(mNotificationAdapter);
+    }
+
+    void getData() {
+        mDataList = GreenDaoManager.getInstance().getSession().getNotifiyDao().queryBuilder().list();
     }
 
 
