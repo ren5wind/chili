@@ -63,7 +63,7 @@ public class JsManager {
         } else if (url.contains("login.html")) {
             AccountManager.getInstance().clearAccount();
             RxBus.getInstance().post(AccountManager.RXBUS_ACCOUNT_LOGOUT, true);
-            return true;
+            return false;
         } else if (url.contains("user/score-recharge.html")) {
             startPayView(activity);
             return true;

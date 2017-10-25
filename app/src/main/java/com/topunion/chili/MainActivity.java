@@ -67,30 +67,30 @@ public class MainActivity extends FragmentActivity {
 
                 switch (tabNum) {
                     case 0:
-//                        find.initfresh();
-                        bid.initfresh();
-                        square.initfresh();
-                        my.initfresh();
-                        break;
-                    case 1:
                         find.initfresh();
 //                        bid.initfresh();
-                        square.initfresh();
-                        my.initfresh();
+//                        square.initfresh();
+//                        my.initfresh();
+                        break;
+                    case 1:
+//                        find.initfresh();
+                        bid.initfresh();
+//                        square.initfresh();
+//                        my.initfresh();
                         break;
                     case 2:
                         break;
                     case 3:
-                        find.initfresh();
-                        bid.initfresh();
-//                        square.initfresh();
-                        my.initfresh();
-                        break;
-                    case 4:
-                        find.initfresh();
-                        bid.initfresh();
+//                        find.initfresh();
+//                        bid.initfresh();
                         square.initfresh();
 //                        my.initfresh();
+                        break;
+                    case 4:
+//                        find.initfresh();
+//                        bid.initfresh();
+//                        square.initfresh();
+                        my.initfresh();
                         break;
                 }
             }
