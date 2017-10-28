@@ -128,16 +128,19 @@
         android:id="@+id/rl_notifiy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/line_bottom">
+        android:layout_below="@id/line_bottom"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/img_notifiy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_margin="10dp"
-            android:src="@mipmap/ic_launcher" />
+            fresco:placeholderImage="@mipmap/ic_launcher"
+            fresco:placeholderImageScaleType="centerCrop"
+            fresco:roundAsCircle="true" />
 
         <LinearLayout
             android:layout_width="wrap_content"

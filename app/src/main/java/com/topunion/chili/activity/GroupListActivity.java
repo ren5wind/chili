@@ -17,6 +17,9 @@ import com.topunion.chili.R;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetGroups;
+import com.topunion.chili.wight.refresh.UiLibRefreshLayout;
+import com.topunion.chili.wight.refresh.UiLibRefreshOnLoadMoreListener;
+import com.topunion.chili.wight.refresh.UiLibRefreshOnRefreshListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -41,6 +44,9 @@ public class GroupListActivity extends AppCompatActivity {
 
     private Adapter mAdapter;
     private List<GetGroups.GetGroupsResponse.Group> mDataList;
+    @ViewById
+    UiLibRefreshLayout refresh;
+    int page = 1;
 
     @Click
     void btn_operation() {
@@ -75,16 +81,33 @@ public class GroupListActivity extends AppCompatActivity {
                 TalkingActivity_.intent(GroupListActivity.this).title(mAdapter.getItem(i).name).groupId(Long.valueOf(mAdapter.getItem(i).pushGroupId)).start();
             }
         });
-        initGroup();
+        initGroup(1);
+
+        refresh.setOnRefreshListener(new UiLibRefreshOnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh.setRefreshing(false);
+                initGroup(1);
+            }
+        });
+
+        refresh.setOnLoadMoreListener(new UiLibRefreshOnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                refresh.setLoadingMore(false);
+                initGroup(page);
+            }
+        });
     }
 
     //获取群组列表
     @Background
-    void initGroup() {
-        GetGroups.GetGroupsResponse groups = HttpHelper_.getInstance_(this).getGroups(1, 100, AccountManager.getInstance().getUserId());
+    void initGroup(int page) {
+        GetGroups.GetGroupsResponse groups = HttpHelper_.getInstance_(this).getGroups(page, 20, AccountManager.getInstance().getUserId());
         if (groups == null) {
             return;
         }
+        page++;
 //        //test data
 //        GetGroups.GetGroupsResponse.Group group = new GetGroups.GetGroupsResponse.Group();
 //        group.count = "20";

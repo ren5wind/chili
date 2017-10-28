@@ -1,26 +1,32 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:uilib="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <include
         android:id="@+id/title_layout"
-        layout="@layout/normal_title_layout"/>
-
+        layout="@layout/normal_title_layout" />
 
     <View
-        android:layout_below="@id/title_layout"
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#999999"/>
+        android:layout_below="@id/title_layout"
+        android:background="#999999" />
 
-    <ListView
-        android:id="@+id/mListView"
+    <com.topunion.chili.wight.refresh.UiLibRefreshLayout
+        android:id="@+id/refresh"
         android:layout_below="@id/line"
-        android:choiceMode="singleChoice"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        uilib:template="normal">
+
+        <ListView
+            android:id="@+id/mListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:choiceMode="singleChoice" />
+    </com.topunion.chili.wight.refresh.UiLibRefreshLayout>
 </RelativeLayout>

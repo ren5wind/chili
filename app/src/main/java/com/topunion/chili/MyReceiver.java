@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.topunion.chili.data.Notifiy;
+import com.topunion.chili.greendao.GreenDaoManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,7 +46,11 @@ public class MyReceiver extends BroadcastReceiver {
             } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {
                 Log.d(TAG, "[MyReceiver] 接收到推送下来的自定义消息: " + bundle.getString(JPushInterface.EXTRA_MESSAGE));
                 processCustomMessage(context, bundle);
-
+                Notifiy notifiy = new Notifiy();
+                notifiy.setTitle(bundle.getString(JPushInterface.EXTRA_TITLE));
+                notifiy.setMsg(bundle.getString(JPushInterface.EXTRA_MESSAGE));
+                notifiy.setTime(System.currentTimeMillis());
+                GreenDaoManager.getInstance().getSession().getNotifiyDao().insert(notifiy);
             } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {
                 Log.d(TAG, "[MyReceiver] 接收到推送下来的通知");
                 int notifactionId = bundle.getInt(JPushInterface.EXTRA_NOTIFICATION_ID);

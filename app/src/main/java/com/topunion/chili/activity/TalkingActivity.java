@@ -351,9 +351,7 @@ public class TalkingActivity extends AppCompatActivity {
 //                    viewHolder.text_info.setVisibility(View.GONE);
 //                }
 //            }
-
             return convertView;
-
         }
 
         class ViewHolder {

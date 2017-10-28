@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:uilib="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -41,24 +42,31 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:drawableLeft="@mipmap/manage_staff"
+        android:drawablePadding="10dp"
         android:gravity="center"
         android:padding="10dp"
-        android:visibility="gone"
         android:text="新的好友"
-        android:drawablePadding="10dp"
         android:textColor="#666666"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/mListView"
+        <com.topunion.chili.wight.refresh.UiLibRefreshLayout
+            android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:divider="@null" />
+            uilib:template="normal">
+
+            <ListView
+                android:id="@+id/mListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:divider="@null" />
+        </com.topunion.chili.wight.refresh.UiLibRefreshLayout>
 
         <LinearLayout
             android:id="@+id/top_layout"

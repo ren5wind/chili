@@ -149,11 +149,6 @@ public class MessageMainFragment extends Fragment {
 
     @Click
     void rl_notifiy() {
-        Notifiy notifiy = new Notifiy();
-        notifiy.setTitle("title");
-        notifiy.setMsg("message");
-        notifiy.setTime(System.currentTimeMillis());
-        GreenDaoManager.getInstance().getSession().getNotifiyDao().insert(notifiy);
         NotificationActivity_.intent(this).start();
     }
 

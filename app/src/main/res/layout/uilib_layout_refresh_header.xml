@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.topunion.chili.wight.refresh.UiLibRefreshTemplateHeaderLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp">
+
+    <RelativeLayout
+        android:id="@+id/header_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/header_hint_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/uilib_header_hint_normal"
+            android:textColor="@color/uilib_text_hit"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/header_time_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header_hint_textview"
+            android:layout_marginTop="3dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/uilib_header_last_time"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/header_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/header_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/uilib_refresh_loading"
+        android:visibility="visible" />
+
+
+</com.topunion.chili.wight.refresh.UiLibRefreshTemplateHeaderLayout>

@@ -23,7 +23,6 @@
         android:id="@+id/txt_title"
         android:textSize="16sp"
         android:textColor="#666666"
-        android:text="陪你看大海"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

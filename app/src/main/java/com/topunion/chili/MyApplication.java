@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.topunion.chili.business.AccountManager;
+import com.topunion.chili.greendao.GreenDaoManager;
 import com.topunion.chili.net.HttpHelper;
 import com.topunion.chili.util.AppUtil;
 import com.topunion.chili.util.SPUtil;
@@ -60,7 +61,7 @@ public class MyApplication extends Application {
         baseApplication = this;
         JShareInterface.init(this);
         JShareInterface.setDebugMode(AppUtil.isApkDebugable(this));
-
+        GreenDaoManager.getInstance().init(getApplicationContext());
     }
 
     public String getToken() {

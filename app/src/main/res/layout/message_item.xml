@@ -45,20 +45,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_name_other"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:text="鸣人" />
-
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/img_header_other"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 fresco:placeholderImage="@mipmap/friends"
-                fresco:placeholderImageScaleType="fitXY" />
+                fresco:placeholderImageScaleType="fitXY"
+                fresco:roundAsCircle="true" />
+
+            <TextView
+                android:id="@+id/tv_name_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp" />
 
         </LinearLayout>
 
@@ -83,11 +83,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_info">
+
         <LinearLayout
             android:id="@+id/ll_head"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:orientation="vertical">
 
             <com.facebook.drawee.view.SimpleDraweeView
@@ -95,14 +96,14 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 fresco:placeholderImage="@mipmap/friends"
-                fresco:placeholderImageScaleType="fitXY" />
+                fresco:placeholderImageScaleType="fitXY"
+                fresco:roundAsCircle="true" />
 
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="静香" />
+                android:layout_gravity="center" />
         </LinearLayout>
 
         <TextView
@@ -110,8 +111,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@mipmap/chat_me"
             android:layout_toLeftOf="@id/ll_head"
+            android:background="@mipmap/chat_me"
             android:paddingBottom="15dp"
             android:paddingLeft="15dp"
             android:paddingRight="25dp"

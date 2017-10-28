@@ -16,5 +16,6 @@
     <color name="divider_line">#e6e8ea</color>
     <color name="uilib_transparent">#00000000</color>
     <color name="text_hit">#ff999999</color>
+    <color name="uilib_text_hit">#ff999999</color>
 
 </resources>

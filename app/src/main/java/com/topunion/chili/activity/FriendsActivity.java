@@ -22,6 +22,9 @@ import com.topunion.chili.view.PinyinComparator;
 import com.topunion.chili.wight.SideBar;
 import com.topunion.chili.view.SortAdapter;
 import com.topunion.chili.data.SortModel;
+import com.topunion.chili.wight.refresh.UiLibRefreshLayout;
+import com.topunion.chili.wight.refresh.UiLibRefreshOnLoadMoreListener;
+import com.topunion.chili.wight.refresh.UiLibRefreshOnRefreshListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -57,6 +60,8 @@ public class FriendsActivity extends Activity {
     SideBar sideBar;
     @ViewById
     ListView mListView;
+    @ViewById
+    UiLibRefreshLayout refresh;
 
     @Extra
     int showType;
@@ -66,6 +71,7 @@ public class FriendsActivity extends Activity {
     String deptName;
     @Extra
     Serializable group;
+    int page = 1;
 
     @Click
     void btn_newFriend() {
@@ -113,7 +119,7 @@ public class FriendsActivity extends Activity {
 
         });
 
-        dataRequest();
+        dataRequest(1);
         adapter = new SortAdapter(this, SourceDateList);
         mListView.setAdapter(adapter);
 
@@ -159,18 +165,34 @@ public class FriendsActivity extends Activity {
                 lastFirstVisibleItem = firstVisibleItem;
             }
         });
+
+        refresh.setOnRefreshListener(new UiLibRefreshOnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh.setRefreshing(false);
+                dataRequest(1);
+            }
+        });
+
+        refresh.setOnLoadMoreListener(new UiLibRefreshOnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                refresh.setLoadingMore(false);
+                dataRequest(page);
+            }
+        });
     }
 
     @Background
-    void dataRequest() {
+    void dataRequest(int page) {
         switch (showType) {
             case TYPE_SHOW_FRIENDS:
-                GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), 1, 20);
+                GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), page, 20);
                 if (friends != null)
                     SourceDateList = friends.friendsTofilledData();
                 break;
             case TYPE_SHOW_DEPT_NUMBERS:
-                GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse deptNumbs = HttpHelper_.getInstance_(this).getDeptUsers(1, 20, deptId, deptName);
+                GetCorpOrDeptUsers.GetCorpOrDeptUsersResponse deptNumbs = HttpHelper_.getInstance_(this).getDeptUsers(page, 20, deptId, deptName);
                 if (deptNumbs != null)
                     SourceDateList = deptNumbs.deptTofilledData();
                 break;
@@ -180,6 +202,7 @@ public class FriendsActivity extends Activity {
         }
 
         if (SourceDateList != null) {
+            page++;
             Collections.sort(SourceDateList, pinyinComparator);
         }
         update();
