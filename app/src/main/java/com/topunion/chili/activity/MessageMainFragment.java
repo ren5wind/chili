@@ -69,6 +69,8 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
+import static cn.jpush.im.android.api.enums.ContentType.eventNotification;
+
 @EFragment(R.layout.fragment_message_main)
 public class MessageMainFragment extends Fragment {
     public static int sequence = 1;
@@ -288,7 +290,7 @@ public class MessageMainFragment extends Fragment {
                 if (contentType == null) {
                     continue;
                 }
-                if (contentType == ContentType.text || contentType == ContentType.eventNotification) {
+                if (contentType == ContentType.text || contentType == eventNotification) {
                     msgList.add(conversation);
                 }
             }
@@ -515,25 +517,31 @@ public class MessageMainFragment extends Fragment {
         String userId = "";
         if (con != null && con.size() > 0) {
             userId = con.get(0);
-            userId.replace("[", "");
-            userId.replace("]", "");
+//            userId.replace("[", "");
+//            userId.replace("]", "");
         }
 
         if (StringUtil.isEmpt(userId)) {
             return;
         }
-        final GetETMemberDetails.GetETMemberDetailsResponse response =
-                HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userId, AccountManager.getInstance().getUserId());
-        if (response != null && response.data != null) {
-            msg.replace("userId", response.data.logicNickname);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    txt_msg.setText(msg);
-                }
-            });
+        String[] userIdStr = userId.split(",");
+        String message = msg;
+        for (int i = 0; i < userIdStr.length; i++) {
+            final GetETMemberDetails.GetETMemberDetailsResponse response =
+                    HttpHelper_.getInstance_(getActivity()).getETMemberDetails(userIdStr[i], AccountManager.getInstance().getUserId());
+            if (response != null && response.data != null) {
+                message = message.replace(userIdStr[i], response.data.logicNickname);
+            }
         }
+        final String finalMessage = message;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txt_msg.setText(finalMessage);
+            }
+        });
     }
+
 
     class MsgAdapter extends BaseAdapter {
         private List<Conversation> mDataList;
@@ -610,7 +618,6 @@ public class MessageMainFragment extends Fragment {
                     case eventNotification:
                         EventNotificationContent eventNotificationContent = (EventNotificationContent) lastMsg.getContent();
                         contentStr = eventNotificationContent.getEventText();
-                        getETMember(contentStr, holder.txt_msg);
 //                        switch (eventNotificationContent.getEventNotificationType()) {
 //                            case group_member_added:
 //                                //群成员加群事件
@@ -636,8 +643,6 @@ public class MessageMainFragment extends Fragment {
                         contentStr = ((TextContent) lastMsg.getContent()).getText();
                 }
 
-                MessageContent msgContent = lastMsg.getContent();
-
                 if (lastMsg.getTargetType() == ConversationType.group && lastMsg.getContentType() == ContentType.text) {
                     UserInfo info = lastMsg.getFromUser();
                     String fromName = info.getNotename();
@@ -647,7 +652,10 @@ public class MessageMainFragment extends Fragment {
                             fromName = info.getUserName();
                         }
                     }
-                    holder.txt_msg.setText(fromName + ": " + contentStr);
+                    getETMember("[" + fromName + "]" + ": " + contentStr, holder.txt_msg);
+//                    holder.txt_msg.setText(fromName + ": " + contentStr);
+                } else if (lastMsg.getContentType() == eventNotification) {
+                    getETMember(contentStr, holder.txt_msg);
                 } else {
                     holder.txt_msg.setText(contentStr);
                 }

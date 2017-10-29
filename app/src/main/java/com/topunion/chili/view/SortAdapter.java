@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
 import com.topunion.chili.data.SortModel;
 
@@ -18,49 +19,49 @@ import java.util.List;
  * @author J 适配器
  */
 public class SortAdapter extends BaseAdapter implements SectionIndexer {
-	private List<SortModel> list = null;
-	private Context mContext;
+    private List<SortModel> list = null;
+    private Context mContext;
 
-	public SortAdapter(Context mContext, List<SortModel> list) {
-		this.mContext = mContext;
-		this.list = list;
-	}
+    public SortAdapter(Context mContext, List<SortModel> list) {
+        this.mContext = mContext;
+        this.list = list;
+    }
 
-	public void updateListView(List<SortModel> list) {
-		this.list = list;
-		notifyDataSetChanged();
-	}
+    public void updateListView(List<SortModel> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
 
-	public int getCount() {
-		return (list == null)?0:list.size();
-	}
+    public int getCount() {
+        return (list == null) ? 0 : list.size();
+    }
 
-	public Object getItem(int position) {
-		return (list == null)?null:list.get(position);
-	}
+    public Object getItem(int position) {
+        return (list == null) ? null : list.get(position);
+    }
 
-	public long getItemId(int position) {
-		return position;
-	}
+    public long getItemId(int position) {
+        return position;
+    }
 
-	public View getView(final int position, View view, ViewGroup arg2) {
-		ViewHolder viewHolder = null;
-		if(list == null){
-			return null;
-		}
-		final SortModel mContent = list.get(position);
-		if (view == null) {
-			viewHolder = new ViewHolder();
-			view = LayoutInflater.from(mContext).inflate(R.layout.friends_sort_list_item, null);
-			viewHolder.tvTitle = (TextView) view
-					.findViewById(R.id.txt_name);
-			viewHolder.tvLetter = (TextView) view.findViewById(R.id.catalog);
-			viewHolder.icon = (ImageView) view
-					.findViewById(R.id.img_header);
-			view.setTag(viewHolder);
-		} else {
-			viewHolder = (ViewHolder) view.getTag();
-		}
+    public View getView(final int position, View view, ViewGroup arg2) {
+        ViewHolder viewHolder = null;
+        if (list == null) {
+            return null;
+        }
+        final SortModel mContent = list.get(position);
+        if (view == null) {
+            viewHolder = new ViewHolder();
+            view = LayoutInflater.from(mContext).inflate(R.layout.friends_sort_list_item, null);
+            viewHolder.tvTitle = (TextView) view
+                    .findViewById(R.id.txt_name);
+            viewHolder.tvLetter = (TextView) view.findViewById(R.id.catalog);
+            viewHolder.icon = (SimpleDraweeView) view
+                    .findViewById(R.id.img_header);
+            view.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) view.getTag();
+        }
 
 //		int section = getSectionForPosition(position);
 
@@ -68,58 +69,60 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 //			viewHolder.tvLetter.setVisibility(View.VISIBLE);
 //			viewHolder.tvLetter.setText(mContent.getSortLetters());
 //		} else {
-			viewHolder.tvLetter.setVisibility(View.GONE);
+        viewHolder.tvLetter.setVisibility(View.GONE);
 //		}
-		SortModel model = list.get(position);
+        SortModel model = list.get(position);
 
-		viewHolder.tvTitle.setText(model.getName());
-		return view;
+        viewHolder.tvTitle.setText(model.getName());
 
-	}
+        viewHolder.icon.setImageURI(model.getIconUrl());
+        return view;
 
-	final static class ViewHolder {
-		TextView tvLetter;
-		TextView tvTitle;
-		ImageView icon;
-	}
+    }
 
-	/**
-	 * 得到首字母的ascii值
-	 */
-	public int getSectionForPosition(int position) {
-		if(list == null || list.size() == 0){
-			return 0;
-		}
+    final static class ViewHolder {
+        TextView tvLetter;
+        TextView tvTitle;
+        SimpleDraweeView icon;
+    }
 
-		return list.get(position).getSortLetters().charAt(0);
-	}
+    /**
+     * 得到首字母的ascii值
+     */
+    public int getSectionForPosition(int position) {
+        if (list == null || list.size() == 0) {
+            return 0;
+        }
 
-	public int getPositionForSection(int section) {
-		if(list == null){
-			return -1;
-		}
-		for (int i = 0; i < getCount(); i++) {
-			String sortStr = list.get(i).getSortLetters();
-			char firstChar = sortStr.toUpperCase().charAt(0);
-			if (firstChar == section) {
-				return i;
-			}
-		}
+        return list.get(position).getSortLetters().charAt(0);
+    }
 
-		return -1;
-	}
+    public int getPositionForSection(int section) {
+        if (list == null) {
+            return -1;
+        }
+        for (int i = 0; i < getCount(); i++) {
+            String sortStr = list.get(i).getSortLetters();
+            char firstChar = sortStr.toUpperCase().charAt(0);
+            if (firstChar == section) {
+                return i;
+            }
+        }
 
-	public String getAlpha(String str) {
-		String sortStr = str.trim().substring(0, 1).toUpperCase();
-		if (sortStr.matches("[A-Z]")) {
-			return sortStr;
-		} else {
-			return "#";
-		}
-	}
+        return -1;
+    }
 
-	@Override
-	public Object[] getSections() {
-		return null;
-	}
+    public String getAlpha(String str) {
+        String sortStr = str.trim().substring(0, 1).toUpperCase();
+        if (sortStr.matches("[A-Z]")) {
+            return sortStr;
+        } else {
+            return "#";
+        }
+    }
+
+    @Override
+    public Object[] getSections() {
+        return null;
+    }
 }

@@ -25,6 +25,7 @@ import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetETMemberDetails;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
+import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
@@ -242,6 +243,35 @@ public class TalkingActivity extends AppCompatActivity {
         }
     }
 
+    @Background
+    void getETMemberEventNotification(final String msg, final TextView txt_msg) {
+
+        List<String> con = StringUtil.extractMessageByRegular(msg);
+        String userId = "";
+        if (con != null && con.size() > 0) {
+            userId = con.get(0);
+        }
+
+        if (StringUtil.isEmpt(userId)) {
+            return;
+        }
+        String[] userIdStr = userId.split(",");
+        String message = msg;
+        for (int i = 0; i < userIdStr.length; i++) {
+            final GetETMemberDetails.GetETMemberDetailsResponse response =
+                    HttpHelper_.getInstance_(this).getETMemberDetails(userIdStr[i], AccountManager.getInstance().getUserId());
+            if (response != null && response.data != null) {
+                message = message.replace(userIdStr[i], response.data.logicNickname);
+            }
+        }
+        final String finalMessage = message;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txt_msg.setText(finalMessage);
+            }
+        });
+    }
     public class ListViewAdapter extends BaseAdapter {
 
         private Context context;
@@ -339,7 +369,7 @@ public class TalkingActivity extends AppCompatActivity {
                 viewHolder.text_info.setVisibility(View.VISIBLE);
                 if (mid.getContent() != null) {
                     EventNotificationContent eventNotificationContent = (EventNotificationContent) mid.getContent();
-                    viewHolder.text_info.setText(eventNotificationContent.getEventText());
+                    getETMemberEventNotification(eventNotificationContent.getEventText(),viewHolder.text_info);
                 }
                 viewHolder.text_time.setText(TimeFormat.getDetailTime(TalkingActivity.this, mid.getCreateTime()));
             }
