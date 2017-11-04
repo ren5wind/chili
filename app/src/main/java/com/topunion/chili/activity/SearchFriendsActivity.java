@@ -1,6 +1,5 @@
 package com.topunion.chili.activity;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +12,11 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Employee;
 import com.topunion.chili.net.HttpHelper_;
-import com.topunion.chili.net.request_interface.GetUsers;
+import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.wight.refresh.UiLibRefreshLayout;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnLoadMoreListener;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnRefreshListener;
@@ -28,17 +28,11 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_search_from_manual)
-public class SearchFromManualActivity extends AppCompatActivity {
-
-    public static final int TYPE_SEARCH = 1;
-    public static final int TYPE_NORMAL = 0;
-    @Extra
-    int viewType;
+public class SearchFriendsActivity extends AppCompatActivity {
     @ViewById
     ListView mListView;
 
@@ -50,11 +44,10 @@ public class SearchFromManualActivity extends AppCompatActivity {
     Company company;
     @Extra
     String deparmentId;
-    private List<GetUsers.GetUsersResponse.Data.User> mDataList;
-    private List<Employee> chooseEmployee;
-    int page = 1;
     @ViewById
     UiLibRefreshLayout refresh;
+    private List<GetFriends.GetFriendsResponse.Friend> mDataList;
+    int page = 1;
 
     @Click
     void btn_cancel() {
@@ -63,29 +56,17 @@ public class SearchFromManualActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
-        chooseEmployee = new ArrayList<>();
         mAdapter = new MyAdapter();
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (viewType == TYPE_NORMAL) {
-                    Intent intent = new Intent(SearchFromManualActivity.this, CompanyManageAddEmployessActivity_.class);
-                    Employee employee = new Employee();
-                    employee.setId(mAdapter.getItem(i).cId);
-                    employee.setName(mAdapter.getItem(i).logicNickname);
-                    chooseEmployee.add(employee);
-                    intent.putExtra("employees", (Serializable) chooseEmployee);
-                    intent.putExtra("company", company);
-                    intent.putExtra("deparmentId", deparmentId);
-                    startActivity(intent);
-                    finish();
-                } else if (viewType == TYPE_SEARCH) {
-                    PersonalCenterActivity_.intent(SearchFromManualActivity.this).
-                            uid(mAdapter.getItem(i).cId).start();
-                }
+
+                PersonalCenterActivity_.intent(SearchFriendsActivity.this).
+                        uid(mAdapter.getItem(i).friendId).start();
             }
         });
+
         refresh.setOnRefreshListener(new UiLibRefreshOnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -105,8 +86,10 @@ public class SearchFromManualActivity extends AppCompatActivity {
 
     @Background
     void search(int page) {
-        GetUsers.GetUsersResponse result = HttpHelper_.getInstance_(this).getUsers(page, 20, mSearchInput.getText().toString().trim());
-        mDataList = result.data.result;
+        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), page, 20);
+        if (friends != null)
+            mDataList = friends.result;
+
         updateAdapter();
     }
 
@@ -121,9 +104,9 @@ public class SearchFromManualActivity extends AppCompatActivity {
     }
 
     class MyAdapter extends BaseAdapter {
-        private List<GetUsers.GetUsersResponse.Data.User> dataList;
+        private List<GetFriends.GetFriendsResponse.Friend> dataList;
 
-        public void setData(List<GetUsers.GetUsersResponse.Data.User> dataList) {
+        public void setData(List<GetFriends.GetFriendsResponse.Friend> dataList) {
             this.dataList = dataList;
         }
 
@@ -136,7 +119,7 @@ public class SearchFromManualActivity extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             ViewHolder viewHolder;
             if (view == null) {
-                view = LayoutInflater.from(SearchFromManualActivity.this).inflate(R.layout.person_list_item, null);
+                view = LayoutInflater.from(SearchFriendsActivity.this).inflate(R.layout.person_list_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.txt_name = (TextView) view.findViewById(R.id.txt_name);
                 viewHolder.img_header = (SimpleDraweeView) view.findViewById(R.id.img_header);
@@ -144,9 +127,9 @@ public class SearchFromManualActivity extends AppCompatActivity {
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
-            GetUsers.GetUsersResponse.Data.User user = dataList.get(i);
-            viewHolder.img_header.setImageURI(user.imgUrl);
-            viewHolder.txt_name.setText(user.logicNickname);
+            GetFriends.GetFriendsResponse.Friend friend = dataList.get(i);
+            viewHolder.img_header.setImageURI(friend.headImg);
+            viewHolder.txt_name.setText(friend.nickname);
 
             return view;
         }
@@ -158,7 +141,7 @@ public class SearchFromManualActivity extends AppCompatActivity {
         }
 
         @Override
-        public GetUsers.GetUsersResponse.Data.User getItem(int i) {
+        public GetFriends.GetFriendsResponse.Friend getItem(int i) {
             return (dataList == null) ? null : dataList.get(i);
         }
 

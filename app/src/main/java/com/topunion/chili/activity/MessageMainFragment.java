@@ -180,7 +180,7 @@ public class MessageMainFragment extends Fragment {
         dataList = null;
         dataList = new ArrayList<>();
         //获取部门列表
-        dataList.add("好友");
+        dataList.add("易投好友");
         dataList.add("群组");
         dataList.add("电话本");
         contactAdapter.setData(dataList);
@@ -275,6 +275,9 @@ public class MessageMainFragment extends Fragment {
         if (msgList != null) {
             msgList.clear();
         }
+        if(StringUtil.isEmpt(AccountManager.getInstance().getUserId())){
+            return;
+        }
         List<Conversation> tempMsgList = JMessageClient.getConversationList();
         if (tempMsgList != null && tempMsgList.size() > 0) {
             for (int i = 0; i < tempMsgList.size(); i++) {
@@ -336,7 +339,7 @@ public class MessageMainFragment extends Fragment {
         mSearchInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SearchFromManualActivity_.intent(getActivity()).viewType(SearchFromManualActivity_.TYPE_SEARCH).start();
+                SearchFriendsActivity_.intent(getActivity()).start();
             }
         });
 

@@ -28,7 +28,7 @@
 
         <Button
             android:id="@+id/btn_from_manual"
-            android:text="通过手动添加"
+            android:text="手动输入添加"
             android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="50dp"/>

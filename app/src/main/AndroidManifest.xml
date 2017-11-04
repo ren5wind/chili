@@ -40,10 +40,10 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity_"
+            android:name=".SplashActivity_"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.TransNav">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -139,7 +139,11 @@
                 <category android:name="com.topunion.chili" />
             </intent-filter>
         </receiver>
-
+        <activity
+            android:name=".MainActivity_"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activity.TalkingActivity_"
             android:label="@string/title_activity_talking"
@@ -167,6 +171,11 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activity.SearchFromManualActivity_"
+            android:label="@string/title_activity_remark"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".activity.SearchFriendsActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>

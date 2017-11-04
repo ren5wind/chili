@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:uilib="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="#f2f2f2"
+    android:fitsSystemWindows="true"
     tools:context="com.topunion.chili.activity.TalkingActivity">
 
     <include
         android:id="@+id/title_layout"
-        layout="@layout/search_title_layout"/>
+        layout="@layout/search_title_layout" />
 
-    <ListView
-        android:id="@+id/mListView"
-        android:layout_below="@id/title_layout"
-        android:layout_alignParentBottom="true"
+    <com.topunion.chili.wight.refresh.UiLibRefreshLayout
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_layout"
+        uilib:template="normal">
 
+        <ListView
+            android:id="@+id/mListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+             />
+    </com.topunion.chili.wight.refresh.UiLibRefreshLayout>
 </RelativeLayout>

@@ -7,7 +7,9 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.topunion.chili.activity.MessageMainFragment_;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
+import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.wight.NoScrollViewPager;
 import com.yinglan.alphatabs.AlphaTabsIndicator;
 import com.yinglan.alphatabs.OnTabChangedListner;
@@ -79,6 +81,9 @@ public class MainActivity extends FragmentActivity {
 //                        my.initfresh();
                         break;
                     case 2:
+                        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+                            alphaIndicator.setTabCurrenItem(4);
+                        }
                         break;
                     case 3:
 //                        find.initfresh();

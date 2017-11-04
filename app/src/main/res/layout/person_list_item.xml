@@ -12,6 +12,7 @@
         android:layout_alignParentLeft="true"
         fresco:placeholderImageScaleType="fitXY"
         fresco:placeholderImage="@mipmap/friends"
+        fresco:roundAsCircle="true"
         android:layout_margin="10dp"/>
 
     <TextView

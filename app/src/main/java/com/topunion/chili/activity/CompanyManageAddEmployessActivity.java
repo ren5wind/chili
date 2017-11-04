@@ -62,7 +62,7 @@ public class CompanyManageAddEmployessActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
-        btn_confirm.setText("确定");
+        btn_confirm.setText("提交");
         btn_confirm.setVisibility(View.VISIBLE);
         txt_title.setText("员工添加");
         Intent intent = getIntent();

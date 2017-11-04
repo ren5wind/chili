@@ -109,45 +109,113 @@
             android:background="@android:color/white"
             android:paddingBottom="15dp">
 
-            <TextView
-                android:id="@+id/txt_member1"
+            <LinearLayout
+                android:id="@+id/ll_member1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableTop="@mipmap/friends"
                 android:gravity="center"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/txt_member2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@mipmap/friends"
-                android:gravity="center"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/img_member1"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    fresco:placeholderImage="@mipmap/friends"
+                    fresco:placeholderImageScaleType="fitXY"
+                    fresco:roundAsCircle="true" />
 
-            <TextView
-                android:id="@+id/txt_member3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@mipmap/friends"
-                android:gravity="center"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                <TextView
+                    android:id="@+id/txt_member1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="4"
+                    android:singleLine="true"
+                    android:textColor="@color/textGray"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/txt_member4"
+            <LinearLayout
+                android:id="@+id/ll_member2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableTop="@mipmap/friends"
                 android:gravity="center"
-                android:textColor="@color/textGray"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/img_member2"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    fresco:placeholderImage="@mipmap/friends"
+                    fresco:placeholderImageScaleType="fitXY"
+                    fresco:roundAsCircle="true" />
+
+                <TextView
+                    android:id="@+id/txt_member2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="4"
+                    android:singleLine="true"
+                    android:textColor="@color/textGray"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_member3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/img_member3"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    fresco:placeholderImage="@mipmap/friends"
+                    fresco:placeholderImageScaleType="fitXY"
+                    fresco:roundAsCircle="true" />
+
+                <TextView
+                    android:id="@+id/txt_member3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="4"
+                    android:singleLine="true"
+                    android:textColor="@color/textGray"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_member4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/img_member4"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    fresco:placeholderImage="@mipmap/friends"
+                    fresco:placeholderImageScaleType="fitXY"
+                    fresco:roundAsCircle="true" />
+
+                <TextView
+                    android:id="@+id/txt_member4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="4"
+                    android:singleLine="true"
+                    android:textColor="@color/textGray"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/txt_member_add"

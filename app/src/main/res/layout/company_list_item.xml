@@ -1,90 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:fresco="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/img_header"
-        fresco:placeholderImage="@mipmap/company_group"
-        fresco:placeholderImageScaleType="fitXY"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_margin="10dp"
+        fresco:placeholderImage="@mipmap/company_group"
+        fresco:placeholderImageScaleType="fitXY"
+        fresco:roundAsCircle="true" />
 
     <TextView
         android:id="@+id/txt_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="left"
-        android:layout_toRightOf="@+id/img_header"
         android:layout_centerVertical="true"
-        android:layout_weight="1"/>
+        android:layout_toRightOf="@+id/img_header"
+        android:layout_weight="1"
+        android:gravity="left" />
 
     <LinearLayout
         android:id="@+id/layout_manage"
         android:layout_width="wrap_content"
         android:layout_height="64dp"
-        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:orientation="horizontal">
 
         <View
             android:layout_width="1dp"
             android:layout_height="30dp"
-            android:layout_marginRight="20dp"
             android:layout_gravity="center_vertical"
-            android:background="@color/textGray"/>
+            android:layout_marginRight="20dp"
+            android:background="@color/textGray" />
 
         <ImageView
-            android:src="@mipmap/message_guanli"
-            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/message_guanli" />
 
         <Button
             android:id="@+id/btn_manage"
-            android:text="管理"
-            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
-            android:textColor="#93c7f0"
             android:minWidth="0dp"
             android:paddingLeft="5dp"
             android:paddingRight="15dp"
-            android:layout_gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:text="管理"
+            android:textColor="#93c7f0"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_add"
         android:layout_width="wrap_content"
         android:layout_height="64dp"
-        android:visibility="gone"
-        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:orientation="horizontal">
+        android:layout_centerVertical="true"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
-            android:src="@mipmap/add_gray"
-            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/add_gray" />
 
         <Button
             android:id="@+id/btn_add"
-            android:text="添加"
-            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
-            android:textColor="#999999"
             android:minWidth="0dp"
             android:paddingLeft="5dp"
             android:paddingRight="15dp"
-            android:layout_gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:text="添加"
+            android:textColor="#999999"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>

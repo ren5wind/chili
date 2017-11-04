@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +37,10 @@ public class GroupCenterActivity extends AppCompatActivity {
 
     @ViewById
     TextView txt_title, txt_name, txt_count, txt_member1, txt_member2, txt_member3, txt_member4, txt_member_add, txt_member_remove;
-
+    @ViewById
+    LinearLayout ll_member1, ll_member2, ll_member3, ll_member4;
+    @ViewById
+    SimpleDraweeView img_member1, img_member2, img_member3, img_member4;
     @ViewById
     ImageButton btn_operation;
 
@@ -165,28 +169,32 @@ public class GroupCenterActivity extends AppCompatActivity {
         }
         txt_title.setText("群资料设置");
         txt_name.setText(mGroup.name);
-        txt_member1.setVisibility(View.GONE);
-        txt_member2.setVisibility(View.GONE);
-        txt_member3.setVisibility(View.GONE);
-        txt_member4.setVisibility(View.GONE);
+        ll_member1.setVisibility(View.GONE);
+        ll_member2.setVisibility(View.GONE);
+        ll_member3.setVisibility(View.GONE);
+        ll_member4.setVisibility(View.GONE);
 
         for (int i = 0; i < mGroup.members.size(); i++) {
             switch (i) {
                 case 0:
                     txt_member1.setText(mGroup.members.get(i).logicNickname);
-                    txt_member1.setVisibility(View.VISIBLE);
+                    ll_member1.setVisibility(View.VISIBLE);
+                    img_member1.setImageURI(mGroup.members.get(i).headImg);
                     break;
                 case 1:
                     txt_member2.setText(mGroup.members.get(i).logicNickname);
-                    txt_member2.setVisibility(View.VISIBLE);
+                    ll_member2.setVisibility(View.VISIBLE);
+                    img_member2.setImageURI(mGroup.members.get(i).headImg);
                     break;
                 case 2:
                     txt_member3.setText(mGroup.members.get(i).logicNickname);
-                    txt_member3.setVisibility(View.VISIBLE);
+                    ll_member3.setVisibility(View.VISIBLE);
+                    img_member3.setImageURI(mGroup.members.get(i).headImg);
                     break;
                 case 3:
                     txt_member4.setText(mGroup.members.get(i).logicNickname);
-                    txt_member4.setVisibility(View.VISIBLE);
+                    ll_member4.setVisibility(View.VISIBLE);
+                    img_member4.setImageURI(mGroup.members.get(i).headImg);
                     break;
             }
         }
