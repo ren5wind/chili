@@ -127,7 +127,11 @@ public class TalkingActivity extends AppCompatActivity {
         mDataList = new ArrayList<>();
         txt_title.setText(title);
         btn_operation.setVisibility(View.VISIBLE);
-        btn_operation.setImageResource(R.mipmap.more);
+        if (!TextUtils.isEmpty(targetId)) {
+            btn_operation.setImageResource(R.mipmap.more);
+        }else{
+            btn_operation.setImageResource(R.mipmap.chat_group_right);
+        }
         initImMessage();
         JMessageClient.registerEventReceiver(this);
         options = new MessageSendingOptions();

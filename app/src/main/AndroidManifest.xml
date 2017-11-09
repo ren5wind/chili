@@ -252,10 +252,12 @@
         <activity
             android:name=".activity.PayActivity_"
             android:label="@string/title_activity_remark"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
-
+        <activity
+            android:name=".WelcomeGuideActivity"
+            android:label="@string/title_activity_remark"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

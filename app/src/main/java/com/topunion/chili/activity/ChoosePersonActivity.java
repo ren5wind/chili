@@ -25,6 +25,7 @@ import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.AddGroup;
 import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
+import com.topunion.chili.util.StringUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -128,6 +129,9 @@ public class ChoosePersonActivity extends AppCompatActivity {
     }
 
     private void showMembers() {
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+            return;
+        }
         mDateList = ((GetGroupDetails.GetGroupDetailsResponse.Group) group).membersTofilledData();
         updateAdapter(true, "");
     }
@@ -168,6 +172,9 @@ public class ChoosePersonActivity extends AppCompatActivity {
 
     @Background
     void getFriends() {
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+            return;
+        }
         GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), 1, 100);
         mDateList = friends.friendsTofilledData();
         updateAdapter(true, "网络异常，获取好友失败");

@@ -17,6 +17,7 @@ import com.topunion.chili.R;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetGroups;
+import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.wight.refresh.UiLibRefreshLayout;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnLoadMoreListener;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnRefreshListener;
@@ -103,6 +104,9 @@ public class GroupListActivity extends AppCompatActivity {
     //获取群组列表
     @Background
     void initGroup(int page) {
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+            return;
+        }
         GetGroups.GetGroupsResponse groups = HttpHelper_.getInstance_(this).getGroups(page, 20, AccountManager.getInstance().getUserId());
         if (groups == null) {
             return;

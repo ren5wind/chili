@@ -13,10 +13,12 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.topunion.chili.R;
+import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Employee;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetUsers;
+import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.wight.refresh.UiLibRefreshLayout;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnLoadMoreListener;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnRefreshListener;
@@ -105,6 +107,9 @@ public class SearchFromManualActivity extends AppCompatActivity {
 
     @Background
     void search(int page) {
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+            return;
+        }
         GetUsers.GetUsersResponse result = HttpHelper_.getInstance_(this).getUsers(page, 20, mSearchInput.getText().toString().trim());
         mDataList = result.data.result;
         updateAdapter();

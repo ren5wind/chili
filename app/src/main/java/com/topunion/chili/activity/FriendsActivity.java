@@ -18,6 +18,7 @@ import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetCorpOrDeptUsers;
 import com.topunion.chili.net.request_interface.GetFriends;
 import com.topunion.chili.net.request_interface.GetGroupDetails;
+import com.topunion.chili.util.StringUtil;
 import com.topunion.chili.view.PinyinComparator;
 import com.topunion.chili.wight.SideBar;
 import com.topunion.chili.view.SortAdapter;
@@ -185,6 +186,9 @@ public class FriendsActivity extends Activity {
 
     @Background
     void dataRequest(int page) {
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+            return;
+        }
         switch (showType) {
             case TYPE_SHOW_FRIENDS:
                 GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), page, 20);

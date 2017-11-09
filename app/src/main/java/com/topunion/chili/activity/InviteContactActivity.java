@@ -1,9 +1,14 @@
 package com.topunion.chili.activity;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +39,7 @@ import java.util.List;
 
 @EActivity(R.layout.activity_choose_person)
 public class InviteContactActivity extends AppCompatActivity {
+    private final int REQUEST_CODE=1;
 
     @ViewById
     TextView txt_title;
@@ -70,13 +76,31 @@ public class InviteContactActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
-        getContact();
         txt_title.setText("电话本");
-
         mAdapter = new Adapter(contacts);
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
-
+        //检测程序是否开启权限
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_CONTACTS)!=
+                PackageManager.PERMISSION_GRANTED) {//没有权限需要动态获取
+            //动态请求权限
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_CODE);
+        }else{
+            getContact();
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {//判断是否给于权限
+                getContact();
+                mAdapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(this, "请开启通讯录权限", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     class Contact {

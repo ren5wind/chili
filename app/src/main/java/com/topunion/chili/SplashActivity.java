@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 
+import com.topunion.chili.util.SPUtil;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 
@@ -25,7 +27,15 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void initView() {
-
+        // 判断是否是第一次开启应用
+        boolean isFirstOpen = SPUtil.getSharedBooleanData(this, "first");
+        // 如果是第一次启动，则先进入功能引导页
+        if (isFirstOpen) {
+            Intent intent = new Intent(this, WelcomeGuideActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         //防止按了MENU，重新走splash的bug,参考：http://stackoverflow.com/questions/19545889/app-restarts-rather-than-resumes
         if (!isTaskRoot()
                 && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)

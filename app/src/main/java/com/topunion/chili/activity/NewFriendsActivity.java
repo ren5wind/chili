@@ -14,6 +14,7 @@ import com.topunion.chili.R;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetFriednApplies;
+import com.topunion.chili.util.StringUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -69,6 +70,9 @@ public class NewFriendsActivity extends Activity {
 
     @Background
     void dataRequest() {
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+            return;
+        }
         GetFriednApplies.GetFriednAppliesResponse friends = HttpHelper_.getInstance_(this).getFriednApplies(AccountManager.getInstance().getUserId(), 1, 100);
         mDataList = friends.data.result;
         updateAdapter();
