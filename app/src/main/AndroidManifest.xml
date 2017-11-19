@@ -258,6 +258,14 @@
             android:name=".WelcomeGuideActivity"
             android:label="@string/title_activity_remark"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity
+            android:name=".activity.LoginActivity_"
+            android:label="@string/title_activity_remark"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+
+
     </application>
 
 </manifest>

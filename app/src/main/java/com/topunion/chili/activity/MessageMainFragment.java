@@ -163,8 +163,9 @@ public class MessageMainFragment extends Fragment {
     @UiThread
     void updateImLogin(boolean isLogin, int code, boolean hasUserId) {
         if (!hasUserId) {
-            btn_imlogin.setText("您还没有登录，无法获取消息,请到“我的”里登录");
-            btn_imlogin.setVisibility(View.VISIBLE);
+//            btn_imlogin.setText("您还没有登录，无法获取消息,请到“我的”里登录");
+//            btn_imlogin.setVisibility(View.VISIBLE);
+//            LoginActivity_.intent(this).start();
             return;
         }
         if (isLogin) {
@@ -192,8 +193,8 @@ public class MessageMainFragment extends Fragment {
         List<Company> companyList = mOrganization.analysisCompany(corps);
         List<Department> departmentList = null;
         for (int i = 0; companyList != null && i < companyList.size(); i++) {
-            if (!companyList.get(i).isAdministrators())
-                continue;
+//            if (!companyList.get(i).isAdministrators())
+//                continue;
             dataList.add(companyList.get(i));
             GetCorpDepts.GetCorpDeptsResponse depts = HttpHelper_.getInstance_(getActivity()).getCorpDepts(1, 20, Integer.parseInt(companyList.get(i).getId()));
             departmentList = companyList.get(i).analysisDepartment(depts);
@@ -275,7 +276,7 @@ public class MessageMainFragment extends Fragment {
         if (msgList != null) {
             msgList.clear();
         }
-        if(StringUtil.isEmpt(AccountManager.getInstance().getUserId())){
+        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
             return;
         }
         List<Conversation> tempMsgList = JMessageClient.getConversationList();
@@ -744,13 +745,19 @@ public class MessageMainFragment extends Fragment {
                         view = LayoutInflater.from(getActivity()).inflate(R.layout.company_list_item, null);
                         txt_name = (TextView) view.findViewById(R.id.txt_name);
                         txt_name.setText(company.getName());
-                        Button btn_manage = (Button) view.findViewById(R.id.btn_manage);
-                        btn_manage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                CompanyManageActivity_.intent(getActivity()).company(company).start();
-                            }
-                        });
+
+                        LinearLayout btn_manage = (LinearLayout) view.findViewById(R.id.layout_manage);
+                        if (company.isAdministrators()) {
+                            btn_manage.setVisibility(View.VISIBLE);
+                            btn_manage.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    CompanyManageActivity_.intent(getActivity()).company(company).start();
+                                }
+                            });
+                        } else {
+                            btn_manage.setVisibility(View.GONE);
+                        }
                     } else if (getItem(i) instanceof Department) { //部门
                         final Department dept = (Department) getItem(i);
                         view = LayoutInflater.from(getActivity()).inflate(R.layout.department_list_item, null);

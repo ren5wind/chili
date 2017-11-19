@@ -17,6 +17,7 @@ import com.topunion.chili.data.Company;
 import com.topunion.chili.data.Employee;
 import com.topunion.chili.net.HttpHelper_;
 import com.topunion.chili.net.request_interface.GetFriends;
+import com.topunion.chili.net.request_interface.GetUsers;
 import com.topunion.chili.wight.refresh.UiLibRefreshLayout;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnLoadMoreListener;
 import com.topunion.chili.wight.refresh.UiLibRefreshOnRefreshListener;
@@ -46,7 +47,7 @@ public class SearchFriendsActivity extends AppCompatActivity {
     String deparmentId;
     @ViewById
     UiLibRefreshLayout refresh;
-    private List<GetFriends.GetFriendsResponse.Friend> mDataList;
+    private List<GetUsers.GetUsersResponse.Data.User> mDataList;
     int page = 1;
 
     @Click
@@ -63,7 +64,7 @@ public class SearchFriendsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 PersonalCenterActivity_.intent(SearchFriendsActivity.this).
-                        uid(mAdapter.getItem(i).friendId).start();
+                        uid(mAdapter.getItem(i).cId).start();
             }
         });
 
@@ -86,9 +87,13 @@ public class SearchFriendsActivity extends AppCompatActivity {
 
     @Background
     void search(int page) {
-        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), page, 20);
-        if (friends != null)
-            mDataList = friends.result;
+//        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), page, 20);
+//        if (friends != null)
+//            mDataList = friends.result;
+
+        GetUsers.GetUsersResponse result = HttpHelper_.getInstance_(this).getUsers(page, 20, mSearchInput.getText().toString().trim());
+        mDataList = result.data.result;
+
 
         updateAdapter();
     }
@@ -104,9 +109,9 @@ public class SearchFriendsActivity extends AppCompatActivity {
     }
 
     class MyAdapter extends BaseAdapter {
-        private List<GetFriends.GetFriendsResponse.Friend> dataList;
+        private List<GetUsers.GetUsersResponse.Data.User> dataList;
 
-        public void setData(List<GetFriends.GetFriendsResponse.Friend> dataList) {
+        public void setData(List<GetUsers.GetUsersResponse.Data.User> dataList) {
             this.dataList = dataList;
         }
 
@@ -127,9 +132,9 @@ public class SearchFriendsActivity extends AppCompatActivity {
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
-            GetFriends.GetFriendsResponse.Friend friend = dataList.get(i);
-            viewHolder.img_header.setImageURI(friend.headImg);
-            viewHolder.txt_name.setText(friend.nickname);
+            GetUsers.GetUsersResponse.Data.User friend = dataList.get(i);
+            viewHolder.img_header.setImageURI(friend.imgUrl);
+            viewHolder.txt_name.setText(friend.logicNickname);
 
             return view;
         }
@@ -141,7 +146,7 @@ public class SearchFriendsActivity extends AppCompatActivity {
         }
 
         @Override
-        public GetFriends.GetFriendsResponse.Friend getItem(int i) {
+        public GetUsers.GetUsersResponse.Data.User getItem(int i) {
             return (dataList == null) ? null : dataList.get(i);
         }
 
