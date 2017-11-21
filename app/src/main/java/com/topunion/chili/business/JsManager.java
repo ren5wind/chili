@@ -34,6 +34,7 @@ public class JsManager {
     private static JsManager instance;
     private final static Object syncLock = new Object();
     private Gson gson;
+    private boolean isNotific;
 
     public static JsManager getInstance() {
         if (instance == null) {
@@ -50,8 +51,9 @@ public class JsManager {
         gson = new Gson();
     }
 
-    public boolean parseUrl(String url, Activity activity) {
+    public boolean parseUrl(String url, Activity activity, boolean isNotific) {
         Uri uri = Uri.parse(url);
+        this.isNotific = isNotific;
         if (uri.getScheme().equals(TAG)) {
             if (uri.getAuthority().equals(FUN_GETUSERINFO)) {
                 getUserInfo(getJson(url));
@@ -60,7 +62,7 @@ public class JsManager {
         } else if (url.contains("user/setting/picture.html")) {
             upLoadHead(activity, url);
             return true;
-        } else if (url.contains("login.html")) {
+        } else if (url.contains("login.html") && isNotific) {
             AccountManager.getInstance().clearAccount();
             RxBus.getInstance().post(AccountManager.RXBUS_ACCOUNT_LOGOUT, true);
             return false;

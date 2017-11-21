@@ -17,6 +17,7 @@ import com.topunion.chili.base.dialog.UiLibDialog;
 import com.topunion.chili.base.dialog.UiLibDialogInterface;
 import com.topunion.chili.data.Notifiy;
 import com.topunion.chili.greendao.GreenDaoManager;
+import com.topunion.chili.greendao.gen.NotifiyDao;
 import com.topunion.chili.util.TimeFormat;
 
 import org.androidannotations.annotations.AfterViews;
@@ -96,7 +97,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     void getData() {
-        mDataList = GreenDaoManager.getInstance().getSession().getNotifiyDao().queryBuilder().list();
+        mDataList = GreenDaoManager.getInstance().getSession().getNotifiyDao().queryBuilder().orderDesc(NotifiyDao.Properties.Time).list();
     }
 
 

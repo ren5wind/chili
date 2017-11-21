@@ -24,7 +24,8 @@ import rx.android.schedulers.AndroidSchedulers;
 
 public class WebViewFragment extends Fragment {
 
-    public static String ARG_URL;
+    public static String ARG_URL = "url";
+    public static String ARG_NOTIFIC = "notific";
 
     private WebView webView;
     ProgressBar bar;
@@ -33,14 +34,16 @@ public class WebViewFragment extends Fragment {
 
     private boolean isExit;
 
+    private boolean isNotific = true;
 
     public WebViewFragment() {
     }
 
-    public static WebViewFragment newInstance(String urlStr) {
+    public static WebViewFragment newInstance(String urlStr, boolean isNotific) {
         WebViewFragment fragment = new WebViewFragment();
         Bundle args = new Bundle();
         args.putString(ARG_URL, urlStr);
+        args.putBoolean(ARG_NOTIFIC, isNotific);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,6 +53,7 @@ public class WebViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             urlStr = getArguments().getString(ARG_URL);
+            isNotific = getArguments().getBoolean(ARG_NOTIFIC);
         }
     }
 
@@ -74,7 +78,7 @@ public class WebViewFragment extends Fragment {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 System.out.println("url = " + url);
                 isExit = false;
-                boolean b = JsManager.getInstance().parseUrl(url, getActivity());
+                boolean b = JsManager.getInstance().parseUrl(url, getActivity(), isNotific);
                 if (!b) {
                     view.loadUrl(url);
                     super.shouldOverrideUrlLoading(view, url);
@@ -118,7 +122,7 @@ public class WebViewFragment extends Fragment {
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
         webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setAppCacheEnabled(false);
         String appCachePath = getActivity().getCacheDir().getAbsolutePath();
         webView.getSettings().setAppCachePath(appCachePath);
@@ -158,9 +162,12 @@ public class WebViewFragment extends Fragment {
 
     public void initfresh() {
         if (webView != null) {
-            webView.setVisibility(View.GONE);
             webView.loadUrl(urlStr);
         }
+    }
+
+    public void setVisibility(boolean isVisibility) {
+        webView.setVisibility(isVisibility ? View.VISIBLE : View.GONE);
     }
 
     public boolean back() {

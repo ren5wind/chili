@@ -21,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
-        WebViewFragment fragment = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/user/index.html");
+        WebViewFragment fragment = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/user/index.html", false);
         FragmentManager mFragmentManager = getSupportFragmentManager();
         FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
         mTransaction.add(R.id.fragment, fragment);

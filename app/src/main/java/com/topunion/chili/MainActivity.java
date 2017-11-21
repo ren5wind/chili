@@ -38,11 +38,11 @@ public class MainActivity extends FragmentActivity {
     protected void afterViews() {
         List<Fragment> listFragment = new ArrayList<>();
 
-        find = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/home.html");
-        bid = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/bid-management/bid-on.html");
+        find = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/home.html", true);
+        bid = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/bid-management/bid-on.html", true);
         Fragment message = MessageMainFragment_.builder().build();
-        square = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/square/index.html");
-        my = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/user/index.html");
+        square = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/square/index.html", true);
+        my = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/user/index.html", true);
 
         listFragment.add(find);
         listFragment.add(bid);
@@ -62,39 +62,38 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onTabSelected(int tabNum) {
                 postion = tabNum;
-//                find.initfresh();
-//                bid.initfresh();
-//                square.initfresh();
-//                my.initfresh();
-
                 switch (tabNum) {
                     case 0:
                         find.initfresh();
-//                        bid.initfresh();
-//                        square.initfresh();
-//                        my.initfresh();
+                        bid.setVisibility(false);
+                        square.setVisibility(false);
+                        my.setVisibility(false);
                         break;
                     case 1:
-//                        find.initfresh();
+                        find.setVisibility(false);
                         bid.initfresh();
-//                        square.initfresh();
-//                        my.initfresh();
+                        square.setVisibility(false);
+                        my.setVisibility(false);
                         break;
                     case 2:
                         if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
                             alphaIndicator.setTabCurrenItem(4);
                         }
+                        find.setVisibility(false);
+                        bid.setVisibility(false);
+                        square.setVisibility(false);
+                        my.setVisibility(false);
                         break;
                     case 3:
-//                        find.initfresh();
-//                        bid.initfresh();
+                        find.setVisibility(false);
+                        bid.setVisibility(false);
                         square.initfresh();
-//                        my.initfresh();
+                        my.setVisibility(false);
                         break;
                     case 4:
-//                        find.initfresh();
-//                        bid.initfresh();
-//                        square.initfresh();
+                        find.setVisibility(false);
+                        bid.setVisibility(false);
+                        square.setVisibility(false);
                         my.initfresh();
                         break;
                 }
