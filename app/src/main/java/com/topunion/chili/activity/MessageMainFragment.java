@@ -165,7 +165,6 @@ public class MessageMainFragment extends Fragment {
         if (!hasUserId) {
 //            btn_imlogin.setText("您还没有登录，无法获取消息,请到“我的”里登录");
 //            btn_imlogin.setVisibility(View.VISIBLE);
-//            LoginActivity_.intent(this).start();
             return;
         }
         if (isLogin) {

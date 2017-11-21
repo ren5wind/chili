@@ -167,7 +167,9 @@ public class WebViewFragment extends Fragment {
     }
 
     public void setVisibility(boolean isVisibility) {
-        webView.setVisibility(isVisibility ? View.VISIBLE : View.GONE);
+        if (webView != null) {
+            webView.setVisibility(isVisibility ? View.VISIBLE : View.GONE);
+        }
     }
 
     public boolean back() {

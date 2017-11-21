@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import com.topunion.chili.activity.LoginActivity_;
 import com.topunion.chili.activity.MessageMainFragment_;
 import com.topunion.chili.business.AccountManager;
 import com.topunion.chili.net.HttpHelper_;
@@ -38,10 +39,10 @@ public class MainActivity extends FragmentActivity {
     protected void afterViews() {
         List<Fragment> listFragment = new ArrayList<>();
 
-        find = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/home.html", true);
-        bid = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/bid-management/bid-on.html", true);
+        find = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/home.html", false);
+        bid = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/bid-management/bid-on.html", false);
         Fragment message = MessageMainFragment_.builder().build();
-        square = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/square/index.html", true);
+        square = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/square/index.html", false);
         my = WebViewFragment.newInstance(HttpHelper_.DEBUG_SERVER + "/assets/user/index.html", true);
 
         listFragment.add(find);
@@ -76,13 +77,13 @@ public class MainActivity extends FragmentActivity {
                         my.setVisibility(false);
                         break;
                     case 2:
-                        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
-                            alphaIndicator.setTabCurrenItem(4);
-                        }
                         find.setVisibility(false);
                         bid.setVisibility(false);
                         square.setVisibility(false);
                         my.setVisibility(false);
+                        if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
+                            LoginActivity_.intent(MainActivity.this).start();
+                        }
                         break;
                     case 3:
                         find.setVisibility(false);
