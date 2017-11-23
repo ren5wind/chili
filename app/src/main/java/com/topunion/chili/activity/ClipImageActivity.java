@@ -28,7 +28,7 @@ import java.io.IOException;
  * @Description:
  * @date 2015-5-8 下午3:39:22
  */
-public class ClipImageActivity extends Activity implements OnClickListener {
+public class ClipImageActivity extends BaseAppCompatActivity implements OnClickListener {
     public static final String RESULT_PATH = "crop_image";
     public static final String KEY = "path";
     private ClipImageLayout mClipImageLayout = null;

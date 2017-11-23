@@ -41,7 +41,7 @@ import java.util.List;
 
 
 @EActivity(R.layout.activity_friends)
-public class FriendsActivity extends Activity {
+public class FriendsActivity extends BaseAppCompatActivity {
     private SortAdapter adapter; // 排序的适配器
 
     private List<SortModel> SourceDateList; // 数据

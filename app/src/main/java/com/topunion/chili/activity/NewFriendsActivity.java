@@ -31,7 +31,7 @@ import java.util.List;
  */
 
 @EActivity(R.layout.activity_new_friends)
-public class NewFriendsActivity extends Activity {
+public class NewFriendsActivity extends BaseAppCompatActivity {
     private MyAdapter adapter;
     private List<GetFriednApplies.GetFriednAppliesResponse.Data.Apply> mDataList; // 数据
 

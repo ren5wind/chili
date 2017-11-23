@@ -5,13 +5,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 
+import com.topunion.chili.activity.BaseAppCompatActivity;
 import com.topunion.chili.util.SPUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 
 @EActivity(R.layout.activity_splash)
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseAppCompatActivity {
     private static final int SPLASH_DELAY_MILLIS = 2000;
     private boolean isFirst;
     private Handler mHandler = new Handler() {

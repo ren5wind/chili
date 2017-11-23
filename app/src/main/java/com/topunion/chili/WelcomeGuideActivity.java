@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.topunion.chili.activity.BaseAppCompatActivity;
 import com.topunion.chili.util.SPUtil;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
  * Created by Administrator on 2017/11/9.
  */
 
-public class WelcomeGuideActivity extends AppCompatActivity {
+public class WelcomeGuideActivity extends BaseAppCompatActivity {
     private ViewPager vpGuide;
     private TextView btnStart;
     private LinearLayout llIndicator;

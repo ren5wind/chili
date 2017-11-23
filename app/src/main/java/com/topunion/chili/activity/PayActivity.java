@@ -7,6 +7,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -35,7 +36,7 @@ import org.androidannotations.annotations.ViewById;
  * Description :
  */
 @EActivity(R.layout.activity_pay)
-public class PayActivity extends AppCompatActivity {
+public class PayActivity extends FragmentActivity {
     @ViewById
     RadioGroup radioGroup;
     @ViewById

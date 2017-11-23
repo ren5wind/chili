@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_search_from_manual)
-public class SearchFromManualActivity extends AppCompatActivity {
+public class SearchFromManualActivity extends BaseAppCompatActivity {
 
     public static final int TYPE_SEARCH = 1;
     public static final int TYPE_NORMAL = 0;

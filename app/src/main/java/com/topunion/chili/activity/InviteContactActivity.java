@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_choose_person)
-public class InviteContactActivity extends AppCompatActivity {
+public class InviteContactActivity extends BaseAppCompatActivity {
     private final int REQUEST_CODE=1;
 
     @ViewById

@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_choose_person)
-public class ChoosePersonActivity extends AppCompatActivity {
+public class ChoosePersonActivity extends BaseAppCompatActivity {
     private List<SortModel> mDateList;
     //选择的人
     private List<SortModel> mChooseDateList;
@@ -75,6 +75,10 @@ public class ChoosePersonActivity extends AppCompatActivity {
     void btn_confirm() {
         switch (viewType) {
             case TYPE_CREATE_GROUP:
+                if (mChooseDateList == null || mChooseDateList.size() == 0) {
+                    showToast("请选择群成员");
+                    break;
+                }
                 progressDialog = ProgressDialog.show(ChoosePersonActivity.this, "提示", "正在创建群组...", true, false);
                 createGroup();
                 break;
@@ -133,6 +137,7 @@ public class ChoosePersonActivity extends AppCompatActivity {
             return;
         }
         mDateList = ((GetGroupDetails.GetGroupDetailsResponse.Group) group).membersTofilledData();
+
         updateAdapter(true, "");
     }
 
@@ -175,9 +180,21 @@ public class ChoosePersonActivity extends AppCompatActivity {
         if (StringUtil.isEmpt(AccountManager.getInstance().getUserId())) {
             return;
         }
-        GetFriends.GetFriendsResponse friends = HttpHelper_.getInstance_(this).getFriends(AccountManager.getInstance().getUserId(), 1, 100);
-        mDateList = friends.friendsTofilledData();
-        updateAdapter(true, "网络异常，获取好友失败");
+        GetFriends.GetFriendsResponse friends = null;
+        if (viewType == TYPE_ADD_GROUP_MEMBER) {
+            friends = HttpHelper_.getInstance_(this).
+                    getFriendsByGroupId(AccountManager.getInstance().getUserId(),
+                            ((GetGroupDetails.GetGroupDetailsResponse.Group) group).id, 1, 100);
+        } else {
+            friends = HttpHelper_.getInstance_(this).
+                    getFriends(AccountManager.getInstance().getUserId(), 1, 100);
+        }
+        if (friends == null) {
+            updateAdapter(false, "网络异常，获取好友失败");
+        } else {
+            mDateList = friends.friendsTofilledData();
+            updateAdapter(true, "网络异常，获取好友失败");
+        }
     }
 
     @UiThread

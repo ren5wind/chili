@@ -19,7 +19,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_choose_department)
-public class ChooseDepartmentActivity extends AppCompatActivity {
+public class ChooseDepartmentActivity extends BaseAppCompatActivity {
 
     @ViewById
     TextView txt_title;

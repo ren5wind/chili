@@ -364,8 +364,11 @@ public class MessageMainFragment extends Fragment {
                     String tagerId = ((UserInfo) msgAdapter.getItem(i).getTargetInfo()).getUserName();
                     TalkingActivity_.intent(getActivity()).targetId(tagerId).title(((MsgAdapter.ViewHolder) view.getTag()).txt_name.getText().toString().trim()).start();
                 } else {
-                    long groupId = ((GroupInfo) msgAdapter.getItem(i).getTargetInfo()).getGroupID();
-                    TalkingActivity_.intent(getActivity()).groupId(groupId).title(((MsgAdapter.ViewHolder) view.getTag()).txt_name.getText().toString().trim()).start();
+                    GroupInfo groupInfo = (GroupInfo) msgAdapter.getItem(i).getTargetInfo();
+                    if (groupInfo != null) {
+                        long groupId = groupInfo.getGroupID();
+                        TalkingActivity_.intent(getActivity()).groupId(groupId).title(((MsgAdapter.ViewHolder) view.getTag()).txt_name.getText().toString().trim()).start();
+                    }
                 }
             }
         });

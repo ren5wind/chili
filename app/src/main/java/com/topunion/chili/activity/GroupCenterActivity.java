@@ -33,7 +33,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
 @EActivity(R.layout.activity_group_center)
-public class GroupCenterActivity extends AppCompatActivity {
+public class GroupCenterActivity extends BaseAppCompatActivity {
 
     @ViewById
     TextView txt_title, txt_name, txt_count, txt_member1, txt_member2, txt_member3, txt_member4, txt_member_add, txt_member_remove;

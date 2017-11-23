@@ -2,11 +2,19 @@ package com.topunion.chili.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.topunion.chili.MyApplication;
 import com.topunion.chili.R;
 import com.topunion.chili.base.RxBus;
 import com.topunion.chili.base.dialog.DialogTemplate;
@@ -25,6 +33,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
@@ -35,7 +44,7 @@ import java.util.List;
  * Description :
  */
 @EActivity(R.layout.activity_manage_add_employees)
-public class CompanyManageAddEmployessActivity extends AppCompatActivity {
+public class CompanyManageAddEmployessActivity extends BaseAppCompatActivity {
     public final static String RXBUS_ADD_EMPLOYESS = "rxbus_add_Employess";
     private List<Employee> chooseEmployee;
     //    @Extra
@@ -43,7 +52,7 @@ public class CompanyManageAddEmployessActivity extends AppCompatActivity {
     //    @Extra
     String deparmentId;
     @ViewById
-    ListView mListView;
+    ListView listView;
     @ViewById
     TextView txt_title;
     @ViewById
@@ -53,8 +62,8 @@ public class CompanyManageAddEmployessActivity extends AppCompatActivity {
     TextView txt_department;
     @ViewById
     TextView txt_position_name;
-    @ViewById
-    ListView listView;
+
+    private MyAdapter myAdapter;
 
     private String[] departmentArray;
     private String[] role;
@@ -72,6 +81,9 @@ public class CompanyManageAddEmployessActivity extends AppCompatActivity {
         }
         initDeparment();
         initRole();
+
+        myAdapter = new MyAdapter(chooseEmployee);
+        listView.setAdapter(myAdapter);
     }
 
     private void initDeparment() {
@@ -101,8 +113,17 @@ public class CompanyManageAddEmployessActivity extends AppCompatActivity {
         this.finish();
     }
 
+    @UiThread
+    void showToast(String msg) {
+        Toast.makeText(MyApplication.getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
     @Click
     void btn_confirm() {
+        if (chooseEmployee == null || chooseEmployee.size() == 0) {
+            showToast("您还没有选择人员");
+            return;
+        }
         AddEmployess data = new AddEmployess();
         for (int i = 0; i < company.getDepartmentList().size(); i++) {
             if ((txt_department.getText().toString().trim()).equals(company.getDepartmentList().get(i).getName())) {
@@ -155,4 +176,53 @@ public class CompanyManageAddEmployessActivity extends AppCompatActivity {
         uiLibDialog.show();
     }
 
+    class MyAdapter extends BaseAdapter {
+        private List<Employee> dataList;
+
+        MyAdapter(List<Employee> dataList) {
+            this.dataList = dataList;
+        }
+
+        public void setData(List<Employee> dataList) {
+            this.dataList = dataList;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            TextView txt_name;
+            SimpleDraweeView img_header;
+            ImageButton btn_dustbin;
+            final Employee data = dataList.get(i);
+            view = LayoutInflater.from(CompanyManageAddEmployessActivity.this).inflate(R.layout.member_list_item, null);
+            img_header = (SimpleDraweeView) view.findViewById(R.id.img_header);
+            img_header.setImageURI(data.getHeadUrl());
+            txt_name = (TextView) view.findViewById(R.id.txt_name);
+            txt_name.setText(data.getName());
+            btn_dustbin = (ImageButton) view.findViewById(R.id.btn_dustbin);
+            btn_dustbin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //移除员工
+                    dataList.remove(data);
+                    notifyDataSetChanged();
+                }
+            });
+            return view;
+        }
+
+        @Override
+        public int getCount() {
+            return (dataList == null) ? 0 : dataList.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return (dataList == null || dataList.size() < i) ? null : dataList.get(i);
+        }
+    }
 }

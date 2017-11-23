@@ -33,7 +33,7 @@ import java.util.List;
 
 
 @EActivity(R.layout.activity_sort_person)
-public class GroupMembersActivity extends Activity {
+public class GroupMembersActivity extends BaseAppCompatActivity {
 	private SortAdapter adapter; // 排序的适配器
 
 	private CharacterParser characterParser;

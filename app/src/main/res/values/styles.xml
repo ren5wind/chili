@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.TransNav" parent="AppTheme"/>
+    <style name="AppTheme.TransNav" parent="AppTheme" />
 
     <style name="text_slidingTabTitle">
         <item name="android:layout_width">wrap_content</item>
@@ -23,14 +23,13 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="common_theme" parent="AppTheme">
+        <item name="android:windowSoftInputMode">adjustUnspecified|stateHidden</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
     <style name="uilib_dialog_style" parent="@android:style/Theme.Dialog">

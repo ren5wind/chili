@@ -17,7 +17,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_member_manage)
-public class MemberManageActivity extends AppCompatActivity {
+public class MemberManageActivity extends BaseAppCompatActivity {
 
     @ViewById
     TextView txt_title, txt_name, txt_verify1, txt_verify2, txt_company, txt_position, txt_position_name, txt_department;

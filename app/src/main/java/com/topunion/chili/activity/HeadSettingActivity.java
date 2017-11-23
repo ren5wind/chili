@@ -30,7 +30,7 @@ import java.util.List;
  * Description :
  */
 
-public class HeadSettingActivity extends Activity {
+public class HeadSettingActivity extends BaseAppCompatActivity {
     private final int START_ALBUM_REQUESTCODE = 1;
     private final int CAMERA_WITH_DATA = 2;
     private final int CROP_RESULT_CODE = 3;

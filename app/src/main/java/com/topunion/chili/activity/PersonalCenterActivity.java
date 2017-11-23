@@ -24,7 +24,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_personal_center)
-public class PersonalCenterActivity extends AppCompatActivity {
+public class PersonalCenterActivity extends BaseAppCompatActivity {
     @Extra
     String uid;
 

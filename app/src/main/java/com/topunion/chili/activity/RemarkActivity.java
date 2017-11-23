@@ -22,7 +22,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_remark)
-public class RemarkActivity extends AppCompatActivity {
+public class RemarkActivity extends BaseAppCompatActivity {
 
     @Extra
     String logicNickname;

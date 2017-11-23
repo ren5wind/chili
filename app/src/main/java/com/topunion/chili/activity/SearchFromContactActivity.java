@@ -22,7 +22,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_search_from_contact)
-public class SearchFromContactActivity extends AppCompatActivity {
+public class SearchFromContactActivity extends BaseAppCompatActivity {
 
     @ViewById
     ListView mListView;

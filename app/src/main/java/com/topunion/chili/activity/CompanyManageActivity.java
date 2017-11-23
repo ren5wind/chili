@@ -50,7 +50,7 @@ import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 @EActivity(R.layout.activity_manage_company)
-public class CompanyManageActivity extends AppCompatActivity {
+public class CompanyManageActivity extends BaseAppCompatActivity {
 
     @Extra
     String companyId;
@@ -106,15 +106,15 @@ public class CompanyManageActivity extends AppCompatActivity {
         search_layout.setVisibility(View.VISIBLE);
         myAdapter = new MyAdapter(itemDataList);
         mListView.setAdapter(myAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 3) {
-                    //TODO
-                    startActivity(new Intent(CompanyManageActivity.this, MemberManageActivity_.class));
-                }
-            }
-        });
+//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                if (i == 3) {
+//                    //TODO
+//                    startActivity(new Intent(CompanyManageActivity.this, MemberManageActivity_.class));
+//                }
+//            }
+//        });
     }
 
     private List<ItemData> analysisOrganization(Company company) {
@@ -499,6 +499,8 @@ public class CompanyManageActivity extends AppCompatActivity {
                     break;
                 case ItemData.TYPE_EMPLOYEE: //员工操作
                     view = LayoutInflater.from(CompanyManageActivity.this).inflate(R.layout.member_list_item, null);
+                    img_header = (SimpleDraweeView) view.findViewById(R.id.img_header);
+                    img_header.setImageURI(data.iconUrl);
                     txt_name = (TextView) view.findViewById(R.id.txt_name);
                     txt_name.setText(data.name);
                     txt_department = (TextView) view.findViewById(R.id.txt_department);

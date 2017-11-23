@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 @EActivity(R.layout.activity_notifycation)
-public class NotificationActivity extends AppCompatActivity {
+public class NotificationActivity extends BaseAppCompatActivity {
 
     @ViewById
     TextView txt_title;

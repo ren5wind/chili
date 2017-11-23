@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_group_list)
-public class GroupListActivity extends AppCompatActivity {
+public class GroupListActivity extends BaseAppCompatActivity {
 
     @ViewById
     TextView txt_title, txt_name;

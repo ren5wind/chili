@@ -51,7 +51,7 @@ import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.android.api.options.MessageSendingOptions;
 
 @EActivity(R.layout.activity_talking)
-public class TalkingActivity extends AppCompatActivity {
+public class TalkingActivity extends BaseAppCompatActivity {
 
     @ViewById
     ListView mListView;
@@ -391,7 +391,7 @@ public class TalkingActivity extends AppCompatActivity {
         class ViewHolder {
             public View rootView;
             public TextView text_left;
-            public LinearLayout left;
+            public RelativeLayout left;
             public TextView text_right;
             public RelativeLayout right;
             public LinearLayout middle;
@@ -405,7 +405,7 @@ public class TalkingActivity extends AppCompatActivity {
             public ViewHolder(View rootView) {
                 this.rootView = rootView;
                 this.text_left = (TextView) rootView.findViewById(R.id.text_left);
-                this.left = (LinearLayout) rootView.findViewById(R.id.left);
+                this.left = (RelativeLayout) rootView.findViewById(R.id.left);
                 this.text_right = (TextView) rootView.findViewById(R.id.text_right);
                 this.right = (RelativeLayout) rootView.findViewById(R.id.right);
                 this.middle = (LinearLayout) rootView.findViewById(R.id.layout_info);

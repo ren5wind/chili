@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import com.topunion.chili.activity.BaseAppCompatActivity;
 import com.topunion.chili.activity.LoginActivity_;
 import com.topunion.chili.activity.MessageMainFragment_;
 import com.topunion.chili.business.AccountManager;

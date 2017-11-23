@@ -89,7 +89,7 @@ public class HttpHelper {
         try {
             AddCorpDept.IAddCorpDept request = retrofit.create(AddCorpDept.IAddCorpDept.class);
             Call<AddCorpDept.AddCorpDeptResponse> call = request.addCorpDept(corpId, name, description);
-              Response<AddCorpDept.AddCorpDeptResponse> result = call.execute();
+            Response<AddCorpDept.AddCorpDeptResponse> result = call.execute();
             return result.body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -293,6 +293,18 @@ public class HttpHelper {
         try {
             GetFriends.IGetFriends request = retrofit.create(GetFriends.IGetFriends.class);
             Call<ResponseData<GetFriends.GetFriendsResponse>> call = request.getFriends(userId, pageNo, pageSize);
+            Response<ResponseData<GetFriends.GetFriendsResponse>> result = call.execute();
+            return (result.body() == null) ? null : result.body().data;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public GetFriends.GetFriendsResponse getFriendsByGroupId(String userId, String groupId, int pageNo, int pageSize) {
+        try {
+            GetFriends.IGetFriends request = retrofit.create(GetFriends.IGetFriends.class);
+            Call<ResponseData<GetFriends.GetFriendsResponse>> call = request.getFriendsByGroup(userId, groupId, pageNo, pageSize);
             Response<ResponseData<GetFriends.GetFriendsResponse>> result = call.execute();
             return (result.body() == null) ? null : result.body().data;
         } catch (IOException e) {

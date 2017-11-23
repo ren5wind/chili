@@ -43,7 +43,7 @@
             android:name=".SplashActivity_"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/common_theme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -143,126 +143,126 @@
             android:name=".MainActivity_"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.TalkingActivity_"
             android:label="@string/title_activity_talking"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.PersonalCenterActivity_"
             android:label="@string/title_activity_personal_center"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.RemarkActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.NotificationActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.CompanyManageActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.SearchFromManualActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.SearchFriendsActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.SearchFromContactActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.SearchFromFriendsActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.MemberManageActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.ChooseDepartmentActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.FriendsActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.GroupListActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.ChoosePersonActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.InviteContactActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.GroupCenterActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.GroupMembersActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.NewFriendsActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.CompanyManageAddEmployessActivity_"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.HeadSettingActivity"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.ClipImageActivity"
             android:label="@string/title_activity_remark"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
         <activity
             android:name=".activity.PayActivity_"
             android:label="@string/title_activity_remark"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
 
         <activity
             android:name=".WelcomeGuideActivity"
             android:label="@string/title_activity_remark"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
 
         <activity
             android:name=".activity.LoginActivity_"
             android:label="@string/title_activity_remark"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/common_theme"></activity>
 
 
 

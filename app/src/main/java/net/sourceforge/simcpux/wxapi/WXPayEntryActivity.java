@@ -12,12 +12,13 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.topunion.chili.R;
+import com.topunion.chili.activity.BaseAppCompatActivity;
 
 /**
  * Created by LinYi.
  * <p/>微信客户端回调给我们支付结果接收
  */
-public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEventHandler {
+public class WXPayEntryActivity extends BaseAppCompatActivity implements IWXAPIEventHandler {
     private IWXAPI api;
 
     @Override

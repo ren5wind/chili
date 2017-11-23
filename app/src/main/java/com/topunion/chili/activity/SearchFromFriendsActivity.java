@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_search_from_contact)
-public class SearchFromFriendsActivity extends AppCompatActivity {
+public class SearchFromFriendsActivity extends BaseAppCompatActivity {
 
     @ViewById
     ListView mListView;

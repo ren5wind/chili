@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EActivity(R.layout.activity_search_from_manual)
-public class SearchFriendsActivity extends AppCompatActivity {
+public class SearchFriendsActivity extends BaseAppCompatActivity {
     @ViewById
     ListView mListView;
 

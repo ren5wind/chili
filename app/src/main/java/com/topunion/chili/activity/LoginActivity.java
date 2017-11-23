@@ -1,5 +1,6 @@
 package com.topunion.chili.activity;
 
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,7 @@ import org.androidannotations.annotations.EActivity;
  * Description :
  */
 @EActivity(R.layout.activity_login)
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends FragmentActivity {
 
     @AfterViews
     void init() {
