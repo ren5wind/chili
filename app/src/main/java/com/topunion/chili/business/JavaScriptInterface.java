@@ -37,11 +37,10 @@ import cn.jiguang.share.weibo.SinaWeibo;
  */
 public class JavaScriptInterface {
     private Context context;
-    private WebViewFragment fragment;
-
-    public JavaScriptInterface(Context context, WebViewFragment fragment) {
+    private CallBack callBack;
+    public JavaScriptInterface(Context context, CallBack callBack) {
         this.context = context;
-        this.fragment = fragment;
+        this.callBack = callBack;
     }
 
     @JavascriptInterface
@@ -103,7 +102,7 @@ public class JavaScriptInterface {
     @JavascriptInterface
     public void getBackState(boolean isBack) {
         System.out.println("isBack = " + isBack);
-        fragment.setEixt(!isBack);
+        callBack.setEixt(!isBack);
     }
 
     public void download(String url, final ShareParams shareParams) {
@@ -160,4 +159,7 @@ public class JavaScriptInterface {
         }
     }
 
+    public interface CallBack {
+        void setEixt(boolean isExit);
+    }
 }
